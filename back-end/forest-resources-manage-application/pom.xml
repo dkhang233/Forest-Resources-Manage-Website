@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.project</groupId>
-	<artifactId>forest-resources-manage</artifactId>
+	<artifactId>forest-resources-manage-application</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>forest-resources-manage</name>
-	<description>Demo project for Spring Boot</description>
+	<name>forest-resources-manage-application</name>
+	<description>Project for </description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
