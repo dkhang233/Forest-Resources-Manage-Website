@@ -1,5 +1,9 @@
 package com.project.forestresourcesmanageapplication.services;
 
-public interface UserService {
+import java.util.List;
 
+import com.project.forestresourcesmanageapplication.models.User;
+
+public interface UserService {
+	List<User> retrieveAllUsers();
 }
