@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { VueCookies } from 'vue-cookies'
 
 import router from './router'
 import { createPinia } from 'pinia'
@@ -19,7 +20,10 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 
+
 const app = createApp(App)
+
+app.use(VueCookies)
 
 //router
 app.use(router)

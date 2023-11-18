@@ -1,25 +1,17 @@
 <template>
     <div id="nav">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item class="title">{{ active.title }}</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="active.item != null">{{ active.item }}</el-breadcrumb-item>
+            <el-breadcrumb-item class="title">{{ this.appStore.menu[this.appStore.currentIndex].title}}</el-breadcrumb-item>
+            <el-breadcrumb-item v-for="(item,index) in this.appStore.menu[this.appStore.currentIndex].content" :key="index">{{item.item }}</el-breadcrumb-item>
         </el-breadcrumb>
     </div>
 </template>
 
 <script>
 import { mapStores } from 'pinia'
-import { useAppStore } from "../../store/store"
+import { useAppStore } from "../../stores/app-store"
 export default {
     name:"navigator",
-    data() {
-        return {
-            active: {}
-        }
-    },
-    watch: {
-        
-    },
     computed: {
         ...mapStores(useAppStore)
     },
@@ -27,7 +19,6 @@ export default {
         
     },
     created() {
-        this.getIndex()
     },
     beforeDestroy() {
         // this.bus.$off('sendIndex') //销毁
@@ -44,5 +35,11 @@ export default {
 
 #nav .el-breadcrumb .title {
     font-weight: bold;
+}
+
+#nav{
+    position: fixed;
+    top: 100px;
+    left: 100px;
 }
 </style>

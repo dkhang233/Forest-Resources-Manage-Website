@@ -16,14 +16,14 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Entity
-@Table(name = "administratives")
+@Table(name = "administrations")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class Administrative {
+public class Administration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "code")
@@ -32,10 +32,11 @@ public class Administrative {
 	@Column(name = "name",nullable = false,length = 100)
 	private String name;
 	
-	@Column(name = "subordinate")
-	private String subordinate;
+	@ManyToOne
+	@JoinColumn(name = "subordinate")
+	private Administration subordinate;
 	
 	@ManyToOne
-	@JoinColumn(name = "id_administrative_level")
+	@JoinColumn(name = "administrative_level_id")
 	private AdministrativeLevel administrativeLevel;
 }

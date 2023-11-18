@@ -31,18 +31,16 @@
 
 <script>
 import { mapStores } from 'pinia'
-import {useAppStore} from "../../store/store"
+import {useAppStore} from "../../stores/app-store"
+import { useUserStore } from '@/stores/user-store'
 
 export default {
     name: "sideBar",
-    data() {
-       
-    },
     computed: {
-        ...mapStores(useAppStore)
+        ...mapStores(useAppStore, useUserStore),
     },
     created() {
-        // this.addData()
+        this.addData()
     },
     methods: {
         handleOpen(key, keyPath) {
@@ -51,19 +49,16 @@ export default {
         handleClose(key, keyPath) {
             // console.log(key, keyPath);
         },
-        //点击标题传递参数给navigator组件
         handleTitle(index) {
             this.appStore.currentIndex = index;
-            // this.bus.$emit('sendIndex', index)
         },
         addData() {
-            let role = this.$cookies.get("role")
-            if (role == 0) {
-                this.menu.push({
+            if (this.userStore.roles == 0) {
+                this.appStore.menu.push({
                     index: '5',
-                    title: '教师管理',
-                    icon: 'icon-Userselect',
-                    content: [{ item1: '教师管理', path: '/teacherManage' }, { item2: '添加教师', path: '/addTeacher' }],
+                    title: 'Hệ thống',
+                    icon: 'fa-gauge-high',
+                    content: [{ item: 'Quản lí tài khoản', path: '/account' }, { item: 'Quản lí truy cập', path: '/access' }],
                 })
             }
         }
@@ -87,11 +82,10 @@ export default {
 }
 
 #left {
-    height: 100%;
+    height: 500%;
     background-color: #124280;
     z-index: 0;
-    position: fixed;
-    top: 80px;
+    position: relative;
 }
 
 #left .el-menu-vertical-demo .title {

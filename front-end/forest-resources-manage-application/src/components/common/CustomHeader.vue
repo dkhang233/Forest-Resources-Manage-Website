@@ -27,7 +27,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useAppStore } from "../../store/store"
+import { useAppStore } from "../../stores/app-store"
 export default {
     name: "customHeader",
     data() {
@@ -72,22 +72,9 @@ export default {
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity .5s;
-}
-
-.fade-enter,
-.fade-leave-to
-
-/* .fade-leave-active below version 2.1.8 */
-    {
-    opacity: 0;
-}
 
 #topbar {
-    position: fixed;
-    top: 0;
+    position: relative;
     z-index: 10;
     background-color: #124280;
     height: 80px;
@@ -105,7 +92,7 @@ export default {
     overflow: hidden;
 }
 
-.topbar-left .icon-kaoshi {
+.topbar-left{
     font-size: 60px;
 }
 

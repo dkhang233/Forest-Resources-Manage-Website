@@ -59,6 +59,6 @@ public class User {
 	private Role role ;
 	
 	@ManyToOne
-	@JoinColumn(name = "administrative_code")
-	private Administrative administrative;
+	@JoinColumn(name = "administration_code")
+	private Administration administration;
 }

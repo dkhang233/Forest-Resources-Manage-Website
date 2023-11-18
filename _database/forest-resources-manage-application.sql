@@ -26,23 +26,25 @@ VALUES (1,'tỉnh'),
 
 
 -- -----------------------------------------------------
--- Table `administratives`
+-- Table administrations
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `administratives`;
-CREATE TABLE `administratives` (
+DROP TABLE IF EXISTS `administrations`;
+CREATE TABLE `administrations`(
     `code` VARCHAR(20) NOT NULL,
     `name` VARCHAR(100) NOT NULL UNIQUE,
     `subordinate` VARCHAR(20) NULL COMMENT 'trực thuộc',
-    `id_administrative_level` INT NOT NULL,
+    `administrative_level_id` INT NOT NULL,
     PRIMARY KEY (`code`),
-    FOREIGN KEY (`id_administrative_level`)
-        REFERENCES `administrative_levels` (`id`)
+    FOREIGN KEY (`administrative_level_id`)
+        REFERENCES `administrative_levels` (`id`),
+	FOREIGN KEY (`subordinate`)
+		REFERENCES `administrations`(`code`)
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='hành chính';
 
 -- ----------------------------
--- Records of `administratives`
+-- Records of administrations
 -- ----------------------------
-INSERT INTO `administratives`(`code`,`name`,`subordinate`,`id_administrative_level`)
+INSERT INTO `administrations`(`code`,`name`,`subordinate`,`administrative_level_id`)
 VALUES ('35','Hà Nam',NULL,1),
 
 	 ('347','Phủ Lý','35',2),
@@ -172,16 +174,16 @@ CREATE TABLE `users` (
     `address` VARCHAR(100) NOT NULL,
     `is_active` INT NOT NULL DEFAULT 1 COMMENT 'Trạng thái tài khoản : hoạt động = 1 , không hoạt động = 0 ',
     `role` VARCHAR(50) NOT NULL COMMENT 'Vai trò : admin , user',
-    `administrative_code` VARCHAR(20) NOT NULL,
+    `administration_code` VARCHAR(20) NOT NULL,
     PRIMARY KEY (`username`),
-    FOREIGN KEY (`administrative_code`)
-        REFERENCES `administratives`(`code`)
+    FOREIGN KEY (`administration_code`)
+        REFERENCES `administrations`(`code`)
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='người dùng';
 
 -- ----------------------------
 -- Records of `users`
 -- ----------------------------
-INSERT INTO `users` (`username`,`password`,`first_name`,`last_name`,`avatar`,`birth_date`,`address`,`is_active`,`role`,`administrative_code`)
+INSERT INTO `users` (`username`,`password`,`first_name`,`last_name`,`avatar`,`birth_date`,`address`,`is_active`,`role`,`administration_code`)
 VALUES ('admin','1','admin','admin','','2003-1-1','',1,'admin','35'),
 
 ('a','1','Nguyễn','A','','2003-1-1','',1,'user','347'),

@@ -6,8 +6,8 @@
                 <side-bar></side-bar>
             </div>
             <div class="main_wrapper">
-                <navigator class="nav"></navigator>
-                <!-- <router-view></router-view> -->
+                <!-- <navigator class="nav"></navigator> -->
+                <router-view></router-view>
             </div>
         </section>
     </div>
@@ -25,7 +25,7 @@ export default {
     },
     data() {
         return {
-            username: '许如梦'
+            username: ''
         }
     },
     methods: {
@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style scoped>
-#index{
+#index {
     box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
     margin-bottom: 30px;
 }
