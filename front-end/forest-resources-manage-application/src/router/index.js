@@ -13,8 +13,8 @@ export const constantRoutes = [
         path: 'account',
         component: () => import('../components/admin/ManageAccount')
       },{
-        path: 'administrative',
-        component: () => import('../components/administrative/Administrative')
+        path: 'administration',
+        component: () => import('../components/administration/Administration')
       },
       {
         path: 'seedtype',

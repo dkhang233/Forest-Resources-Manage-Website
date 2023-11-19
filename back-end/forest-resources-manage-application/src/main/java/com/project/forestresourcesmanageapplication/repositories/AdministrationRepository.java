@@ -1,6 +1,7 @@
 package com.project.forestresourcesmanageapplication.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,7 @@ public interface AdministrationRepository extends JpaRepository<Administration, 
 
 	@Query("SELECT a FROM Administration a WHERE a.subordinate = (SELECT a FROM Administration a WHERE a.code = :code)")
 	List<Administration> findChildren(String code);
+
+	@Query("SELECT a FROM Administration a WHERE a.name = :name")
+    Optional<Administration> findByName(String name);
 }
