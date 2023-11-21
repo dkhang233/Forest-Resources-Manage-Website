@@ -9,7 +9,7 @@ export const useAppStore = defineStore('app', {
                 index: '1',
                 title: 'Hành chính', // 
                 icon: 'fa-city',
-                content: [{item : 'Danh sách' , path : '/administrative'}],
+                content: [{item : 'Danh sách' , path : '/administration'}],
             },
             {
                 index: '2',

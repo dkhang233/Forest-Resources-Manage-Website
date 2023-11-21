@@ -22,7 +22,9 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-service": "~5.0.0"
+    "@vue/cli-service": "~5.0.0",
+    "leaflet": "^1.9.4"
   }
 }

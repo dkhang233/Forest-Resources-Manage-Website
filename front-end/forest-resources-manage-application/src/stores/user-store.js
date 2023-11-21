@@ -7,15 +7,15 @@ export const useUserStore = defineStore('user', {
         welcome: '',
         avatar: '',
         roles: 0,
-        administrative: { code: "35", name: "", administrativeLevel: { id : 1 , name:"tỉnh"} },
+        administration: { code: "35", name: "", administrativeLevel: { id : 1 , name:"tỉnh"} },
         info: {}
     }),
     getters: {
         administrativeName: (state) => {
-            return state.administrative.code
+            return state.administration.code
         },
         administrativeLevelName: (state) => {
-            return state.administrative.administrativeLevel.name
+            return state.administration.administrativeLevel.name
         }
     },
     actions: {

@@ -38,7 +38,8 @@ CREATE TABLE `administrations`(
     FOREIGN KEY (`administrative_level_id`)
         REFERENCES `administrative_levels` (`id`),
 	FOREIGN KEY (`subordinate`)
-		REFERENCES `administrations`(`code`)
+		REFERENCES `administrations`(`code`),
+	INDEX (`name`) USING BTREE
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='hành chính';
 
 -- ----------------------------
