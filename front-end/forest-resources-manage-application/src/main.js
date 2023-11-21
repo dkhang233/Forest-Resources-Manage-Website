@@ -21,6 +21,11 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 
 
+//import vue-leaflet css and component 
+import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import "leaflet/dist/leaflet.css";
+
+
 const app = createApp(App)
 
 app.use(VueCookies)
@@ -41,7 +46,10 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // add icons to the library
 library.add(fas, fab , far)
 
-//add component
+//add component\
+app.component("l-map", LMap);
+app.component("l-tile-layer", LTileLayer);
+app.component("l-marker", LMarker);
 app.component('font-awesome-icon', FontAwesomeIcon)
 
 //mount 

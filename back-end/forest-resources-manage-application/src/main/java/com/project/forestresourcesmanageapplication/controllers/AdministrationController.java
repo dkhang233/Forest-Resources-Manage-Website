@@ -23,16 +23,28 @@ import lombok.RequiredArgsConstructor;
 public class AdministrationController {
 	private final AdministrationService administrationService;
 	
-	@GetMapping("/{code}")
-	public ResponseEntity<List<AdministrationHierarchyResponse>> retrieveSubAdministrationsWithHierarchy(@PathVariable String code){
-		List<AdministrationHierarchyResponse> administrations = administrationService.retrieveAllSubAdministrations(code);
+	@GetMapping("")
+	public ResponseEntity<List<Administration>> retrieveAllAdministration(){
+		List<Administration> administrations =  administrationService.retrieveAllAdministrations();
 		return ResponseEntity.ok(administrations);
 	}
 
-	@PostMapping("/{code}")
-	public ResponseEntity<Administration> updateAdministration(@RequestBody AdministrationDTO administrationDTO){
-		Administration administration =  administrationService.updateAdministration(administrationDTO);
+	@GetMapping("/{code}")
+	public ResponseEntity<Administration> retrieveAdministrationByCode(@PathVariable String code){
+		Administration administration =  administrationService.retrieveAdministrationByCode(code);
 		return ResponseEntity.ok(administration);
+	}
+
+	@PostMapping("/{code}")
+	public ResponseEntity<Administration> updateAdministration( @PathVariable String code ,@RequestBody AdministrationDTO administrationDTO){
+		Administration administration =  administrationService.updateAdministration(code,administrationDTO);
+		return ResponseEntity.ok(administration);
+	}
+
+	@GetMapping("/{code}/sub")
+	public ResponseEntity<List<AdministrationHierarchyResponse>> retrieveSubAdministrationsWithHierarchy(@PathVariable String code){
+		List<AdministrationHierarchyResponse> administrations = administrationService.retrieveAllSubAdministrations(code);
+		return ResponseEntity.ok(administrations);
 	}
 	
 }

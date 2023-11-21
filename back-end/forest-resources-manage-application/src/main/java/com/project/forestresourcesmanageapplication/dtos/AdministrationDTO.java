@@ -7,9 +7,6 @@ import lombok.Data;
 public class AdministrationDTO {
 
 	@NotBlank
-	private String code;
-	
-	@NotBlank
 	private String name;
 
 	@NotBlank

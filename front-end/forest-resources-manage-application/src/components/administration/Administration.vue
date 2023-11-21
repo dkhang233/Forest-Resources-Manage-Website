@@ -2,12 +2,12 @@
     <div class="tree" v-loading="loadingStatus">
         <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
         <el-input :offset="2" v-model="filterText" placeholder="Filter keyword" class="form" />
-        <el-tree ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps" :expand-on-click-node="false"
-            :item-size="50" :height="1000" :filter-node-method="filterNode" @node-click="showNode" />
+        <el-tree default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps" :expand-on-click-node="false"
+            :item-size="50" :height="300" :filter-node-method="filterNode" @node-click="showNode" />
         <el-dialog v-model="dialogFormVisible" title="Administration Details">
             <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
                 <el-form-item label="Mã" prop="code">
-                    <el-input v-model="form.code" autocomplete="off" />
+                    <el-input v-model="form.code" autocomplete="off" disabled />
                 </el-form-item>
                 <el-form-item label="Cấp Hành Chính" prop="level">
                     <el-select v-model="form.level" placeholder="Chọn cấp hành chính">
@@ -35,6 +35,7 @@
                 </span>
             </template>
         </el-dialog>
+        <map-view class="map"></map-view>
     </div>
 </template>
 
@@ -42,7 +43,11 @@
 import { retrieveSubAdministrationsWithHierarchy, updateAdministration } from "../../api/administration"
 import { mapStores } from 'pinia'
 import { useUserStore } from "../../stores/user-store"
+import MapView  from "../common/MapView.vue";
 export default {
+    components: {
+        MapView
+    },
     data() {
         return {
             defaultProps: {
@@ -133,7 +138,7 @@ export default {
                 .then(() => {
                     this.dialogFormVisible = false
                     this.$notify({
-                        title : 'Thành công',
+                        title: 'Thành công',
                         message: 'Xóa thành công',
                         type: 'success'
                     })
@@ -142,7 +147,6 @@ export default {
                 })
         },
         retrieveAdministrations() {
-            this.loadingStatus = true
             retrieveSubAdministrationsWithHierarchy(this.userStore.administrativeName)
                 .then((res) => {
                     this.treeData = res.data
@@ -152,8 +156,7 @@ export default {
         },
         updateAdministration() {
             this.loadingStatus = true
-            updateAdministration({
-                code: this.form.code,
+            updateAdministration(this.form.code,{
                 name: this.form.name,
                 subordinateName: this.form.subName,
                 administrativeLevelName: this.form.level
@@ -162,7 +165,7 @@ export default {
                     (res) => {
                         this.loadingStatus = false
                         this.$notify({
-                            title : 'Thành công',
+                            title: 'Thành công',
                             message: 'Cập nhập thành công',
                             type: 'success'
                         })
@@ -173,7 +176,7 @@ export default {
                     (err) => {
                         this.loadingStatus = false
                         this.$notify({
-                            title : 'Thất bại',
+                            title: 'Thất bại',
                             message: 'Cập nhập thất bại',
                             type: 'error',
                         })
@@ -208,10 +211,19 @@ export default {
     --el-tree-node-hover-bg-color: #D0D3D4;
     font-size: 20px !important;
     margin: 20px;
+    width : 400px;
 }
 
 .del-btn {
     position: absolute;
     left: 0px;
+}
+
+.map{
+  width: 500px;
+  height: 500px;
+  position: absolute;
+  right: 10px; 
+  top : 160px;
 }
 </style>

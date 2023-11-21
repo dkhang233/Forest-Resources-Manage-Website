@@ -10,5 +10,5 @@ public interface AdministrationService {
 	public List<Administration> retrieveAllAdministrations();
 	public List<AdministrationHierarchyResponse> retrieveAllSubAdministrations(String code);
 	public Administration retrieveAdministrationByCode(String code);
-	public Administration updateAdministration(AdministrationDTO administrationDTO);
+	public Administration updateAdministration(String code,AdministrationDTO administrationDTO);
 }

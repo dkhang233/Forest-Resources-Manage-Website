@@ -2,6 +2,6 @@ import { apiClient } from "./index"
 
 export const retrieveAllAdministrations = () => apiClient.get(`administrations`);
 
-export const retrieveSubAdministrationsWithHierarchy = (code) => apiClient.get(`administrations/${code}`);
+export const retrieveSubAdministrationsWithHierarchy = (code) => apiClient.get(`administrations/${code}/sub`);
 
-export const updateAdministration  = (administration) => apiClient.post(`administrations/${administration.code}`,administration)
+export const updateAdministration  = (code,administration) => apiClient.post(`administrations/${code}`,administration)

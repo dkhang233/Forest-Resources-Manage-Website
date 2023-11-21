@@ -25,21 +25,33 @@ public class AdministrationServiceImpl implements AdministrationService {
 	private final AdministrationRepository administrationRepository;
 	private final AdministrativeLevelRepository administrativeLevelRepository;
 
+	// Truy suất toàn bộ đơn vị hành chính
 	@Override
 	public List<Administration> retrieveAllAdministrations() {
 		return administrationRepository.findAll();
 	}
 
+	// Truy suất đơn vị hành chính theo mã
+	@Override
+	public Administration retrieveAdministrationByCode(String code) {
+		Administration administration = this.administrationRepository.findById(code)
+				.orElseThrow(() -> new DataNotFoundException("Not found administration with code = " + code));
+		return administration;
+	}
+
+	// Truy suất toàn bộ đơn vị hành chính trực thuộc đơn vị có mã là tham số truyển
+	// vào
 	@Override
 	public List<AdministrationHierarchyResponse> retrieveAllSubAdministrations(String code) {
 		List<AdministrationHierarchyResponse> res = new ArrayList<>();
 		Administration tmp = administrationRepository.findById(code)
-				.orElseThrow(() -> new RuntimeException("Not found administration with code = " + code));
+				.orElseThrow(() -> new DataNotFoundException("Not found administration with code = " + code));
 		res.add(new AdministrationHierarchyResponse(tmp));
 		findChildren(res);
 		return res;
 	}
 
+	// Hàm hỗ trợ cho hàm: retrieveAllSubAdministrations
 	public void findChildren(List<AdministrationHierarchyResponse> data) {
 		data.stream().forEach((el) -> {
 			List<Administration> tmp1 = administrationRepository.findChildren(el.getCode());
@@ -53,30 +65,16 @@ public class AdministrationServiceImpl implements AdministrationService {
 		});
 	}
 
+	// Cập nhập đơn vị hành chính
 	@Override
-	public Administration retrieveAdministrationByCode(String code) {
-		Administration administration = this.administrationRepository.findById(code)
-				.orElseThrow(() -> new RuntimeException("Not found administration with code = " + code));
-		return administration;
-	}
+	public Administration updateAdministration(String code, AdministrationDTO administrationDTO) {
 
-	@Override
-	public Administration updateAdministration(AdministrationDTO administrationDTO) {
 		Administration administration = this.administrationRepository
-				.findById(administrationDTO.getCode())
+				.findById(code)
 				.orElseThrow(() -> new DataNotFoundException(
-						"Can not found administration with code = " + administrationDTO.getCode()));
+						"Can not found administration with code = " + code));
 
-		if (!administration.getCode().equals(administrationDTO.getCode())) {
-			Optional<Administration> tmp = this.administrationRepository
-					.findById(administrationDTO.getCode());
-			if (tmp.isPresent()) {
-				throw new DataAlreadyExistsException(
-						"Administration already exists with code = " + administrationDTO.getCode());
-			}
-			administration.setCode(administrationDTO.getCode());
-		}
-
+		// Kiểm tra tên đơn vị hành chính
 		if (!administration.getName().equals(administrationDTO.getName())) {
 			Optional<Administration> tmp = this.administrationRepository
 					.findByName(administrationDTO.getName());
@@ -87,6 +85,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 			administration.setName(administrationDTO.getName());
 		}
 
+		// Kiểm tra trực thuộc
 		if (!administration.getSubordinate().getName().equals(administrationDTO.getSubordinateName())) {
 			Administration subrbodinate = this.administrationRepository
 					.findByName(administrationDTO.getSubordinateName())
@@ -95,12 +94,14 @@ public class AdministrationServiceImpl implements AdministrationService {
 			administration.setSubordinate(subrbodinate);
 		}
 
+		// Kiểm tra cáp hành chính
 		if (!administration.getAdministrativeLevel().getName().equals(administrationDTO.getAdministrativeLevelName())) {
 			AdministrativeLevel administrativeLevel = this.administrativeLevelRepository
 					.findByName(administrationDTO.getAdministrativeLevelName())
 					.orElseThrow(() -> new DataNotFoundException(
-							"Không thể tìm thấy cấp hành chính với tên = " + administrationDTO.getAdministrativeLevelName()));
-			if(!administrationRepository.findChildren(administration.getCode()).isEmpty()){
+							"Không thể tìm thấy cấp hành chính với tên = "
+									+ administrationDTO.getAdministrativeLevelName()));
+			if (!administrationRepository.findChildren(administration.getCode()).isEmpty()) {
 				throw new InvalidDataException("Cấp hành chính không hợp lệ");
 			}
 			administration.setAdministrativeLevel(administrativeLevel);
