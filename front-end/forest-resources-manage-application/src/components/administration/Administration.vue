@@ -2,8 +2,15 @@
     <div class="tree" v-loading="loadingStatus">
         <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
         <el-input :offset="2" v-model="filterText" placeholder="Filter keyword" class="form" />
-        <el-tree default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps" :expand-on-click-node="false"
-            :item-size="50" :height="300" :filter-node-method="filterNode" @node-click="showNode" />
+        <el-tree-v2 default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps" :item-size="50"
+            :expand-on-click-node="false" :height="600" :filter-node-method="filterNode">
+            <template #default="{ node, data }">
+                <span class="custom-tree-node">
+                    <span>{{ node.label }}</span>
+                    <a @click="showNode(data)">Chi tiết</a>
+                </span>
+            </template>
+        </el-tree-v2>
         <el-dialog v-model="dialogFormVisible" title="Administration Details">
             <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
                 <el-form-item label="Mã" prop="code">
@@ -43,7 +50,7 @@
 import { retrieveSubAdministrationsWithHierarchy, updateAdministration } from "../../api/administration"
 import { mapStores } from 'pinia'
 import { useUserStore } from "../../stores/user-store"
-import MapView  from "../common/MapView.vue";
+import MapView from "../common/MapView.vue";
 export default {
     components: {
         MapView
@@ -51,6 +58,7 @@ export default {
     data() {
         return {
             defaultProps: {
+                value: `code`,
                 children: `children`,
                 label: `fullName`,
             },
@@ -64,7 +72,7 @@ export default {
                 subName: "",
             },
             rules: {
-                code: [{ validator: this.checkAdministrationCode, trigger: 'change' }]
+                name: [{ validator: this.checkAdministrationName, trigger: 'change' }, { validator: this.checkAdministrationSub, trigger: 'change' }]
             },
             loadingStatus: false
         }
@@ -82,19 +90,24 @@ export default {
             if (!value) return true
             return dataa.fullName.includes(value)
         },
-        showNode(node, nodeProperty, treeNode) {
+        showNode(node) {
             this.form.code = node.code
             this.form.name = node.name
             this.form.level = node.levelName
             this.form.subName = node.subordinateName
             this.dialogFormVisible = true
         },
-        checkAdministrationCode(rule, value, callback) {
+        checkAdministrationName(rule, value, callback) {
             if (!value) {
                 return callback(new Error('Vui lòng nhập mã hành chính'))
             }
-            if (!Number.isInteger(Number(value))) {
-                callback(new Error('Mã hành chính phải là một số '))
+            else {
+                callback()
+            }
+        },
+        checkAdministrationSub(rule, value, callback) {
+            if (!value) {
+                return callback(new Error('Vui lòng trực thuộc'))
             }
             else {
                 callback()
@@ -147,6 +160,7 @@ export default {
                 })
         },
         retrieveAdministrations() {
+            // this.loadingStatus = true
             retrieveSubAdministrationsWithHierarchy(this.userStore.administrativeName)
                 .then((res) => {
                     this.treeData = res.data
@@ -156,7 +170,7 @@ export default {
         },
         updateAdministration() {
             this.loadingStatus = true
-            updateAdministration(this.form.code,{
+            updateAdministration(this.form.code, {
                 name: this.form.name,
                 subordinateName: this.form.subName,
                 administrativeLevelName: this.form.level
@@ -200,6 +214,8 @@ export default {
 <style scoped>
 .tree {
     margin: 15px 30px 10px 30px;
+    width: 100%;
+    height: 700px;
 }
 
 .form {
@@ -211,7 +227,7 @@ export default {
     --el-tree-node-hover-bg-color: #D0D3D4;
     font-size: 20px !important;
     margin: 20px;
-    width : 400px;
+    width: 600px;
 }
 
 .del-btn {
@@ -219,11 +235,21 @@ export default {
     left: 0px;
 }
 
-.map{
-  width: 500px;
-  height: 500px;
-  position: absolute;
-  right: 10px; 
-  top : 160px;
+.map {
+    width: 700px;
+    height: 600px;
+    position: absolute;
+    right: 30px;
+    top: 160px;
+}
+
+a:hover{
+    color:#5DADE2;
+}
+
+a{
+    font-size: 15px;
+    margin-left: 200px;
+    color:#BDC3C7
 }
 </style>

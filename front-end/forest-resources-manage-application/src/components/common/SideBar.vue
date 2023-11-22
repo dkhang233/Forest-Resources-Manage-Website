@@ -1,26 +1,21 @@
 <template>
     <div id="left">
-        <el-menu active-text-color="#dd5862"
-                 text-color="#fff" 
-                 :default-active="this.$route.path"
-                 class="el-menu-vertical-demo" 
-                 @open="handleOpen" 
-                 @close="handleClose" 
-                 :collapse="this.appStore.flag" 
-                 background-color="#124280"
-                 menu-trigger="click"
-                 router
-        >
+        <el-menu active-text-color="#dd5862" text-color="#fff" :default-active="this.$route.path"
+            class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="this.appStore.flag"
+            background-color="#124280" menu-trigger="click" router>
+            <el-menu-item index ='/'>
+                <i class="icon"><font-awesome-icon class="iconfont" icon= "fa-house"/></i>
+                <template #title>
+                    <span class="title">Home</span>
+                </template>
+            </el-menu-item>
             <el-sub-menu v-for="(item, index) in this.appStore.menu" :index='item.index' :key="index">
                 <template #title>
                     <i class="icon"><font-awesome-icon class="iconfont" :icon="item.icon" /></i>
                     <span class="title">{{ item.title }}</span>
                 </template>
-                <el-menu-item-group v-for="(list,index1) in item.content" :key="index1">
-                    <el-menu-item @click="handleTitle(item.index)" 
-                                  :index="list.path"
-                                  v-if="list.item != null"
-                    >
+                <el-menu-item-group v-for="(list, index1) in item.content" :key="index1">
+                    <el-menu-item @click="handleTitle(item.index)" :index="list.path" v-if="list.item != null">
                         {{ list.item }}
                     </el-menu-item>
                 </el-menu-item-group>
@@ -31,7 +26,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import {useAppStore} from "../../stores/app-store"
+import { useAppStore } from "../../stores/app-store"
 import { useUserStore } from '@/stores/user-store'
 
 export default {
@@ -82,7 +77,7 @@ export default {
 }
 
 #left {
-    height: 500%;
+    height: 750px;
     background-color: #124280;
     z-index: 0;
     position: relative;
@@ -107,13 +102,12 @@ export default {
     color: #fbfbfc !important;
 }
 
-.el-button{
+.el-button {
     margin: 5px 0px 10px 17px;
 }
 
-.icon{
-    display: inline-block; /* Đảm bảo icon hiển thị trên cùng một dòng */
+.icon {
+    display: inline-block;
     margin-bottom: 41px;
 }
-
 </style>

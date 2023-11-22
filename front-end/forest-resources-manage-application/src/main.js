@@ -26,9 +26,14 @@ import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 
 
+import * as echarts from 'echarts';
+
+
 const app = createApp(App)
 
 app.use(VueCookies)
+
+// app.prototype.$echarts = echarts
 
 //router
 app.use(router)

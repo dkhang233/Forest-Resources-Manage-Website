@@ -111,4 +111,10 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return administration;
 	}
 
+	// Xóa đơn vị hành chính
+	@Override
+	public void deleteByCode(String code) {
+		this.administrationRepository.deleteById(code);
+	}
+
 }

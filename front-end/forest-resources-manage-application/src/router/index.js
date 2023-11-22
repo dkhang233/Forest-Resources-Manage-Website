@@ -6,6 +6,10 @@ export const constantRoutes = [
     component: () => import('../components/main/Main'),
     children: [
       {
+        path: '',
+        component: () => import ('@/components/common/Home')
+      },
+      {
         path: 'access',
         component: () => import('../components/admin/ManageAccess')
       },
