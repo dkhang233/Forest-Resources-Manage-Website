@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.forestresourcesmanageapplication.models.AdministrativeLevel;
-import com.project.forestresourcesmanageapplication.services.AdministrativeLevelService;
+import com.project.forestresourcesmanageapplication.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("${api.prefix}/administrativelevels")
 @RequiredArgsConstructor
 public class AdministrativeLevelController {
-	private final AdministrativeLevelService administrativeLevelService;
+	private final UserService userService;
 	
 	@GetMapping("")
 	public ResponseEntity<List<AdministrativeLevel>> retrieveAllAdministratives(){
-		List<AdministrativeLevel> administrativelevels = administrativeLevelService.retrieveAllAdministrativeLevels();
+		List<AdministrativeLevel> administrativelevels = userService.retrieveAllAdministrativeLevels();
 		return ResponseEntity.ok(administrativelevels);
 	}
 }

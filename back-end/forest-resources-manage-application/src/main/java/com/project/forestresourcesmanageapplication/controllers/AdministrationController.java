@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.forestresourcesmanageapplication.dtos.AdministrationDTO;
 import com.project.forestresourcesmanageapplication.models.Administration;
 import com.project.forestresourcesmanageapplication.responses.AdministrationHierarchyResponse;
-import com.project.forestresourcesmanageapplication.services.AdministrationService;
+import com.project.forestresourcesmanageapplication.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,29 +21,29 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("${api.prefix}/administrations")
 @RequiredArgsConstructor
 public class AdministrationController {
-	private final AdministrationService administrationService;
+	private final UserService userService;
 	
 	@GetMapping("")
 	public ResponseEntity<List<Administration>> retrieveAllAdministration(){
-		List<Administration> administrations =  administrationService.retrieveAllAdministrations();
+		List<Administration> administrations =  userService.retrieveAllAdministrations();
 		return ResponseEntity.ok(administrations);
 	}
 
 	@GetMapping("/{code}")
 	public ResponseEntity<Administration> retrieveAdministrationByCode(@PathVariable String code){
-		Administration administration =  administrationService.retrieveAdministrationByCode(code);
+		Administration administration =  userService.retrieveAdministrationByCode(code);
 		return ResponseEntity.ok(administration);
 	}
 
 	@PostMapping("/{code}")
 	public ResponseEntity<Administration> updateAdministration( @PathVariable String code ,@RequestBody AdministrationDTO administrationDTO){
-		Administration administration =  administrationService.updateAdministration(code,administrationDTO);
+		Administration administration =  userService.updateAdministration(code,administrationDTO);
 		return ResponseEntity.ok(administration);
 	}
-
+	
 	@GetMapping("/{code}/sub")
 	public ResponseEntity<List<AdministrationHierarchyResponse>> retrieveSubAdministrationsWithHierarchy(@PathVariable String code){
-		List<AdministrationHierarchyResponse> administrations = administrationService.retrieveAllSubAdministrations(code);
+		List<AdministrationHierarchyResponse> administrations = userService.retrieveAllSubAdministrations(code);
 		return ResponseEntity.ok(administrations);
 	}
 	
