@@ -199,3 +199,79 @@ VALUES ('admin','1','admin','admin','','2003-1-1','',1,'admin','35'),
 ('hminh','1','Hiếu','Minh','','2003-1-1','Hà Nam',1,'user','13306'),
 ('truong','1','Đức','Trường','','2003-1-1','Hà Nam',1,'user','13306'),
 ('lminh','1','Lê','Minh','','2003-1-1','Hải Dương',1,'user','13306');
+
+-- -----------------------------------------------------
+-- Table Animal Storage Facilities 
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `animal_storage_facilities`;
+CREATE TABLE `animal_storage_facilities`(
+    `code` VARCHAR(20) NOT NULL,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `date` DATE NULL,
+    `capacity` VARCHAR(20) NOT NULL COMMENT 'sức chứa',
+    `adminstration_code` VARCHAR(20) NULL COMMENT 'id hành chính',
+    `detail` varchar(256) NULL COMMENT 'thông tin chi tiết',
+    PRIMARY KEY (`code`),
+    FOREIGN KEY (`adminstration_code`)
+        REFERENCES `administrations`(`code`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Cơ sở lưu trữ động vật';
+
+-- -----------------------------------------------------
+-- Table Animal Species
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `animal_species`;
+CREATE TABLE `animal_species`(
+    `name` VARCHAR(100) NOT NULL,
+    `animal_type` VARCHAR(100) NOT NULL COMMENT 'loài động vật',
+    `main_food` VARCHAR(100) NULL COMMENT 'thức ăn chính',
+    `main_disease` VARCHAR(100) NULL COMMENT 'bệnh chính',
+    `longevity` INT NULL COMMENT 'tuổi thọ',
+    `detail` varchar(256) NULL COMMENT 'thông tin chi tiết',
+    PRIMARY KEY (`name`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='loài động vật';
+
+-- -----------------------------------------------------
+-- Table ASF_AS_relationship 
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `asf_as_relationship`;
+CREATE TABLE `asf_as_relationship`(
+    `id` INT NOT NULL,
+    `animal_storage_facilities_code` VARCHAR(20) NOT NULL COMMENT 'code cơ sở lưu trữ động vật',
+    `animal_species_name` VARCHAR(100) NOT NULL COMMENT 'tên loài động vật',
+    `quantity` LONG NULL COMMENT 'số lượng',
+    `date` DATE NULL COMMENT 'ngày',
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`animal_storage_facilities_code`)
+        REFERENCES `animal_storage_facilities`(`code`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (`animal_species_name`)
+        REFERENCES `animal_species`(`name`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='bảng quan hệ CSLTDV - Loài động vật';
+
+-- -----------------------------------------------------
+-- Table fluctuation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `fluctuation`;
+CREATE TABLE `fluctuation`(
+    `id` INT NOT NULL,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Loại biến động';
+
+-- -----------------------------------------------------
+-- Table AS_F_Relationship
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `as_f_relationship`;
+CREATE TABLE `as_f_relationship`(
+    `id` INT NOT NULL,
+    `animal_species_name` VARCHAR(100) NOT NULL ,
+    `fluctuation_id` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`animal_species_name`)
+        REFERENCES `animal_species`(`name`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (`fluctuation_id`)
+        REFERENCES `fluctuation`(`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='quan hệ LĐV - loại biến động';
