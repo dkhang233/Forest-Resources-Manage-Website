@@ -16,5 +16,5 @@ public interface AnimalStorageFacilitiesRepository extends JpaRepository<AnimalS
         List<AnimalStorageFacilities> findAll();
 
     @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.name = :name")
-    AnimalStorageFacilities findByName(String name);
+    Optional<AnimalStorageFacilities> findByName(String name);
 } 
