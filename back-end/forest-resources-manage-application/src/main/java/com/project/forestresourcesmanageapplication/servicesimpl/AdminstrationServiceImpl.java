@@ -12,10 +12,8 @@ import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFou
 import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
 import com.project.forestresourcesmanageapplication.models.Administration;
 import com.project.forestresourcesmanageapplication.models.AdministrativeLevel;
-import com.project.forestresourcesmanageapplication.models.User;
 import com.project.forestresourcesmanageapplication.repositories.AdministrationRepository;
 import com.project.forestresourcesmanageapplication.repositories.AdministrativeLevelRepository;
-import com.project.forestresourcesmanageapplication.repositories.UserRepository;
 import com.project.forestresourcesmanageapplication.responses.AdministrationHierarchyResponse;
 import com.project.forestresourcesmanageapplication.services.AdminstrationService;
 
@@ -115,6 +113,21 @@ public class AdminstrationServiceImpl implements AdminstrationService{
 		administration = administrationRepository.save(administration);
 		return administration;
 	}
+
+	// Xóa đơn vị hành chính
+	@Override
+	public void deleteByCode(String code) {
+		this.administrationRepository.deleteById(code);
+	}
+
+	// Tìm kiếm đơn vị hành chính theo tên
+	@Override
+	public Administration retrieveAdministrationByName(String name) {
+		Administration administration =  this.administrationRepository.findByName(name)
+				.orElseThrow(() -> new DataNotFoundException("Not found administration with name: " + name));
+		return administration;
+	}
+
 
 	//----------------------Administrative_Level-------------------------
 	@Override

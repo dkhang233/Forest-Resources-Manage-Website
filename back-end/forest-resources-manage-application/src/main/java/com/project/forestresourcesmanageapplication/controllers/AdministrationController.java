@@ -46,5 +46,17 @@ public class AdministrationController {
 		List<AdministrationHierarchyResponse> administrations = adminstrationService.retrieveAllSubAdministrations(code);
 		return ResponseEntity.ok(administrations);
 	}
+
+	@GetMapping("/name/{name}")
+	public ResponseEntity<Administration> retrieveAdministrationByName(@PathVariable String name){
+		Administration administration =  this.adminstrationService.retrieveAdministrationByName(name);
+		return ResponseEntity.ok(administration);
+	}
+
+	// @DeleteMapping("/{code}")
+	// public ResponseEntity<String> deleteAdministrationByCode (@PathVariable String code){
+	// 	this.administrationService.deleteByCode(code);
+	// 	return ResponseEntity.ok("");
+	// }
 	
 }
