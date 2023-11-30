@@ -4,9 +4,12 @@ import java.util.List;
 
 import com.project.forestresourcesmanageapplication.dtos.AdministrationDTO;
 import com.project.forestresourcesmanageapplication.models.Administration;
+import com.project.forestresourcesmanageapplication.models.AdministrativeLevel;
 import com.project.forestresourcesmanageapplication.responses.AdministrationHierarchyResponse;
 
-public interface AdministrationService {
+public interface AdminstrationService {
+	public List<AdministrativeLevel> retrieveAllAdministrativeLevels();
+
 	public List<Administration> retrieveAllAdministrations();
 	public List<AdministrationHierarchyResponse> retrieveAllSubAdministrations(String code);
 	public Administration retrieveAdministrationByCode(String code);

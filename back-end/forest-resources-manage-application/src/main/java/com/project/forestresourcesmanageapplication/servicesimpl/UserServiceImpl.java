@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 		String administrationName = userDTO.getAdministrationName();
 		Administration administration = this.administrationRepository.findByName(administrationName)
 				.orElseThrow(() -> new DataNotFoundException(
-						"Not found administration with name: "+administrationName ));
+						"Not found administration with name: " + administrationName));
 		user.setFirstName(userDTO.getFirstName())
 				.setLastName(userDTO.getLastName())
 				.setEmail(userDTO.getEmail())
@@ -94,5 +94,4 @@ public class UserServiceImpl implements UserService {
 				.build();
 		return user;
 	}
-
 }

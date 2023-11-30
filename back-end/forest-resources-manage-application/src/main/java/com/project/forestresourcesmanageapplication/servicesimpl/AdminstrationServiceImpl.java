@@ -15,15 +15,18 @@ import com.project.forestresourcesmanageapplication.models.AdministrativeLevel;
 import com.project.forestresourcesmanageapplication.repositories.AdministrationRepository;
 import com.project.forestresourcesmanageapplication.repositories.AdministrativeLevelRepository;
 import com.project.forestresourcesmanageapplication.responses.AdministrationHierarchyResponse;
-import com.project.forestresourcesmanageapplication.services.AdministrationService;
+import com.project.forestresourcesmanageapplication.services.AdminstrationService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AdministrationServiceImpl implements AdministrationService {
+public class AdminstrationServiceImpl implements AdminstrationService{
 	private final AdministrationRepository administrationRepository;
 	private final AdministrativeLevelRepository administrativeLevelRepository;
+	
+
+	//---------------------Administration------------------------
 
 	// Truy suất toàn bộ đơn vị hành chính
 	@Override
@@ -125,4 +128,10 @@ public class AdministrationServiceImpl implements AdministrationService {
 		return administration;
 	}
 
+
+	//----------------------Administrative_Level-------------------------
+	@Override
+	public List<AdministrativeLevel> retrieveAllAdministrativeLevels() {
+		return administrativeLevelRepository.findAll();
+	}
 }
