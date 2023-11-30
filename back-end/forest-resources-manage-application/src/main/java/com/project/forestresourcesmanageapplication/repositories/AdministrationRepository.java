@@ -21,4 +21,5 @@ public interface AdministrationRepository extends JpaRepository<Administration, 
 
 	@Query("SELECT a FROM Administration a WHERE a.name = :name")
     Optional<Administration> findByName(String name);
+
 }

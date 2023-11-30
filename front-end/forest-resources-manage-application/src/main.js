@@ -25,10 +25,17 @@ import { far } from '@fortawesome/free-regular-svg-icons'
 import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 
+// import echarts
+import * as echarts from 'echarts';
+
+//import tailwind css
+import '@/assets/tailwind.css'
 
 const app = createApp(App)
 
 app.use(VueCookies)
+
+// app.prototype.$echarts = echarts
 
 //router
 app.use(router)

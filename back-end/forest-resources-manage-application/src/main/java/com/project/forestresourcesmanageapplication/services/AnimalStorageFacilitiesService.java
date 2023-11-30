@@ -14,7 +14,7 @@ public interface AnimalStorageFacilitiesService {
     public List<AnimalStorageFacilities> getAllAnimalStorageFacilities() ;
     public AnimalStorageFacilities updateAnimalStorageFacilities(String code,AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO);
     public AnimalStorageFacilities getAnimalStorageFacilitiesByCode(String code);
-    public AnimalStorageFacilities addAnimalStorageFacilities(AnimalStorageFacilities animalStorageFacilities);
+    public AnimalStorageFacilities addAnimalStorageFacilities(AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO);
     public void deleteAnimalStorageFacilitiesByCode(String code);
 
     //Animal-Species

@@ -1,10 +1,36 @@
 <template>
     <div class="tree" v-loading="loadingStatus">
-        <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
-        <el-input :offset="2" v-model="filterText" placeholder="Filter keyword" class="form" />
-        <el-tree default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps" :expand-on-click-node="false"
-            :item-size="50" :height="300" :filter-node-method="filterNode" @node-click="showNode" />
-        <el-dialog v-model="dialogFormVisible" title="Administration Details">
+        <el-row :gutter="50">
+            <el-col :span="10">
+                <el-card class="administrations">
+                    <template #header>
+                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
+                        <el-input :offset="2" v-model="filterText" placeholder="Filter keyword" class="form" />
+                    </template>
+                    <el-tree-v2 default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps"
+                        :item-size="50" :expand-on-click-node="false" :filter-method="filterNode" :height="500">
+                        <template #default="{ node, data }">
+                            <span class="custom-tree-node">
+                                <span>{{ node.label }}</span>
+                                <a @click="showNode(data)">Chi tiết</a>
+                            </span>
+                        </template>
+                    </el-tree-v2>
+                </el-card>
+            </el-col>
+            <el-col :span="13">
+                <el-card class="box-card">
+                    <template #header>
+                        <div class="card-header">
+                            <span>Map</span>
+                        </div>
+                    </template>
+                    <map-view class="map"></map-view>
+                </el-card>
+            </el-col>
+        </el-row>
+
+        <el-dialog v-model="dialogFormVisible" title="Thông tin đơn vị hành chính">
             <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
                 <el-form-item label="Mã" prop="code">
                     <el-input v-model="form.code" autocomplete="off" disabled />
@@ -26,16 +52,31 @@
                 </el-form-item>
             </el-form>
             <template #footer>
-                <span class="dialog-footer">
-                    <el-button type="danger" @click="deleteBtn" class="del-btn">Xóa</el-button>
-                    <el-button @click="dialogFormVisible = false">Quay lại</el-button>
-                    <el-button type="primary" @click="updateBtn(this.$refs.ruleFormRef)">
+                <span class="grid grid-cols-6 gap-4">
+                    <button class="p-2 mr-5 space-x-[100px] font-sans font-bold 
+                        text-white rounded-lg shadow-lg 
+                        px-5 bg-red-500 shadow-blue-100 
+                        hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150" @click="deleteBtn">
+                        Xóa
+                    </button>
+                    <button class="p-2 mr-3 col-start-5 font-sans font-bold
+                        text-white rounded-lg shadow-lg 
+                        px-5 bg-[#839192] shadow-blue-100 
+                        hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false">
+                        Quay lại
+                    </button>
+                    <button class=" p-2 col-start-6  font-sans font-bold
+                        text-white rounded-lg shadow-lg px-5 bg-blue-500 
+                        shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150"
+                        @click="updateBtn(this.$refs.ruleFormRef)">
                         Cập nhập
-                    </el-button>
+                    </button>
                 </span>
             </template>
         </el-dialog>
-        <map-view class="map"></map-view>
     </div>
 </template>
 
@@ -43,7 +84,7 @@
 import { retrieveSubAdministrationsWithHierarchy, updateAdministration } from "../../api/administration"
 import { mapStores } from 'pinia'
 import { useUserStore } from "../../stores/user-store"
-import MapView  from "../common/MapView.vue";
+import MapView from "../common/MapView.vue";
 export default {
     components: {
         MapView
@@ -51,6 +92,7 @@ export default {
     data() {
         return {
             defaultProps: {
+                value: `code`,
                 children: `children`,
                 label: `fullName`,
             },
@@ -64,7 +106,7 @@ export default {
                 subName: "",
             },
             rules: {
-                code: [{ validator: this.checkAdministrationCode, trigger: 'change' }]
+                name: [{ validator: this.checkAdministrationName, trigger: 'change' }, { validator: this.checkAdministrationSub, trigger: 'change' }]
             },
             loadingStatus: false
         }
@@ -82,19 +124,24 @@ export default {
             if (!value) return true
             return dataa.fullName.includes(value)
         },
-        showNode(node, nodeProperty, treeNode) {
+        showNode(node) {
             this.form.code = node.code
             this.form.name = node.name
             this.form.level = node.levelName
             this.form.subName = node.subordinateName
             this.dialogFormVisible = true
         },
-        checkAdministrationCode(rule, value, callback) {
+        checkAdministrationName(rule, value, callback) {
             if (!value) {
                 return callback(new Error('Vui lòng nhập mã hành chính'))
             }
-            if (!Number.isInteger(Number(value))) {
-                callback(new Error('Mã hành chính phải là một số '))
+            else {
+                callback()
+            }
+        },
+        checkAdministrationSub(rule, value, callback) {
+            if (!value) {
+                return callback(new Error('Vui lòng trực thuộc'))
             }
             else {
                 callback()
@@ -147,6 +194,7 @@ export default {
                 })
         },
         retrieveAdministrations() {
+            // this.loadingStatus = true
             retrieveSubAdministrationsWithHierarchy(this.userStore.administrativeName)
                 .then((res) => {
                     this.treeData = res.data
@@ -156,7 +204,7 @@ export default {
         },
         updateAdministration() {
             this.loadingStatus = true
-            updateAdministration(this.form.code,{
+            updateAdministration(this.form.code, {
                 name: this.form.name,
                 subordinateName: this.form.subName,
                 administrativeLevelName: this.form.level
@@ -199,31 +247,38 @@ export default {
 
 <style scoped>
 .tree {
-    margin: 15px 30px 10px 30px;
+    margin: 30px 30px 10px 30px;
+    width: 100%;
+    height: 670px;
 }
 
 .form {
-    margin: 0px 0px 0px 10px;
+    margin: 0px 0px 0px 20px;
     width: 400px;
 }
 
 .el-tree {
     --el-tree-node-hover-bg-color: #D0D3D4;
     font-size: 20px !important;
-    margin: 20px;
-    width : 400px;
 }
 
-.del-btn {
-    position: absolute;
-    left: 0px;
+.administrations {
+    height: 600px;
 }
 
-.map{
-  width: 500px;
-  height: 500px;
-  position: absolute;
-  right: 10px; 
-  top : 160px;
+
+
+.map {
+    height: 500px;
+}
+
+a:hover {
+    color: #5DADE2;
+}
+
+a {
+    font-size: 15px;
+    margin-left: 200px;
+    color: #BDC3C7
 }
 </style>
