@@ -47,6 +47,12 @@ public class AdministrationController {
 		return ResponseEntity.ok(administrations);
 	}
 
+	@GetMapping("/name/{name}")
+	public ResponseEntity<Administration> retrieveAdministrationByName(@PathVariable String name){
+		Administration administration =  administrationService.retrieveAdministrationByName(name);
+		return ResponseEntity.ok(administration);
+	}
+
 	// @DeleteMapping("/{code}")
 	// public ResponseEntity<String> deleteAdministrationByCode (@PathVariable String code){
 	// 	this.administrationService.deleteByCode(code);

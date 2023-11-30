@@ -11,9 +11,9 @@
                     <span>{{ user.userName }}</span>
                     <img src="" class="user-img" ref="img" @click="showSetting()" />
                     <transition name="fade">
-                        <div class="out" ref="out" v-show="loginFlag">
+                        <div class="out" ref="out" v-if="loginFlag">
                             <ul>
-                                <li><a href="javascript:;">Thông tin</a></li>
+                                <li><a href="@/user/infor">Thông tin</a></li>
                                 <li><a href="javascript:;">Cài đặt</a></li>
                                 <li class="exit" @click="exit()"><a href="javascript:;">Đăng xuất</a></li>
                             </ul>
@@ -48,7 +48,7 @@ export default {
     methods: {
         //Hiển thị cài đặt tài khoản khi người dùng ấn vào avatar
         showSetting() {
-            this.login_flag = !this.login_flag
+            this.loginFlag = !this.loginFlag
         },
         //左侧栏放大缩小
         getUserInfo() { //获取用户信息

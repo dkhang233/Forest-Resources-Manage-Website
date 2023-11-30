@@ -1,13 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user-store';
 
 export const constantRoutes = [
   {
-    path: '/',
+    path: '/main',
     component: () => import('../components/main/Main'),
     children: [
       {
         path: '',
-        component: () => import ('@/components/common/Home')
+        component: () => import('@/components/common/Home')
       },
       {
         path: 'access',
@@ -16,7 +17,7 @@ export const constantRoutes = [
       {
         path: 'account',
         component: () => import('../components/admin/ManageAccount')
-      },{
+      }, {
         path: 'administration',
         component: () => import('../components/administration/Administration')
       },
@@ -43,6 +44,28 @@ export const constantRoutes = [
       {
         path: 'animalfacility',
         component: () => import('../components/animal/AnimalFacility')
+      }
+    ]
+  },
+  {
+    path: '/',
+    component: () => import('@/components/login/Login'),
+    children: [
+      {
+        path: '',
+        component: () => import('@/components/login/LoginForm')
+      },
+      {
+        path: 'forgetpass',
+        component: () => import('@/components/login/ForgetPass')
+      },
+      {
+        path: 'authenticatecode',
+        component: () => import('@/components/login/AuthenticateCode')
+      },
+      {
+        path: 'changepass',
+        component: () => import('@/components/login/ChangePass')
       }
     ]
   }

@@ -12,4 +12,5 @@ public interface AdministrationService {
 	public Administration retrieveAdministrationByCode(String code);
 	public Administration updateAdministration(String code,AdministrationDTO administrationDTO);
 	public void deleteByCode(String code );
+    public Administration retrieveAdministrationByName(String name);
 }

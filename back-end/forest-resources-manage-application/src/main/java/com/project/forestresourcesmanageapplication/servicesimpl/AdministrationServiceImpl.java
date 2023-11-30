@@ -117,4 +117,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 		this.administrationRepository.deleteById(code);
 	}
 
+	// Tìm kiếm đơn vị hành chính theo tên
+	@Override
+	public Administration retrieveAdministrationByName(String name) {
+		Administration administration =  this.administrationRepository.findByName(name)
+				.orElseThrow(() -> new DataNotFoundException("Not found administration with name: " + name));
+		return administration;
+	}
+
 }

@@ -1,131 +1,169 @@
 <template>
-    <el-row style="margin:30px 0 10px 0;">
+    <el-row>
         <el-col :offset="2">
-            <h1 style="color: #21618C;">
-                <font-awesome-icon style="margin-right: 10px" :icon="['fas', 'users-gear']" size="lg" />
+            <h1 class=" text-[#21618C] text-[25px] font-bold m-3">
+                <font-awesome-icon class="margin-right: 10px" :icon="['fas', 'users-gear']" size="lg" />
                 Quản lí tài khoản người dùng
             </h1>
         </el-col>
     </el-row>
-    <el-row>
-        <el-col>
-            <div class="box" ref="box"></div>
-        </el-col>
+    <el-row v-loading="loadingStatus">
         <el-col :span="20" :offset="2">
-            <el-table :data="filterTableData" class="seed-table">
-                <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
-                    :prop="item.value" />
-                <el-table-column>
-                    <template #header>
-                        <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
-                    </template>
-                    <template #default="scope">
-                        <el-switch v-model="scope.row.status" :before-change="beforeChange"
-                            @change="changeActive(scope.$index, scope.row)" :loading="loadingActive"
-                            style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
-                        <el-button @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-dialog v-model="dialogFormVisible" :title="`Chỉnh sửa thông tin`">
+            <el-card class="h-[550px]" shadow="always">
+                <el-table :data="filterTableData" class="h-[530px] w-[93rem]" fit>
+                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
+                        :prop="item.value">
+                    </el-table-column>
+                    <el-table-column :min-width="120">
+                        <template #header>
+                            <el-input v-model="search" size="large" placeholder="Tìm kiếm theo username" />
+                        </template>
+                        <template #default="scope">
+                            <el-switch class="ml-20" v-model="scope.row.is_active"
+                                @change="changeUserStatus(index, scope.row)" :loading="scope.row.loading"
+                                style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
+                            <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-card>
+            <el-dialog v-model="dialogFormVisible" :top="`10vh`" :title="`Thông tin chi tiết`">
                 <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
                     <div>
-                        <el-form-item v-for="(item, index) in tableColumns" :key="index" :label="item.title"
-                            :prop="item.value">
-                            <el-input v-model="form[item.value]" autocomplete="off" />
+                        <el-form-item label="Username" prop="username">
+                            <el-input v-model="form.username" :disabled="formType == 'update'" />
+                        </el-form-item>
+                        <el-form-item label="Họ" prop="first_name">
+                            <el-input v-model="form.first_name" />
+                        </el-form-item>
+                        <el-form-item label="Tên" prop="last_name">
+                            <el-input v-model="form.last_name" />
+                        </el-form-item>
+                        <el-form-item label="Email" prop="email">
+                            <el-input v-model="form.email" />
+                        </el-form-item>
+                        <el-form-item label="Ảnh đại diện" prop="avatar">
+                            <el-input v-model="form.avatar" />
+                        </el-form-item>
+                        <el-form-item label="Địa chỉ" prop="address">
+                            <el-input v-model="form.address" />
+                        </el-form-item>
+                        <el-form-item label="Ngày sinh" prop="birth_date">
+                            <el-date-picker v-model="form.birth_date" type="date" placeholder="Chọn ngày sinh"
+                                size="small" />
+                        </el-form-item>
+                        <el-form-item label="Vai trò" prop="role">
+                            <el-select v-model="form.role" placeholder="Chọn vai trò">
+                                <el-option label="User" value="user" />
+                                <el-option label="Admin" value="admin" />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="Trực thuộc" prop="administration_name">
+                            <el-input v-model="form.administration_name" />
                         </el-form-item>
                     </div>
                 </el-form>
                 <template #footer>
-                    <span class="dialog-footer">
-                        <el-button @click="dialogFormVisible = false">Quay lại</el-button>
-                        <el-button type="primary" @click="updateBtn(this.$refs.ruleFormRef)">
+                    <span class="grid grid-cols-6 gap-4">
+                        <button class="p-2 mr-5 space-x-[100px] font-sans font-bold 
+                        text-white rounded-lg shadow-lg 
+                        px-5 bg-red-500 shadow-blue-100 
+                        hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false"
+                            v-if="formType == 'update'">
+                            Xóa
+                        </button>
+                        <button class="p-2 mr-3 col-start-5 font-sans font-bold
+                        text-white rounded-lg shadow-lg 
+                        px-5 bg-[#839192] shadow-blue-100 
+                        hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false">
+                            Quay lại
+                        </button>
+                        <button class=" p-2 col-start-6  font-sans font-bold
+                        text-white rounded-lg shadow-lg px-5 bg-blue-500 
+                        shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150"
+                            @click="handleUpdate(this.$refs.ruleFormRef)" v-if="formType == 'update'">
                             Cập nhập
-                        </el-button>
+                        </button>
+                        <button class=" p-2 col-start-6  font-sans font-bold
+                        text-white rounded-lg shadow-lg px-5 bg-blue-500 
+                        shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150"
+                            @click="handleCreate(this.$refs.ruleFormRef)" v-if="formType == 'create'">
+                           Tạo mới 
+                        </button>
                     </span>
                 </template>
             </el-dialog>
         </el-col>
     </el-row>
-    <el-row style="margin:30px 0 0 0;">
+    <el-row>
         <el-col :offset="2">
-            <el-button class="create-btn" type="primary" round><el-icon :size="30" style="margin-right: 10px">
-                    <CirclePlus />
-                </el-icon>New account</el-button>
+            <button class="w-full md:w-auto flex justify-center 
+                        items-center p-3 mt-3 space-x-4 font-sans font-bold
+                        text-white rounded-lg shadow-lg 
+                        px-9 bg-blue-500 shadow-blue-100 
+                        hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150" @click="createNewUser">
+                <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
+                <span>Tạo mới</span>
+            </button>
         </el-col>
     </el-row>
 </template>
 
 <script>
+import { retrieveAllUsers, updateUser } from '@/api/user'
+import { retrieveAdministrationByName } from '@/api/administration'
 export default {
     data() {
         return {
+            loadingStatus: false,
             search: '',
-            status: true,
-            loadingActive: false,
             tableColumns: [
                 {
-                    title: 'Name',
-                    value: 'name'
+                    title: 'Họ',
+                    value: 'first_name'
                 },
                 {
-                    title: 'Date',
-                    value: 'date'
+                    title: 'Tên',
+                    value: 'last_name'
                 },
                 {
-                    title: 'Address',
-                    value: 'address'
+                    title: 'Username',
+                    value: 'username'
+                },
+                {
+                    title: 'Vai trò',
+                    value: 'role'
+                },
+                {
+                    title: 'Trực thuộc',
+                    value: 'administration_name'
                 },
             ],
-            tableData: [
-                {
-                    date: '2016-05-03',
-                    name: 'Tom',
-                    address: 'No. 189, Grove St, Los Angeles',
-                    status: false
-                },
-                {
-                    date: '2016-05-02',
-                    name: 'John',
-                    address: 'No. 189, Grove St, Los Angeles',
-                },
-                {
-                    date: '2016-05-04',
-                    name: 'Morgan',
-                    address: 'No. 189, Grove St, Los Angeles',
-                },
-                {
-                    date: '2016-05-01',
-                    name: 'Jessy',
-                    address: 'No. 189, Grove St, Los Angeles',
-                },
-                {
-                    date: '2016-05-04',
-                    name: 'Morgan',
-                    address: 'No. 189, Grove St, Los Angeles',
-                },
-                {
-                    date: '2016-05-01',
-                    name: 'Jessy',
-                    address: 'No. 189, Grove St, Los Angeles',
-                },
-                {
-                    date: '2016-05-04',
-                    name: 'Morgan',
-                    address: 'No. 189, Grove St, Los Angeles',
-                },
-                {
-                    date: '2016-05-01',
-                    name: 'Jessy',
-                    address: 'No. 189, Grove St, Los Angeles',
-                },
-            ],
+            tableData: [],
             filterTableData: [],
             dialogFormVisible: false,
-            rules: {
-                // name: [{ validator: this.checkAdministrationName, trigger: 'change' }, { validator: this.checkAdministrationSub, trigger: 'change' }]
+            form: {
+                username: '',
+                first_name: '',
+                last_name: '',
+                email: '',
+                avatar: '',
+                address: '',
+                birth_date: '',
+                role: '',
+                is_active: true,
+                administration_name: ''
             },
-            form: null
+            formType: 'update',
+            rules: {
+                email: [{ validator: this.checkEmail, trigger: 'blur' }],
+                administration_name: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
+            },
         }
     },
     watch: {
@@ -133,16 +171,31 @@ export default {
             this.filterTableData = this.tableData.filter(
                 (data) =>
                     !search ||
-                    data.name.toLowerCase().includes(search.toLowerCase())
+                    data.username.toLowerCase().includes(search.toLowerCase())
             )
         }
     },
     methods: {
-        handleEdit(index, row) {
-            this.form = row
-            console.log(this.form)
+        retrieveData() {
+            this.loadingStatus = true
+            retrieveAllUsers().then((res) => {
+                this.tableData = res.data
+                this.filterTableData = this.tableData
+                this.loadingStatus = false
+            }).catch(err => console.log(err))
+        },
+
+        // Tạo tài khoản mới
+        createNewUser() {
+            this.formType = 'create'
+            this.resetFormData()
             this.dialogFormVisible = true
-            console.log(index, row)
+
+        },
+        handleEdit(index, row) {
+            this.formType = 'update'
+            this.form = row
+            this.dialogFormVisible = true
         },
         handleDelete(index, row) {
             console.log(index, row)
@@ -163,9 +216,11 @@ export default {
                 .catch(() => {
                 })
         },
-        updateBtn(formEl) {
-            if (!formEl) return
-            formEl.validate((valid) => {
+
+        // Cập nhập thông tin tài khoản người dùng
+        handleUpdate(form) {
+            if (!form) return
+            form.validate((valid) => {
                 if (valid) {
                     this.$confirm(
                         'Cập nhập thông tin này. Tiếp tục?',
@@ -174,57 +229,118 @@ export default {
                             confirmButtonText: 'OK',
                             cancelButtonText: 'Hủy',
                             type: 'warning',
+
                         }
                     )
                         .then(() => {
-                            // this.updateAdministration()
-                            console.log('submit!')
+                            this.loadingStatus = true
+                            console.log(this.form)
+                            updateUser(this.form)
+                                .then((res) => {
+                                    this.loadingStatus = false
+                                    this.$notify({
+                                        title: 'Thành công',
+                                        message: 'Cập nhập thành công',
+                                        type: 'success'
+                                    })
+                                    this.retrieveData()
+                                }).catch((err) => {
+                                    this.loadingStatus = false
+                                    this.$notify({
+                                        title: 'Đã xảy ra lỗi',
+                                        message: err.response.data.messages,
+                                        type: 'error',
+                                    })
+                                    this.retrieveData()
+                                    console.log(err.message)
+                                })
                             this.dialogFormVisible = false
                         })
-                        .catch(() => {
+                        .catch((err) => {
+                            console.log(err)
                         })
                 } else {
-                    console.log('error submit!')
                     return false
                 }
             })
         },
-        beforeChange() {
-            this.loadingActive= true
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    this.loadingActive = false
-                    this.$message.success('Switch success')
-                    return resolve(true)
-                }, 1000)
-            })
+
+        // Thay đổi trạng thái tài khoản của người dùng
+        changeUserStatus(index, row) {
+            row.loading = true
+            let user = {
+                username: row.username,
+                first_name: row.first_name,
+                last_name: row.last_name,
+                email: row.email,
+                avatar: row.avatar,
+                address: row.address,
+                birth_date: row.birth_date,
+                is_active: row.is_active,
+                role: row.role,
+                administration_name: row.administration_name
+            }
+            console.log(user)
+            updateUser(user)
+                .then((res) => {
+                    row.loading = false
+                    this.$message.success('Cập nhập thành công')
+                    return true
+                })
+                .catch((err) => {
+                    row.loading = false
+                    row.is_active = !row.is_active
+                    this.$message.error('Cập nhập thất bại')
+                    return false
+                })
         },
-        changeActive(index, row) {
-            console.log(row)
+
+        // Reset dữ liệu của form 
+        resetFormData() {
+            this.form = {
+                username: '',
+                first_name: '',
+                last_name: '',
+                email: '',
+                avatar: '',
+                address: '',
+                birth_date: '',
+                role: '',
+                is_active: true,
+                administration_name: ''
+            }
         },
+
+        //Kiểm tra dữ liệu người dùng nhập vào
+        checkEmail(rule, value, callback) {
+            if (value === '') {
+                callback(new Error('Vui lòng nhập email'))
+            } else {
+                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+                    callback()
+                }
+                callback(new Error('Vui lòng nhập đúng địa chỉ email'))
+            }
+        },
+        checkAdministrationName(rule, value, callback) {
+            if (value === '') {
+                callback(new Error('Vui lòng nhập tên đơn vị hành chính trực thuộc'))
+            } else {
+                retrieveAdministrationByName(value)
+                    .then(res => callback())
+                    .catch(err => callback(new Error('Đơn vị hành chính không tồn tại')))
+            }
+        },
+
+
+
         createChart() {
             // let seedChart = echarts.init(this.$refs.box);
         }
     },
     created() {
-        this.filterTableData = this.tableData
+        this.retrieveData()
         // createChart()
     }
 }
-
-
 </script>
-
-
-<style scoped>
-.seed-table {
-    margin: 30px 20px 0 20px;
-    height: 480px;
-}
-
-.create-btn {
-    width: 140px;
-    height: 50px;
-    font-size: 15px;
-}
-</style>

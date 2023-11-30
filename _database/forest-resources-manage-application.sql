@@ -171,6 +171,7 @@ CREATE TABLE `users` (
     `first_name` VARCHAR(100) NOT NULL,
     `last_name` VARCHAR(100) NOT NULL,
     `avatar` VARCHAR(150) NULL COMMENT 'ảnh đại diện',
+    `email` VARCHAR(200) NOT NULL,
     `birth_date` DATE NOT NULL,
     `address` VARCHAR(100) NOT NULL,
     `is_active` INT NOT NULL DEFAULT 1 COMMENT 'Trạng thái tài khoản : hoạt động = 1 , không hoạt động = 0 ',
@@ -184,18 +185,20 @@ CREATE TABLE `users` (
 -- ----------------------------
 -- Records of `users`
 -- ----------------------------
-INSERT INTO `users` (`username`,`password`,`first_name`,`last_name`,`avatar`,`birth_date`,`address`,`is_active`,`role`,`administration_code`)
-VALUES ('admin','1','admin','admin','','2003-1-1','',1,'admin','35'),
+INSERT INTO `users` (`username`,`password`,`first_name`,`last_name`,`email`,`avatar`,`birth_date`,`address`,`is_active`,`role`,`administration_code`)
+VALUES ('admin','1','admin','admin','c.aodanhkhang2003@gmail.com','','2003-1-1','',1,'admin','35'),
+('a','1','Nguyễn','A','caodanhkhang2003@gmail.com','','2003-1-1','',1,'user','347');
 
-('a','1','Nguyễn','A','','2003-1-1','',1,'user','347'),
-('b','1','Nguyễn','B','','2003-1-1','',1,'user','347'),
-('c','1','Nguyễn','C','','2003-1-1','',1,'user','347'),
-('d','1','Nguyễn','D','','2003-1-1','',1,'user','347'),
-('e','1','Nguyễn','E','','2003-1-1','',1,'user','347'),
-('f','1','Nguyễn','F','','2003-1-1','',1,'user','347'),
+-- ('huy','1','Như','Huy','','','2003-1-1','Bắc Ninh',1,'user','35'),
+-- ('khang','1','Danh','Khang','','2003-1-1','Hà Nam',1,'user','347'),
+-- ('hminh','1','Hiếu','Minh','','2003-1-1','Hà Nam',1,'user','13306'),
+-- ('truong','1','Đức','Trường','','2003-1-1','Hà Nam',1,'user','13306'),
+-- ('lminh','1','Lê','Minh','','2003-1-1','Hải Dương',1,'user','13306');
 
-('huy','1','Như','Huy','','2003-1-1','Bắc Ninh',1,'user','13306'),
-('khang','1','Danh','Khang','','2003-1-1','Hà Nam',1,'user','13306'),
-('hminh','1','Hiếu','Minh','','2003-1-1','Hà Nam',1,'user','13306'),
-('truong','1','Đức','Trường','','2003-1-1','Hà Nam',1,'user','13306'),
-('lminh','1','Lê','Minh','','2003-1-1','Hải Dương',1,'user','13306');
+
+-- ('b','1','Nguyễn','B','','2003-1-1','',1,'user','347'),
+-- ('c','1','Nguyễn','C','','2003-1-1','',1,'user','347'),
+-- ('d','1','Nguyễn','D','','2003-1-1','',1,'user','347'),
+-- ('e','1','Nguyễn','E','','2003-1-1','',1,'user','347'),
+-- ('f','1','Nguyễn','F','','2003-1-1','',1,'user','347'),
+
