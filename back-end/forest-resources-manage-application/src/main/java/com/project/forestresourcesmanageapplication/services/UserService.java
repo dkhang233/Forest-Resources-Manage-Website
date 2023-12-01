@@ -2,6 +2,8 @@ package com.project.forestresourcesmanageapplication.services;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
 
 public interface UserService {
@@ -9,5 +11,5 @@ public interface UserService {
 
 	UserDTO retrieveUserByUsername(String username);
 
-	UserDTO updateUser(String username,UserDTO userDTO);
+	UserDTO updateUser(String username,UserDTO userDTO , MultipartFile avatarFile);
 }
