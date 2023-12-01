@@ -27,31 +27,41 @@
                     </el-table-column>
                 </el-table>
             </el-card>
-            <el-dialog v-model="dialogFormVisible" :top="`10vh`" :title="`Thông tin chi tiết`">
-                <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
-                    <div>
-                        <el-form-item label="Username" prop="username">
-                            <el-input v-model="form.username" :disabled="formType == 'update'" />
+            <el-dialog class=" block max-w-[500px] rounded-lg
+                    bg-white p-6 
+                    shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
+                    dark:bg-neutral-700" top="2vh" v-model="dialogFormVisible" :title="formTitle">
+                <el-form class="max-w-md m-0" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default">
+                    <div class="grid grid-cols-3 gap-5">
+                        <el-form-item class="col-start-2 col-span-1" prop="avatar">
+                            <input ref="uploadInput" @change="handleFileChange" type="file" v-show="false" />
+                            <img @click="openFileInput" class="w-32 rounded-full shadow-lg "
+                                src="@/assets/image/default-avatar.png" v-if="form.avatar == ''" />
+                            <img @click="openFileInput" class="w-32 rounded-full shadow-lg " :src="userAvatar"
+                                v-if="form.avatar != ''" />
                         </el-form-item>
+                    </div>
+                    <el-form-item label="Username" prop="username">
+                        <el-input v-model="form.username" :disabled="formType == 'update'" />
+                    </el-form-item>
+                    <div class="grid grid-cols-2 gap-5">
                         <el-form-item label="Họ" prop="first_name">
                             <el-input v-model="form.first_name" />
                         </el-form-item>
                         <el-form-item label="Tên" prop="last_name">
                             <el-input v-model="form.last_name" />
                         </el-form-item>
-                        <el-form-item label="Email" prop="email">
-                            <el-input v-model="form.email" />
-                        </el-form-item>
-                        <el-form-item label="Ảnh đại diện" prop="avatar">
-                            <el-input v-model="form.avatar" />
-                        </el-form-item>
-                        <el-form-item label="Địa chỉ" prop="address">
-                            <el-input v-model="form.address" />
-                        </el-form-item>
-                        <el-form-item label="Ngày sinh" prop="birth_date">
-                            <el-date-picker v-model="form.birth_date" type="date" placeholder="Chọn ngày sinh"
-                                size="small" />
-                        </el-form-item>
+                    </div>
+                    <el-form-item label="Email" prop="email">
+                        <el-input v-model="form.email" />
+                    </el-form-item>
+                    <el-form-item label="Ngày sinh" prop="birth_date">
+                        <el-date-picker v-model="form.birth_date" type="date" placeholder="Chọn ngày sinh" size="default" />
+                    </el-form-item>
+                    <el-form-item label="Địa chỉ" prop="address">
+                        <el-input v-model="form.address" />
+                    </el-form-item>
+                    <div class="grid grid-cols-2 gap-5">
                         <el-form-item label="Vai trò" prop="role">
                             <el-select v-model="form.role" placeholder="Chọn vai trò">
                                 <el-option label="User" value="user" />
@@ -64,8 +74,8 @@
                     </div>
                 </el-form>
                 <template #footer>
-                    <span class="grid grid-cols-6 gap-4">
-                        <button class="p-2 mr-5 space-x-[100px] font-sans font-bold 
+                    <span class="grid grid-cols-16 gap-4">
+                        <button class="p-2 mr-3  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
@@ -73,26 +83,26 @@
                             v-if="formType == 'update'">
                             Xóa
                         </button>
-                        <button class="p-2 mr-3 col-start-5 font-sans font-bold
+                        <button class="p-2 mr-3 col-start-11  font-sans font-bold text-sm 
                         text-white rounded-lg shadow-lg 
                         px-5 bg-[#839192] shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false">
                             Quay lại
                         </button>
-                        <button class=" p-2 col-start-6  font-sans font-bold
+                        <button class=" p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
                             @click="handleUpdate(this.$refs.ruleFormRef)" v-if="formType == 'update'">
                             Cập nhập
                         </button>
-                        <button class=" p-2 col-start-6  font-sans font-bold
+                        <button class=" p-2 col-start-12 font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
                             @click="handleCreate(this.$refs.ruleFormRef)" v-if="formType == 'create'">
-                           Tạo mới 
+                            Tạo mới
                         </button>
                     </span>
                 </template>
@@ -117,6 +127,8 @@
 <script>
 import { retrieveAllUsers, updateUser } from '@/api/user'
 import { retrieveAdministrationByName } from '@/api/administration'
+import { useUserStore } from "@/stores/user-store"
+import { mapStores } from 'pinia'
 export default {
     data() {
         return {
@@ -159,11 +171,24 @@ export default {
                 is_active: true,
                 administration_name: ''
             },
+            avatarFile: null,
             formType: 'update',
             rules: {
-                email: [{ validator: this.checkEmail, trigger: 'blur' }],
-                administration_name: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
+                email: [{ validator: this.checkEmail, trigger: 'change' }],
+                administration_name: [{ validator: this.checkAdministrationName, trigger: 'change' }]
             },
+        }
+    },
+    computed: {
+        ...mapStores(useUserStore),
+        userAvatar() {
+            if (this.form.avatar.includes("http://")) {
+                return this.form.avatar
+            }
+            return "http://localhost:8088/api/v1/users/avatar/" + this.form.avatar
+        },
+        formTitle() {
+            return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'
         }
     },
     watch: {
@@ -176,6 +201,7 @@ export default {
         }
     },
     methods: {
+        // Lấy dữ liệu từ serve 
         retrieveData() {
             this.loadingStatus = true
             retrieveAllUsers().then((res) => {
@@ -192,11 +218,30 @@ export default {
             this.dialogFormVisible = true
 
         },
+        // Upload avatar
+        openFileInput() {
+            this.$refs.uploadInput.click()
+        },
+        handleFileChange(event) {
+            let file = event.target.files[0]
+            this.avatarFile = file
+            if (file != null) {
+                let avatar = URL.createObjectURL(file);
+                this.form.avatar = avatar
+            } else {
+            }
+        },
+
+        // Cập nhập thông tin tài khoản người dùng
+
+        //Hàm xử lí khi ấn vào nút "Chi tiết"
         handleEdit(index, row) {
             this.formType = 'update'
             this.form = row
             this.dialogFormVisible = true
         },
+
+        // Hàm xử lí khi ấn vào nút "Xóa"
         handleDelete(index, row) {
             console.log(index, row)
             this.$confirm(
@@ -217,7 +262,7 @@ export default {
                 })
         },
 
-        // Cập nhập thông tin tài khoản người dùng
+        // Hàm xử lí khi ấn vào nút "Cập nhập"
         handleUpdate(form) {
             if (!form) return
             form.validate((valid) => {
@@ -234,8 +279,14 @@ export default {
                     )
                         .then(() => {
                             this.loadingStatus = true
-                            console.log(this.form)
-                            updateUser(this.form)
+                            let user = new FormData()
+                            user.append('avatar-file', this.avatarFile)
+                            let formJson = JSON.stringify(this.form)
+                            const formData = new Blob([formJson], {
+                                type: 'application/json'
+                            });
+                            user.append('body', formData)
+                            updateUser(this.form.username, user)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -243,7 +294,6 @@ export default {
                                         message: 'Cập nhập thành công',
                                         type: 'success'
                                     })
-                                    this.retrieveData()
                                 }).catch((err) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -251,7 +301,6 @@ export default {
                                         message: err.response.data.messages,
                                         type: 'error',
                                     })
-                                    this.retrieveData()
                                     console.log(err.message)
                                 })
                             this.dialogFormVisible = false
@@ -268,29 +317,31 @@ export default {
         // Thay đổi trạng thái tài khoản của người dùng
         changeUserStatus(index, row) {
             row.loading = true
-            let user = {
-                username: row.username,
-                first_name: row.first_name,
-                last_name: row.last_name,
-                email: row.email,
-                avatar: row.avatar,
-                address: row.address,
-                birth_date: row.birth_date,
-                is_active: row.is_active,
-                role: row.role,
-                administration_name: row.administration_name
-            }
-            console.log(user)
-            updateUser(user)
+            let user = new FormData()
+            user.append('avatar-file', this.avatarFile)
+            let formJson = JSON.stringify(row)
+            const formData = new Blob([formJson], {
+                type: 'application/json'
+            });
+            user.append('body', formData)
+            updateUser(row.username, user)
                 .then((res) => {
                     row.loading = false
-                    this.$message.success('Cập nhập thành công')
+                    this.$notify({
+                        title: 'Thành công',
+                        message: 'Cập nhập thành công',
+                        type: 'success'
+                    })
                     return true
-                })
-                .catch((err) => {
+                }).catch((err) => {
                     row.loading = false
                     row.is_active = !row.is_active
-                    this.$message.error('Cập nhập thất bại')
+                    this.$notify({
+                        title: 'Đã xảy ra lỗi',
+                        message: err.response.data.messages,
+                        type: 'error',
+                    })
+                    console.log(err.message)
                     return false
                 })
         },
@@ -303,6 +354,7 @@ export default {
                 last_name: '',
                 email: '',
                 avatar: '',
+                avatarFile: null,
                 address: '',
                 birth_date: '',
                 role: '',

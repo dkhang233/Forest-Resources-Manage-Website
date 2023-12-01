@@ -31,10 +31,11 @@ public class UserDTO {
 
     private String address;
 
-    @JsonProperty(value ="birth_date")
+    @JsonProperty(value = "birth_date")
+    // @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 
-    @JsonProperty(value ="is_active")
+    @JsonProperty(value = "is_active")
     private boolean isActive;
 
     private Role role;
