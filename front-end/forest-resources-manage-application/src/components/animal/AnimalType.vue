@@ -1,4 +1,5 @@
 <template>
+    
     <el-row>
         <el-col :offset="2">
             <h1 class=" text-[#21618C] text-[25px] font-bold m-3">
@@ -19,9 +20,6 @@
                             <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
                         </template>
                         <template #default="scope">
-                            <el-switch class="ml-20" v-model="scope.row.is_active"
-                                @change="changeUserStatus(index, scope.row)" :loading="scope.row.loading"
-                                style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
                             <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
                         </template>
                     </el-table-column>
@@ -145,23 +143,23 @@ export default {
             search: '',
             tableColumns: [
                 {
-                    title: 'Họ',
-                    value: 'first_name'
-                },
-                {
                     title: 'Tên',
-                    value: 'last_name'
-                },
-                {
-                    title: 'Username',
                     value: 'username'
                 },
                 {
-                    title: 'Vai trò',
+                    title: 'Loại',
+                    value: 'first_name'
+                },
+                {
+                    title: 'Thức ăn chính',
+                    value: 'last_name'
+                },
+                {
+                    title: 'Bệnh chính',
                     value: 'role'
                 },
                 {
-                    title: 'Trực thuộc',
+                    title: 'Tuổi thọ',
                     value: 'administration_name'
                 },
             ],
