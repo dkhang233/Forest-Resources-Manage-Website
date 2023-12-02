@@ -7,3 +7,9 @@ export const updateUser = (username,user) => apiClient.post(`users/${username}`,
         'Content-Type': 'multipart/form-data'
     }
 });
+
+export const createUser = (user) => apiClient.post(`users`, user, {
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+});

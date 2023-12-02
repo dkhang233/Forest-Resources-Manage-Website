@@ -27,50 +27,59 @@
                     </el-table-column>
                 </el-table>
             </el-card>
-            <el-dialog class=" block max-w-[500px] rounded-lg
+            <el-dialog class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="2vh" v-model="dialogFormVisible" :title="formTitle">
-                <el-form class="max-w-md m-0" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default">
-                    <div class="grid grid-cols-3 gap-5">
-                        <el-form-item class="col-start-2 col-span-1" prop="avatar">
+                <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
+                    label-position="top">
+                    <div class="col-span-3">
+                        <el-form-item class="" prop="avatar">
                             <input ref="uploadInput" @change="handleFileChange" type="file" v-show="false" />
-                            <img @click="openFileInput" class="w-32 rounded-full shadow-lg "
+                            <img @click="openFileInput" class="rounded-full shadow-lg hover:cursor-pointer hover:opacity-60"
                                 src="@/assets/image/default-avatar.png" v-if="form.avatar == ''" />
-                            <img @click="openFileInput" class="w-32 rounded-full shadow-lg " :src="userAvatar"
+                            <img @click="openFileInput" class="rounded-full shadow-lg " :src="userAvatar"
                                 v-if="form.avatar != ''" />
+                            <font-awesome-icon
+                                class="shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] p-2 hover:cursor-pointer hover:opacity-60 hover:text-red-600"
+                                v-if="form.avatar != ''" @click="resetAvatar" :icon="['fas', 'trash-can']" size="lg" />
                         </el-form-item>
                     </div>
-                    <el-form-item label="Username" prop="username">
-                        <el-input v-model="form.username" :disabled="formType == 'update'" />
-                    </el-form-item>
-                    <div class="grid grid-cols-2 gap-5">
-                        <el-form-item label="Họ" prop="first_name">
-                            <el-input v-model="form.first_name" />
+                    <div class="col-start-5 col-span-10">
+                        <el-form-item label="Username" prop="username">
+                            <el-input v-model="form.username" :disabled="formType == 'update'" />
                         </el-form-item>
-                        <el-form-item label="Tên" prop="last_name">
-                            <el-input v-model="form.last_name" />
+                        <div class="grid grid-cols-2 gap-5">
+                            <el-form-item label="Họ" prop="first_name">
+                                <el-input v-model="form.first_name" />
+                            </el-form-item>
+                            <el-form-item label="Tên" prop="last_name">
+                                <el-input v-model="form.last_name" />
+                            </el-form-item>
+                        </div>
+                        <el-form-item label="Email" prop="email">
+                            <el-input v-model="form.email" />
                         </el-form-item>
-                    </div>
-                    <el-form-item label="Email" prop="email">
-                        <el-input v-model="form.email" />
-                    </el-form-item>
-                    <el-form-item label="Ngày sinh" prop="birth_date">
-                        <el-date-picker v-model="form.birth_date" type="date" placeholder="Chọn ngày sinh" size="default" />
-                    </el-form-item>
-                    <el-form-item label="Địa chỉ" prop="address">
-                        <el-input v-model="form.address" />
-                    </el-form-item>
-                    <div class="grid grid-cols-2 gap-5">
-                        <el-form-item label="Vai trò" prop="role">
-                            <el-select v-model="form.role" placeholder="Chọn vai trò">
-                                <el-option label="User" value="user" />
-                                <el-option label="Admin" value="admin" />
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="Trực thuộc" prop="administration_name">
-                            <el-input v-model="form.administration_name" />
-                        </el-form-item>
+                        <div class="grid grid-cols-2 gap-5">
+                            <el-form-item label="Ngày sinh" prop="birth_date">
+                                <el-date-picker v-model="form.birth_date" type="date" placeholder="Chọn ngày sinh"
+                                    size="default" />
+                            </el-form-item>
+                            <el-form-item label="Địa chỉ" prop="address">
+                                <el-input v-model="form.address" />
+                            </el-form-item>
+                        </div>
+                        <div class="grid grid-cols-2 gap-5">
+                            <el-form-item label="Vai trò" prop="role">
+                                <el-select v-model="form.role" placeholder="Chọn vai trò">
+                                    <el-option label="User" value="user" />
+                                    <el-option label="Admin" value="admin" />
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="Trực thuộc" prop="administration_name">
+                                <el-input v-model="form.administration_name" />
+                            </el-form-item>
+                        </div>
                     </div>
                 </el-form>
                 <template #footer>
@@ -87,7 +96,7 @@
                         text-white rounded-lg shadow-lg 
                         px-5 bg-[#839192] shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false">
+                        border transition hover:-translate-y-0.5 duration-150" @click="handleCancel">
                             Quay lại
                         </button>
                         <button class=" p-2 col-start-12  font-sans font-bold text-sm
@@ -125,7 +134,7 @@
 </template>
 
 <script>
-import { retrieveAllUsers, updateUser } from '@/api/user'
+import { retrieveAllUsers, updateUser, createUser } from '@/api/user'
 import { retrieveAdministrationByName } from '@/api/administration'
 import { useUserStore } from "@/stores/user-store"
 import { mapStores } from 'pinia'
@@ -171,11 +180,13 @@ export default {
                 is_active: true,
                 administration_name: ''
             },
+            formBackUp: null,
             avatarFile: null,
             formType: 'update',
             rules: {
-                email: [{ validator: this.checkEmail, trigger: 'change' }],
-                administration_name: [{ validator: this.checkAdministrationName, trigger: 'change' }]
+                username: [{ validator: this.checkUsername, trigger: 'blur' }],
+                email: [{ validator: this.checkEmail, trigger: 'blur' }],
+                administration_name: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
             },
         }
     },
@@ -215,30 +226,130 @@ export default {
         createNewUser() {
             this.formType = 'create'
             this.resetFormData()
-            this.dialogFormVisible = true
-
-        },
-        // Upload avatar
-        openFileInput() {
-            this.$refs.uploadInput.click()
-        },
-        handleFileChange(event) {
-            let file = event.target.files[0]
-            this.avatarFile = file
-            if (file != null) {
-                let avatar = URL.createObjectURL(file);
-                this.form.avatar = avatar
-            } else {
+            if(this.$refs.ruleFormRef != null){
+                this.$refs.ruleFormRef.clearValidate()
             }
+            this.formBackUp = {
+                username: this.form.username,
+                first_name: this.form.first_name,
+                last_name: this.form.last_name,
+                email: this.form.email,
+                avatar: this.form.avatar,
+                address: this.form.address,
+                birth_date: this.form.birth_date,
+                role: this.form.role,
+                is_active: this.form.is_active,
+                administration_name: this.form.administration_name
+            }
+            this.dialogFormVisible = true
+        },
+
+        handleCreate(form) {
+            if (!form) return
+            form.validate((valid) => {
+                if (valid) {
+                    this.$confirm(
+                        'Tạo mới tài khoản. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
+
+                        }
+                    )
+                        .then(() => {
+                            this.loadingStatus = true
+                            let user = new FormData()
+                            user.append('avatar-file', this.avatarFile)
+                            let formJson = JSON.stringify(this.form)
+                            const formData = new Blob([formJson], {
+                                type: 'application/json'
+                            });
+                            user.append('body', formData)
+                            createUser(user)
+                                .then((res) => {
+                                    this.loadingStatus = false
+                                    this.$notify({
+                                        title: 'Thành công',
+                                        message: 'Tạo tài khoản thành công',
+                                        type: 'success'
+                                    })
+                                    this.retrieveData()
+                                }).catch((err) => {
+                                    this.loadingStatus = false
+                                    this.$notify({
+                                        title: 'Đã xảy ra lỗi',
+                                        message: err.response.data.messages,  //response.data.messages
+                                        type: 'error',
+                                    })
+                                    console.log(err.message)
+                                })
+                            this.dialogFormVisible = false
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+                } else {
+                    return false
+                }
+            })
         },
 
         // Cập nhập thông tin tài khoản người dùng
 
         //Hàm xử lí khi ấn vào nút "Chi tiết"
         handleEdit(index, row) {
+            if(this.$refs.ruleFormRef != null){
+                this.$refs.ruleFormRef.clearValidate()
+            }
             this.formType = 'update'
             this.form = row
+            this.formBackUp = {
+                username: this.form.username,
+                first_name: this.form.first_name,
+                last_name: this.form.last_name,
+                email: this.form.email,
+                avatar: this.form.avatar,
+                address: this.form.address,
+                birth_date: this.form.birth_date,
+                role: this.form.role,
+                is_active: this.form.is_active,
+                administration_name: this.form.administration_name
+            }
             this.dialogFormVisible = true
+        },
+
+
+        // --------------Xử lí trong dialog "Thông tin chi tiết" -------------------------
+
+
+        //Xử lí upload avatar
+
+        // Xứ lí khi ấn vào avatar
+        openFileInput() {
+            this.$refs.uploadInput.click()
+        },
+        // XỬ lí khi người dùng chọn file
+        handleFileChange(event) {
+            let file = event.target.files[0]
+            if (!file.type.startsWith('image')) {
+                this.$message.error('Ảnh đại diện phải là ảnh!')
+            } else if (file.size / 1024 / 1024 > 10) {
+                this.$message.error('Ảnh đại diện phải có kích thước nhỏ hơn 10MB!')
+            } else {
+                this.avatarFile = file
+                if (file != null) {
+                    let avatar = URL.createObjectURL(file);
+                    this.form.avatar = avatar
+                }
+            }
+        },
+
+        // Xóa avatar
+        resetAvatar() {
+            this.form.avatar = ''
+            this.avatarFile = null
         },
 
         // Hàm xử lí khi ấn vào nút "Xóa"
@@ -260,6 +371,42 @@ export default {
                 })
                 .catch(() => {
                 })
+        },
+
+        // Hàm xử lí khi ấn vào nút "Quay lại"
+        handleCancel() {
+            if (this.form == this.formBackUp) {
+                this.dialogFormVisible = false
+            }
+            else {
+                this.$confirm(
+                    'Hủy bỏ thay đổi. Tiếp tục?',
+                    'Xác nhận',
+                    {
+                        confirmButtonText: 'OK',
+                        cancelButtonText: 'Hủy',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        if (this.formBackUp != null) {
+                            this.form.username = this.formBackUp.username
+                            this.form.first_name = this.formBackUp.first_name
+                            this.form.last_name = this.formBackUp.last_name
+                            this.form.email = this.formBackUp.email
+                            this.form.avatar = this.formBackUp.avatar
+                            this.form.address = this.formBackUp.address
+                            this.form.birth_date = this.formBackUp.birth_date
+                            this.form.role = this.formBackUp.role
+                            this.form.is_active = this.formBackUp.is_active
+                            this.form.administration_name = this.formBackUp.administration_name
+                        }
+                        this.dialogFormVisible = false
+                    })
+                    .catch(() => {
+                    })
+            }
+
         },
 
         // Hàm xử lí khi ấn vào nút "Cập nhập"
@@ -363,6 +510,12 @@ export default {
             }
         },
 
+        checkUsername(rule, value, callback) {
+            if (value == '') {
+                callback(new Error('Vui lòng nhập username'))
+            }
+            return callback()
+        },
         //Kiểm tra dữ liệu người dùng nhập vào
         checkEmail(rule, value, callback) {
             if (value === '') {
@@ -384,15 +537,9 @@ export default {
             }
         },
 
-
-
-        createChart() {
-            // let seedChart = echarts.init(this.$refs.box);
-        }
     },
     created() {
         this.retrieveData()
-        // createChart()
     }
 }
 </script>

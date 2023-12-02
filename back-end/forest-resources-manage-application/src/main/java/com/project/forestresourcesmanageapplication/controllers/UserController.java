@@ -1,6 +1,5 @@
 package com.project.forestresourcesmanageapplication.controllers;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -37,6 +36,13 @@ public class UserController {
 		return ResponseEntity.ok(users);
 	}
 
+	@PostMapping("")
+	public ResponseEntity<UserDTO> createUser(@RequestPart(name = "body") UserDTO userDTO,
+			@RequestParam(name = "avatar-file", required = false) MultipartFile avatarFile) {
+		userDTO = this.userService.createUser(userDTO, avatarFile);
+		return ResponseEntity.ok(userDTO);
+	}
+
 	@GetMapping("/{username}")
 	public ResponseEntity<UserDTO> retrieveUserByUsername(@PathVariable String username) {
 		UserDTO userDTO = this.userService.retrieveUserByUsername(username);
@@ -46,14 +52,14 @@ public class UserController {
 	@PostMapping("/{username}")
 	public ResponseEntity<UserDTO> updateUser(@PathVariable String username,
 			@RequestPart(name = "body") UserDTO userDTO,
-			@RequestParam(name = "avatar-file" , required = false) MultipartFile avatarFile) {
+			@RequestParam(name = "avatar-file", required = false) MultipartFile avatarFile) {
 		userDTO = this.userService.updateUser(username, userDTO, avatarFile);
 		return ResponseEntity.ok(userDTO);
 	}
 
 	@GetMapping(value = "/avatar/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] getImageWithMediaType(@PathVariable String fileName) throws IOException {
-		Path uploadPath = Path.of("uploads",fileName);
+		Path uploadPath = Path.of("uploads", fileName);
 		InputStream in = Files.newInputStream(uploadPath);
 		return IOUtils.toByteArray(in);
 	}
