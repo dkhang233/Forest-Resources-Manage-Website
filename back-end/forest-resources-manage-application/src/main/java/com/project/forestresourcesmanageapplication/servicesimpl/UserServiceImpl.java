@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
+import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
 import com.project.forestresourcesmanageapplication.models.Administration;
@@ -39,9 +40,23 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public UserDTO createUser(UserDTO userDTO, MultipartFile avatarFile) {
+		if (this.userRepository.findById(userDTO.getUsername()).isPresent()) {
+			throw new DataAlreadyExistsException("Username đã tồn tại");
+		}
+		User user = this.mapUserDTOToUser(userDTO);
+		String avatar = this.saveImage(avatarFile);
+		user.setAvatar(avatar);
+		user.setPassword("password");
+		this.userRepository.save(user);
+		userDTO = this.mapUserToUserDTO(user);
+		return userDTO;
+	}
+
+	@Override
 	public UserDTO retrieveUserByUsername(String username) {
 		User user = this.userRepository.findById(username)
-				.orElseThrow(() -> new DataNotFoundException("Not found user with username : " + username));
+				.orElseThrow(() -> new DataNotFoundException("Không tìm thấy tài khoản"));
 		UserDTO userDTO = this.mapUserToUserDTO(user);
 		return userDTO;
 	}
@@ -50,11 +65,11 @@ public class UserServiceImpl implements UserService {
 	public UserDTO updateUser(String username, UserDTO userDTO, MultipartFile avatarFile) {
 		User user = this.userRepository.findById(username)
 				.orElseThrow(() -> new DataNotFoundException(
-						"Not found user with username : " + username));
+						"Username không tồn tại"));
 		String administrationName = userDTO.getAdministrationName();
 		Administration administration = this.administrationRepository.findByName(administrationName)
 				.orElseThrow(() -> new DataNotFoundException(
-						"Not found administration with name: " + administrationName));
+						"Đơn vị hành chính trực thuộc không tồn tại"));
 
 		// Kiểm tra avatar đã thay đổi chưa, nếu đã thay đổi -> gọi hàm để lưu file
 		// avatar và thay đổi avatar
@@ -136,7 +151,7 @@ public class UserServiceImpl implements UserService {
 	// Chuyển từ userDTO sang user
 	public User mapUserDTOToUser(UserDTO userDTO) {
 		Administration administration = this.administrationRepository.findByName(userDTO.getAdministrationName())
-				.orElseThrow(() -> new DataNotFoundException(null));
+				.orElseThrow(() -> new DataNotFoundException("Đơn vị hành chính trực thuộc không tồn tại"));
 		User user = User.builder()
 				.username(userDTO.getUsername())
 				.firstName(userDTO.getFirstName())
@@ -151,4 +166,5 @@ public class UserServiceImpl implements UserService {
 				.build();
 		return user;
 	}
+
 }
