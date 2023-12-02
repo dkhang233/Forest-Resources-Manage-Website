@@ -229,8 +229,10 @@ CREATE TABLE `animal_species`(
     `main_food` VARCHAR(100) NULL COMMENT 'thức ăn chính',
     `main_disease` VARCHAR(100) NULL COMMENT 'bệnh chính',
     `longevity` INT NULL COMMENT 'tuổi thọ',
-    `detail` varchar(256) NULL COMMENT 'thông tin chi tiết',
-    PRIMARY KEY (`name`)
+	`fluctuation_id` INT NOT NULL ,
+    PRIMARY KEY (`name`),
+	FOREIGN KEY (`fluctuation_id`)
+        REFERENCES `fluctuation`(`id`)
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='loài động vật';
 
 -- -----------------------------------------------------
@@ -259,23 +261,9 @@ DROP TABLE IF EXISTS `fluctuation`;
 CREATE TABLE `fluctuation`(
     `id` INT NOT NULL,
     `name` VARCHAR(100) NOT NULL UNIQUE,
+	`detail` VARCHAR(256) NOT NULL,
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Loại biến động';
 
--- -----------------------------------------------------
--- Table AS_F_Relationship
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `as_f_relationship`;
-CREATE TABLE `as_f_relationship`(
-    `id` INT NOT NULL,
-    `animal_species_name` VARCHAR(100) NOT NULL ,
-    `fluctuation_id` INT NOT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`animal_species_name`)
-        REFERENCES `animal_species`(`name`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (`fluctuation_id`)
-        REFERENCES `fluctuation`(`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
-)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='quan hệ LĐV - loại biến động';
+
 

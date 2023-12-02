@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
+import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
 import com.project.forestresourcesmanageapplication.models.Administration;
@@ -32,7 +34,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     private final FluctuationRepository fluctuationRepository;
     private final AdminstrationService adminstrationService;
 
-    //-----------------------Animal Storage Facilities
+    //-----------------------CƠ SỞ LƯU TRỮ ĐỘNG VẬT---------------------------
     @Override
     public List<AnimalStorageFacilities> getAllAnimalStorageFacilities() {
         return animalStorageFacilitiesRepository.findAll();
@@ -76,15 +78,18 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     }
 
     @Override
-    public AnimalStorageFacilities addAnimalStorageFacilities(AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO) {
+    public AnimalStorageFacilities addAnimalStorageFacilities(AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO,String code) {
         AnimalStorageFacilities animalStorageFacilities = new AnimalStorageFacilities();
-        
+        //kiểm tra code 
+        Optional<AnimalStorageFacilities> tmp1 = this.animalStorageFacilitiesRepository.findById(code);
+            if(tmp1.isPresent()){
+                throw new DataAlreadyExistsException("Đã có cơ sở lưu trữ động vật với code = "+code);
+            }
         //kiểm tra tên
-        Optional<AnimalStorageFacilities> tmp = this.animalStorageFacilitiesRepository.findByName(animalStorageFacilitiesDTO.getName());
-            if(tmp.isPresent()){
+        Optional<AnimalStorageFacilities> tmp2 = this.animalStorageFacilitiesRepository.findByName(animalStorageFacilitiesDTO.getName());
+            if(tmp2.isPresent()){
                 throw new DataAlreadyExistsException("Đã có cơ sở lưu trữ động vật với tên = "+animalStorageFacilitiesDTO.getName());
             }
-            animalStorageFacilities.setName(animalStorageFacilitiesDTO.getName());
         //kiểm tra đơn vị hành chính
         try {
                  Administration administration = this.adminstrationService.retrieveAdministrationByCode(animalStorageFacilitiesDTO.getAdminstrationCode());
@@ -92,6 +97,8 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
             }catch(Exception exception){
                 throw new DataNotFoundException("Không tìm thấy cơ sở hành chính với code = "+ animalStorageFacilitiesDTO.getAdminstrationCode());
             }
+        animalStorageFacilities.setCode(code);
+        animalStorageFacilities.setName(animalStorageFacilitiesDTO.getName());
         animalStorageFacilities.setCapacity(animalStorageFacilitiesDTO.getCapacity());
         animalStorageFacilities.setDate(animalStorageFacilitiesDTO.getDate());
         animalStorageFacilities.setDetail(animalStorageFacilitiesDTO.getDetail());
@@ -101,98 +108,124 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
 
     @Override
     public void deleteAnimalStorageFacilitiesByCode(String code) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAnimalStorageFacilitiesByCode'");
+        AnimalStorageFacilities animalStorageFacilities = this.getAnimalStorageFacilitiesByCode(code);
+        this.animalStorageFacilitiesRepository.deleteById(animalStorageFacilities.getCode());
     }
 
+
+    //-----------------------LOÀI ĐỘNG VẬT----------------------------
     @Override
     public List<AnimalSpecies> getAllAnimalSpecies() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllAnimalSpecies'");
-    }
-
-    @Override
-    public AnimalSpecies updateAnimalSpecies(AnimalSpecies animalSpecies) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateAnimalSpecies'");
+        return this.animalSpeciesRepository.findAll();
     }
 
     @Override
     public AnimalSpecies getAnimalSpeciesByName(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAnimalSpeciesByName'");
+        return this.animalSpeciesRepository.findById(name)
+        .orElseThrow( () -> new DataNotFoundException("Không tìm thấy loài động vật với tên = "+name));
     }
 
     @Override
-    public AnimalSpecies addAnimalSpecies(AnimalSpecies animalSpecies) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addAnimalSpecies'");
+    public AnimalSpecies updateAnimalSpecies(String name, AnimalSpeciesDTO animalSpeciesDTO) {
+        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(name);
+
+        animalSpecies.setAnimalType(animalSpeciesDTO.getAnimalType());
+        animalSpecies.setMainFood(animalSpeciesDTO.getMainFood());
+        animalSpecies.setMainDisease(animalSpeciesDTO.getMainDisease());
+        animalSpecies.setLongevity(animalSpeciesDTO.getLongevity());
+
+        Fluctuation fluctuation = this.getFluctuationById(animalSpeciesDTO.getFluctuationId());
+        animalSpecies.setFluctuation(fluctuation);
+        return animalSpeciesRepository.save(animalSpecies);
+    }
+
+    @Override
+    public AnimalSpecies addAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, String name) {
+        AnimalSpecies animalSpecies = new AnimalSpecies();
+
+        //kiểm tra tên
+        Optional<AnimalSpecies> tmp = this.animalSpeciesRepository.findById(name);
+        if(tmp.isPresent()){
+            throw new DataAlreadyExistsException("Đã tồn tại loài động vật với tên = "+ name);
+        }
+        animalSpecies.setName(name);
+        animalSpecies.setAnimalType(animalSpeciesDTO.getAnimalType());
+        animalSpecies.setMainFood(animalSpeciesDTO.getMainFood());
+        animalSpecies.setMainDisease(animalSpeciesDTO.getMainDisease());
+        animalSpecies.setLongevity(animalSpeciesDTO.getLongevity());
+
+        Fluctuation fluctuation = this.getFluctuationById(animalSpeciesDTO.getFluctuationId());
+        animalSpecies.setFluctuation(fluctuation);
+        return animalSpeciesRepository.save(animalSpecies);
     }
 
     @Override
     public void deleteAnimalSpeciesByName(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAnimalSpeciesByName'");
+        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(name);
+        this.animalSpeciesRepository.deleteById(animalSpecies.getName());
     }
 
+
+    //--------------------------LOẠI BIẾN ĐỘNG-------------------------
+    @Override
+    public List<Fluctuation> getAllFluctuations() {
+        return this.fluctuationRepository.findAll();
+    }
+
+
+    @Override
+    public Fluctuation getFluctuationById(int id) {
+        return this.fluctuationRepository.findById(id)
+        .orElseThrow( () -> new DataNotFoundException("Không tìm thấy loại biến động với id = "+id));
+    }
+
+
+    //---------------------QUAN HỆ CSLTDV VÀ LOÀI ĐỘNG VẬT---------------------------
     @Override
     public List<AsfAsRelationship> getAllAsfAsRelationships() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllAsfAsRelationships'");
+        return this.asfAsRelationshipRepository.findAll();
     }
 
     @Override
-    public AsfAsRelationship updateAsfAsRelationship(AsfAsRelationship asfAsRelationship) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateAsfAsRelationship'");
+    public AsfAsRelationship updateAsfAsRelationship(int id, AsfAsRelationshipDTO asfAsRelationshipDTO ) {
+        AsfAsRelationship asfAsRelationship = this.getAsfAsRelationshipById(id);
+        //kiểm tra tên CSLTDV và tên loài động vật
+        AnimalStorageFacilities animalStorageFacilities = this.getAnimalStorageFacilitiesByCode(asfAsRelationshipDTO.getCodeASF());
+        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(asfAsRelationshipDTO.getNameAS());
+
+        asfAsRelationship.setAnimalStorageFacilities(animalStorageFacilities);
+        asfAsRelationship.setAnimalSpecies(animalSpecies);
+        asfAsRelationship.setQuantity(asfAsRelationshipDTO.getQuantity());
+        asfAsRelationship.setDate(asfAsRelationshipDTO.getDate());
+
+        return asfAsRelationshipRepository.save(asfAsRelationship);
     }
 
     @Override
     public AsfAsRelationship getAsfAsRelationshipById(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAsfAsRelationshipById'");
+        return this.asfAsRelationshipRepository.findById(id)
+        .orElseThrow( () -> new DataNotFoundException("Không tồn tại bảng quan hệ Asf-As với id = "+id));
     }
 
     @Override
-    public AsfAsRelationship addAsfAsRelationship(AsfAsRelationship asfAsRelationship) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addAsfAsRelationship'");
+    public AsfAsRelationship addAsfAsRelationship(AsfAsRelationshipDTO asfAsRelationshipDTO) {
+        AsfAsRelationship asfAsRelationship = new AsfAsRelationship();
+        //kiểm tra tên CSLTDV và tên loài động vật
+        AnimalStorageFacilities animalStorageFacilities = this.getAnimalStorageFacilitiesByCode(asfAsRelationshipDTO.getCodeASF());
+        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(asfAsRelationshipDTO.getNameAS());
+
+        asfAsRelationship.setAnimalStorageFacilities(animalStorageFacilities);
+        asfAsRelationship.setAnimalSpecies(animalSpecies);
+        asfAsRelationship.setQuantity(asfAsRelationshipDTO.getQuantity());
+        asfAsRelationship.setDate(asfAsRelationshipDTO.getDate());
+
+        return asfAsRelationshipRepository.save(asfAsRelationship);
     }
 
     @Override
     public void deleteAsfAsRelationshipById(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteAsfAsRelationshipById'");
+        AsfAsRelationship asfAsRelationship = this.getAsfAsRelationshipById(id);
+        this.asfAsRelationshipRepository.deleteById(asfAsRelationship.getId());
     }
 
-    @Override
-    public List<Fluctuation> getAllFluctuations() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllFluctuations'");
-    }
-
-    @Override
-    public Fluctuation updateFluctuation(Fluctuation fluctuation) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateFluctuation'");
-    }
-
-    @Override
-    public Fluctuation getFluctuationById(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFluctuationById'");
-    }
-
-    @Override
-    public Fluctuation addFluctuation(Fluctuation fluctuation) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addFluctuation'");
-    }
-
-    @Override
-    public void deleteFluctuationById(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteFluctuationById'");
-    }
-    
 }

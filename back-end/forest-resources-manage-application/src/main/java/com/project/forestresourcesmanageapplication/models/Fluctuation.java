@@ -38,18 +38,7 @@ public class Fluctuation {
     @Column(name="name", nullable = false, length = 100)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER,
-                cascade = {
-                CascadeType.MERGE,
-                CascadeType.DETACH,
-                CascadeType.PERSIST,
-                CascadeType.REFRESH
-                }
-    )
-    @JoinTable(
-        name="as_f_relationship",
-        joinColumns = @JoinColumn(name="fluctuation_id"),
-        inverseJoinColumns = @JoinColumn(name="animal_species_name")
-    )
-    private List<AnimalSpecies> animalSpecies;
+    //thông tin chi tiết
+    @Column(name="detail")
+    private String detail;
 }
