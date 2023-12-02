@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,11 +49,7 @@ public class AnimalSpecies {
     @Column(name="longevity")
     private int longevity;
 
-    //thông tin chi tiết
-    @Column(name="detail")
-    private String detail;
-
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToOne(fetch = FetchType.EAGER,
                 cascade = {
                 CascadeType.MERGE,
                 CascadeType.DETACH,
@@ -60,11 +57,7 @@ public class AnimalSpecies {
                 CascadeType.REFRESH
                 }
     )
-    @JoinTable(
-        name="as_f_relationship",
-        joinColumns = @JoinColumn(name="animal_species_name"),
-        inverseJoinColumns = @JoinColumn(name="fluctuation_id")
-    )
-    private List<Fluctuation> fluctuations;
+    @JoinColumn(name="fluctuation_id")
+    private Fluctuation fluctuation;
 
 }

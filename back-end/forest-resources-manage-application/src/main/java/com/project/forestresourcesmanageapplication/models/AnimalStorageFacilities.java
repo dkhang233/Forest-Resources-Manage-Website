@@ -29,7 +29,6 @@ import lombok.experimental.Accessors;
 @Builder
 public class AnimalStorageFacilities {
     @Id
-    @GeneratedValue(strategy =GenerationType.IDENTITY )
     @Column(name="code")
     private String code;
 
