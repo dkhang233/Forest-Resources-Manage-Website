@@ -1,5 +1,8 @@
 package com.project.forestresourcesmanageapplication.controllers;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,8 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
+import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
+import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
+import com.project.forestresourcesmanageapplication.models.Fluctuation;
 import com.project.forestresourcesmanageapplication.services.AnimalStorageFacilitiesService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class AnimalController {
     private final AnimalStorageFacilitiesService animalStorageFacilitiesService;
 
-    //------------------------CƠ SỞ LƯU TRỮ ĐỘNG VẬT
+    //------------------------CƠ SỞ LƯU TRỮ ĐỘNG VẬT-----------------------------
     @GetMapping("")
     public ResponseEntity<List<AnimalStorageFacilities>> getAllAnimalStorageFacilities(){
         List<AnimalStorageFacilities> listAnimalStorageFacilities = this.animalStorageFacilitiesService.getAllAnimalStorageFacilities();
@@ -55,4 +62,60 @@ public class AnimalController {
         this.animalStorageFacilitiesService.deleteAnimalStorageFacilitiesByCode(code);
         return ResponseEntity.ok().build();
     }
+
+//---------------------------LOÀI ĐỘNG VẬT--------------------------
+    
+    @GetMapping("/species")
+    public ResponseEntity<List<AnimalSpecies>> getAllAnimalSpecies(){
+        List<AnimalSpecies> listAnimalSpecies = this.animalStorageFacilitiesService.getAllAnimalSpecies();
+        return ResponseEntity.ok(listAnimalSpecies);
+    }
+
+    @GetMapping("/species/{name}")
+    public ResponseEntity<AnimalSpecies> getAnimalSpeciesByName(@PathVariable String name){
+        AnimalSpecies animalSpecies = this.animalStorageFacilitiesService.getAnimalSpeciesByName(name);
+        return ResponseEntity.ok(animalSpecies);
+    }
+
+    @PostMapping("/species/{name}")
+    public ResponseEntity<AnimalSpecies> addAnimalSpecies(@PathVariable String name, @RequestBody AnimalSpeciesDTO animalSpeciesDTO){
+        AnimalSpecies animalSpecies = this.animalStorageFacilitiesService.addAnimalSpecies(animalSpeciesDTO,name);
+        return ResponseEntity.status(HttpStatus.CREATED).body(animalSpecies);
+    }
+
+    @PutMapping("/species/{name}")
+    public ResponseEntity<AnimalSpecies> updateAnimalSpecies(@PathVariable String name, @RequestBody AnimalSpeciesDTO animalSpeciesDTO){
+        AnimalSpecies animalSpecies = this.animalStorageFacilitiesService.updateAnimalSpecies(name, animalSpeciesDTO);
+        return ResponseEntity.ok(animalSpecies);
+    }
+
+    @DeleteMapping("/species/{name}")
+    public ResponseEntity<Void> deleteAnimalSpecies(@PathVariable String name){
+        this.animalStorageFacilitiesService.deleteAnimalSpeciesByName(name);
+        return ResponseEntity.ok().build();
+    }
+
+//---------------------------LOẠI BIẾN ĐỘNG--------------------------
+
+    @GetMapping("/fluctuation")
+    public ResponseEntity<List<Fluctuation>> getAllFluctuation(){
+        List<Fluctuation> fluctuations = this.animalStorageFacilitiesService.getAllFluctuations();
+        return ResponseEntity.ok(fluctuations);
+    }
+
+    @GetMapping("/fluctuation/{id}")
+    public ResponseEntity<Fluctuation> getFluctuationById(@PathVariable int id){
+        Fluctuation fluctuation = this.animalStorageFacilitiesService.getFluctuationById(id);
+        return ResponseEntity.ok(fluctuation);
+    }
+    
+//--------------------------THỐNG KÊ DỮ LIỆU----------------------
+    //lấy tất cả dữ liệu theo năm
+    // @GetMapping("/statistical")
+    // public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationship(){
+    //     String str = "2013-05-05";
+    //     Date date = Date.valueOf(str);
+    //     List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService.getAsfAsRelationshipWithYear(date);
+    //     return ResponseEntity.ok(asRelationships);
+    // }
 }

@@ -1,5 +1,6 @@
 package com.project.forestresourcesmanageapplication.services;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
@@ -36,4 +37,7 @@ public interface AnimalStorageFacilitiesService {
     //Fluctuation
     public List<Fluctuation> getAllFluctuations();
     public Fluctuation getFluctuationById(int id);
+    
+    // //Thống kê
+    // public List<AsfAsRelationship> getAsfAsRelationshipWithYear(Date date);
 }
