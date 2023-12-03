@@ -1,7 +1,9 @@
 package com.project.forestresourcesmanageapplication.services;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
@@ -26,6 +28,7 @@ public interface AnimalStorageFacilitiesService {
     public AnimalSpecies getAnimalSpeciesByName(String name);
     public AnimalSpecies addAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, String name);
     public void deleteAnimalSpeciesByName(String name);
+    public List<AnimalSpecies> getAllAnimalSpeciesByFacilitiesCode(String code);
 
     //ASF-AS-Relationship
     public List<AsfAsRelationship> getAllAsfAsRelationships();
@@ -38,6 +41,9 @@ public interface AnimalStorageFacilitiesService {
     public List<Fluctuation> getAllFluctuations();
     public Fluctuation getFluctuationById(int id);
     
-    // //Thống kê
-    // public List<AsfAsRelationship> getAsfAsRelationshipWithYear(Date date);
+    //Thống kê
+    public List<AsfAsRelationship> getAsfAsRelationshipWithTime(Date startDate,Date endDate);//lấy dữ liệu trong 1 khoảng thời gian
+    public List<AsfAsRelationship> getAsfAsRelationshipInYear(int year);
+    public List<AsfAsRelationship> getAsfAsRelationshipByFacilitiesInYear(String code, int year);
+    public List<AsfAsRelationship> getAll();
 }

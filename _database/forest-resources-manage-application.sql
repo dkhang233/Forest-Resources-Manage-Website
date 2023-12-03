@@ -220,6 +220,18 @@ CREATE TABLE `animal_storage_facilities`(
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Cơ sở lưu trữ động vật';
 
 -- -----------------------------------------------------
+-- Table fluctuation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `fluctuation`;
+CREATE TABLE `fluctuation`(
+    `id` INT NOT NULL,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+	`detail` VARCHAR(256) NOT NULL,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Loại biến động';
+
+
+-- -----------------------------------------------------
 -- Table Animal Species
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `animal_species`;
@@ -254,16 +266,6 @@ CREATE TABLE `asf_as_relationship`(
         ON DELETE CASCADE ON UPDATE CASCADE
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='bảng quan hệ CSLTDV - Loài động vật';
 
--- -----------------------------------------------------
--- Table fluctuation
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `fluctuation`;
-CREATE TABLE `fluctuation`(
-    `id` INT NOT NULL,
-    `name` VARCHAR(100) NOT NULL UNIQUE,
-	`detail` VARCHAR(256) NOT NULL,
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Loại biến động';
 
 
 

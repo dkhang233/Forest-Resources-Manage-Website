@@ -3,7 +3,9 @@ package com.project.forestresourcesmanageapplication.controllers;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -95,6 +97,13 @@ public class AnimalController {
         return ResponseEntity.ok().build();
     }
 
+    //lấy tất cả loài động vật trong 1 cơ sở lưu trữ
+    @GetMapping("/species/facilities/{facilitiesCode}")
+    public ResponseEntity<List<AnimalSpecies>> getAnimalSpeciesByFacilitiesCode(@PathVariable(value = "facilitiesCode") String code){
+        List<AnimalSpecies> listAnimalSpecies = this.animalStorageFacilitiesService.getAllAnimalSpeciesByFacilitiesCode(code);
+        return ResponseEntity.ok(listAnimalSpecies);
+    }
+
 //---------------------------LOẠI BIẾN ĐỘNG--------------------------
 
     @GetMapping("/fluctuation")
@@ -109,13 +118,25 @@ public class AnimalController {
         return ResponseEntity.ok(fluctuation);
     }
     
-//--------------------------THỐNG KÊ DỮ LIỆU----------------------
-    //lấy tất cả dữ liệu theo năm
-    // @GetMapping("/statistical")
-    // public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationship(){
-    //     String str = "2013-05-05";
-    //     Date date = Date.valueOf(str);
-    //     List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService.getAsfAsRelationshipWithYear(date);
-    //     return ResponseEntity.ok(asRelationships);
-    // }
+//--------------------------THỐNG KÊ DỮ LIỆU VỀ SỐ LƯỢNG----------------------
+    //lấy tất cả dữ liệu trong 1 khoảng thời gian
+    @GetMapping("/statistical/{startDate}/{endDate}")
+    public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationship(@PathVariable(value ="startDate") Date startDate,@PathVariable(value = "endDate") Date endDate){
+        List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService.getAsfAsRelationshipWithTime(startDate,endDate);
+        return ResponseEntity.ok(asRelationships);
+    }
+
+    //lấy tất cả dữ liệu trong 1 năm
+    @GetMapping("/statistical/{year}")
+    public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationshipInYear(@PathVariable int year){
+        List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService.getAsfAsRelationshipInYear(year);
+        return ResponseEntity.ok(asRelationships);
+    }
+
+    //lấy dữ liệu của 1 cơ sở lưu trữ trong 1 năm
+    @GetMapping("/statistical/{facilitiesCode}/{year}")
+    public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationshipByFacilitiesIdInYear(@PathVariable(value = "facilitiesCode") String code,@PathVariable(value = "year") int year){
+        List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService.getAsfAsRelationshipByFacilitiesInYear(code,year);
+        return ResponseEntity.ok(asRelationships);
+    }
 }

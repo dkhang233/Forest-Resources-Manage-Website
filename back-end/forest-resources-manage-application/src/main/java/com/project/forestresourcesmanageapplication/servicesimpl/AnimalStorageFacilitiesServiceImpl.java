@@ -1,6 +1,7 @@
 package com.project.forestresourcesmanageapplication.servicesimpl;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -166,6 +167,12 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         this.animalSpeciesRepository.deleteById(animalSpecies.getName());
     }
 
+    @Override
+    public List<AnimalSpecies> getAllAnimalSpeciesByFacilitiesCode(String code) {
+        List<AnimalSpecies> listAnimalSpecies = this.asfAsRelationshipRepository.selectAllAnimalSpeciesByFacilitiesCode(code)
+        .orElseThrow( () -> new DataNotFoundException("cơ sở lưu trữ này không có loài động vật nào"));
+        return listAnimalSpecies;
+    }
 
     //--------------------------LOẠI BIẾN ĐỘNG-------------------------
     @Override
@@ -231,8 +238,41 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
 
 
     //--------------------------THỐNG KÊ--------------------------------
-    // @Override
-    // public List<AsfAsRelationship> getAsfAsRelationshipWithYear(Date date) {
-    //     return this.getAsfAsRelationshipWithYear(date);
-    // }
+    @Override
+    public List<AsfAsRelationship> getAsfAsRelationshipWithTime(Date startDate , Date endDate) {
+        List<AsfAsRelationship> asRelationships = this.asfAsRelationshipRepository.selectAsfAsRelationshipWithTime(startDate,endDate)
+        .orElseThrow(() -> new DataNotFoundException("Không tồn tại dữ liệu trong khoảng thời gian " ));
+        return asRelationships;
+    }
+
+
+    @Override 
+    public List<AsfAsRelationship> getAll(){
+        return this.getAll();
+    }
+
+    @Override
+    public List<AsfAsRelationship> getAsfAsRelationshipInYear(int year) {
+        String str1 = year + "-01-01";
+        String str2 = year + "-12-31";
+        Date startDate = Date.valueOf(str1);
+        Date endDate = Date.valueOf(str2);
+        List<AsfAsRelationship> asRelationships = this.asfAsRelationshipRepository.selectAsfAsRelationshipWithTime(startDate,endDate)
+        .orElseThrow(() -> new DataNotFoundException("Không tồn tại dữ liệu trong năm "+year ));
+        return asRelationships;
+    }
+
+    @Override
+    public List<AsfAsRelationship> getAsfAsRelationshipByFacilitiesInYear(String code, int year) {
+        String str1 = year + "-01-01";
+        String str2 = year + "-12-31";
+        Date startDate = Date.valueOf(str1);
+        Date endDate = Date.valueOf(str2);
+        List<AsfAsRelationship> asRelationships = this.asfAsRelationshipRepository.selectAsfAsRelationshipByFacilitiesInYear(code,startDate,endDate)
+        .orElseThrow(() -> new DataNotFoundException("Không tồn tại dữ liệu của cơ sở với code "+code+" trong năm "+year ));
+        return asRelationships;
+    }
+
+    
+    
 }
