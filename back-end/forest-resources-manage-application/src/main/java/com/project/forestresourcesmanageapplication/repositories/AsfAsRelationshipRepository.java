@@ -23,4 +23,10 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
 
     @Query("SELECT a.animalSpecies FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code")
     Optional<List<AnimalSpecies>> selectAllAnimalSpeciesByFacilitiesCode(String code);
+
+    @Query("SELECT a FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code AND a.animalSpecies.name = :name")
+    Optional<List<AsfAsRelationship>> selectAsfAsRelationshipByAnimalAndCode(@Param("code") String code, @Param("name") String name);
+
+    @Query("SELECT a FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code AND a.animalSpecies.name = :name AND a.date <= :date ")
+    Optional<List<AsfAsRelationship>> selectAsfAsRelationshipBeforeTime(@Param("code") String code, @Param("name") String name , @Param("date") Date date);
 }

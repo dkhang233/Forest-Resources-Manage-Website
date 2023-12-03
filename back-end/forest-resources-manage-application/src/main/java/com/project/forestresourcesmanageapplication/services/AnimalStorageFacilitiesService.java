@@ -8,10 +8,15 @@ import java.util.Optional;
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
+
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
 import com.project.forestresourcesmanageapplication.models.Fluctuation;
+import com.project.forestresourcesmanageapplication.responses.AnimalQuantity;
+import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
+import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
+import com.project.forestresourcesmanageapplication.responses.YearQuantity;
 
 public interface AnimalStorageFacilitiesService {
 
@@ -42,8 +47,15 @@ public interface AnimalStorageFacilitiesService {
     public Fluctuation getFluctuationById(int id);
     
     //Thống kê
-    public List<AsfAsRelationship> getAsfAsRelationshipWithTime(Date startDate,Date endDate);//lấy dữ liệu trong 1 khoảng thời gian
-    public List<AsfAsRelationship> getAsfAsRelationshipInYear(int year);
-    public List<AsfAsRelationship> getAsfAsRelationshipByFacilitiesInYear(String code, int year);
     public List<AsfAsRelationship> getAll();
+    public List<AsfAsRelationship> getAsfAsRelationshipWithTime(Date startDate,Date endDate);//lấy dữ liệu trong 1 khoảng thời gian
+    public List<AsfAsRelationship> getAsfAsRelationshipInYear(int year);//lấy dữ liệu trong 1 năm
+    public List<AsfAsRelationship> getAsfAsRelationshipByFacilitiesInYear(String code, int year);//lấy dữ liệu của 1 cơ sở trong năm
+    public Long getQuantityAnimalOfFacilitiesCode(String code, String name);//lấy số lượng của 1 con vật trong 1 cơ sở tính đến thời điểm hiện tại
+
+    public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
+    public List<MonthQuantity> getQuantityAnimalWithMonthOfYear(String code, String name, int year);
+    public List<QuarterQuantity> getQuantityAnimalWithQuarterOfYear(String code, String name, int year);
+    public List<YearQuantity> getQuantityAnimalWithYear(String code, String name);
+    
 }
