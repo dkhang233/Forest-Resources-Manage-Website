@@ -26,7 +26,6 @@ import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 
 // import echarts
-import * as echarts from 'echarts';
 
 //import tailwind css
 import '@/assets/tailwind.css'
@@ -49,7 +48,7 @@ app.use(ElementPlus)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-
+//echarts
 // add icons to the library
 library.add(fas, fab , far)
 

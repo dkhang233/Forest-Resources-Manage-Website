@@ -18,7 +18,7 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
     @Query("SELECT a FROM AsfAsRelationship a WHERE a.date BETWEEN :startDate AND :endDate")
     Optional<List<AsfAsRelationship>> selectAsfAsRelationshipWithTime(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-    @Query("SELECT a FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code AND a.date BETWEEN :startDate AND :endDate")
+    @Query("SELECT a.animalStorageFacilities, SUM(a.quantity) quantity FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code AND a.date BETWEEN :startDate AND :endDate")
     Optional<List<AsfAsRelationship>> selectAsfAsRelationshipByFacilitiesInYear(@Param("code") String code, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     @Query("SELECT a.animalSpecies FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code")
