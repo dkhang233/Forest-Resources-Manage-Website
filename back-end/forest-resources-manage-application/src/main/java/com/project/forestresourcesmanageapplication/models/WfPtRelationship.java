@@ -18,7 +18,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Entity
-@Table(name="asf_as_relationship")
+@Table(name="wf_pt_relationship")
 @Getter
 @Setter
 @AllArgsConstructor
