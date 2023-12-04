@@ -174,7 +174,7 @@ public class AnimalController {
     }
 
     //lấy dữ liệu của 1 cơ sở lưu trữ trong 1 năm
-    @GetMapping("/statistical/{facilitiesCode}/{year}")
+    @GetMapping("/statistical/facilities/{facilitiesCode}/{year}")
     public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationshipByFacilitiesIdInYear(@PathVariable(value = "facilitiesCode") String code,@PathVariable(value = "year") int year){
         List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService.getAsfAsRelationshipByFacilitiesInYear(code,year);
         return ResponseEntity.ok(asRelationships);

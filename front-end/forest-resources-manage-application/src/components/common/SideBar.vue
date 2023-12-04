@@ -1,11 +1,10 @@
 <template>
-    <div id="left">
-        <el-scrollbar height="690px" always>
-            <el-menu active-text-color="#dd5862" text-color="#fff" class="side-bar"
-                @open="handleOpen" @close="handleClose" :collapse="this.appStore.flag" background-color="#FBFBFB"
-                menu-trigger="click" router>
-                <el-menu-item :index="`/main`" >
-                    <i class="icon"><font-awesome-icon class="iconfont " icon="fa-house" style="color: #494965;"/></i>
+    <div class="h-screen bg-[#FBFBFB]">
+        <el-scrollbar class="h-[89%] bg-[#FBFBFB]" always>
+            <el-menu active-text-color="#dd5862" text-color="#fff" class="side-bar" @open="handleOpen" @close="handleClose"
+                :collapse="this.appStore.flag" background-color="#FBFBFB" menu-trigger="click" router>
+                <el-menu-item :index="`/main`">
+                    <i class="icon"><font-awesome-icon class="iconfont " icon="fa-house" style="color: #494965;" /></i>
                     <template #title>
                         <span class="title">Trang chủ</span>
                     </template>
@@ -21,9 +20,10 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-sub-menu>
-                <el-sub-menu :index="''" >
+                <el-sub-menu :index="''">
                     <template #title>
-                        <i class="icon"><font-awesome-icon class="iconfont" icon="fa-gauge-high" style="color: #494965;"/></i>
+                        <i class="icon"><font-awesome-icon class="iconfont" icon="fa-gauge-high"
+                                style="color: #494965;" /></i>
                         <span class="title">Hệ thống</span>
                     </template>
                     <el-menu-item-group>
@@ -72,15 +72,16 @@ export default {
     color: #fff;
 }
 
+/* 
 #left {
     min-height: 697px;
     background-color:#FBFBFB;
     z-index: 5;
     position: relative;
-}
+}*/
 
-#left .title {
-    color: #2C3E50 ;
+.title {
+    color: #2C3E50;
     font-size: 16px;
     font-weight: bold;
     margin-left: 14px;
@@ -94,15 +95,15 @@ export default {
     background-color: #2C3E50;
 }
 
-.el-submenu__title{
+.el-submenu__title {
     color: #2C3E50;
 }
 
-.el-menu-item{
+.el-menu-item {
     color: #2C3E50;
 }
 
-.el-sub-menu .el-icon{
+.el-sub-menu .el-icon {
     color: #2C3E50;
 }
 
@@ -116,6 +117,11 @@ export default {
 }
 
 .el-scrollbar__thumb {
-    background-color: #F4F6F7;
+    background-color: #2C3E50;
+    width: 10px;
+}
+
+.el-scrollbar__bar.is-vertical {
+    width: 10px;
 }
 </style>
