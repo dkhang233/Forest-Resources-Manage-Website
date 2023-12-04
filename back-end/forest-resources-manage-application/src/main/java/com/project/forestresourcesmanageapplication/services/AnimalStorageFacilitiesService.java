@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
@@ -29,9 +31,9 @@ public interface AnimalStorageFacilitiesService {
 
     //Animal-Species
     public List<AnimalSpecies> getAllAnimalSpecies();
-    public AnimalSpecies updateAnimalSpecies(String name, AnimalSpeciesDTO animalSpeciesDTO);
+    public AnimalSpecies updateAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, MultipartFile imageFile);
     public AnimalSpecies getAnimalSpeciesByName(String name);
-    public AnimalSpecies addAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, String name);
+    public AnimalSpecies addAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, MultipartFile imageFile);
     public void deleteAnimalSpeciesByName(String name);
     public List<AnimalSpecies> getAllAnimalSpeciesByFacilitiesCode(String code);
 

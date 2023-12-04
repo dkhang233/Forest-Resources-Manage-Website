@@ -1,20 +1,28 @@
 package com.project.forestresourcesmanageapplication.servicesimpl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
+import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
 import com.project.forestresourcesmanageapplication.models.Administration;
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
@@ -123,6 +131,45 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
 
 
     //-----------------------LOÀI ĐỘNG VẬT----------------------------
+    // lƯu file ảnh avatar và trả về đường dẫn đến ảnh
+	public String saveImage(MultipartFile avatarFile) {
+		if (avatarFile == null) {
+			return "";
+		}
+
+		// Kiểm tra kích thước file
+		if (avatarFile.getSize() > 10 * 1024 * 1024) { // kích thước file phải <= 10 MB
+			throw new InvalidDataException("Kích thước ảnh đại diện phải nhỏ hơn 10MB");
+		}
+
+		// Kiểm tra định dạng file
+		String contentType = avatarFile.getContentType();
+
+		if (contentType == null || !contentType.startsWith("image/")) { // Phải là file ảnh
+			throw new InvalidDataException("Ảnh đại diện phải là ảnh");
+		}
+
+		// Trích xuất và làm sạch tên file gốc từ hệ thống file của client
+		String fileName = StringUtils.cleanPath(avatarFile.getOriginalFilename());
+
+		// Tạo ra một tên file duy nhất
+		String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
+
+		// Tạo đường dẫn để lưu file
+		Path uploadDir = Path.of("uploads");
+
+		try {
+			if (!Files.exists(uploadDir)) {
+				Files.createDirectories(uploadDir);
+			}
+			Path uploadPath = Path.of(uploadDir.toString(), uniqueFileName);
+			Files.copy(avatarFile.getInputStream(), uploadPath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+		return uniqueFileName;
+	}
+
     @Override
     public List<AnimalSpecies> getAllAnimalSpecies() {
         return this.animalSpeciesRepository.findAll();
@@ -135,36 +182,46 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     }
 
     @Override
-    public AnimalSpecies updateAnimalSpecies(String name, AnimalSpeciesDTO animalSpeciesDTO) {
-        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(name);
+    public AnimalSpecies updateAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, MultipartFile imageFile) {
+        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(animalSpeciesDTO.getName());
 
-        animalSpecies.setAnimalType(animalSpeciesDTO.getAnimalType());
-        animalSpecies.setMainFood(animalSpeciesDTO.getMainFood());
-        animalSpecies.setMainDisease(animalSpeciesDTO.getMainDisease());
-        animalSpecies.setLongevity(animalSpeciesDTO.getLongevity());
-
+        // Kiểm tra image đã thay đổi chưa, nếu đã thay đổi -> gọi hàm để lưu file
+		if (!animalSpecies.getImage().equals(animalSpeciesDTO.getImage())) {
+			String image = this.saveImage(imageFile);
+			animalSpecies.setImage(image);
+		}
         Fluctuation fluctuation = this.getFluctuationById(animalSpeciesDTO.getFluctuationId());
-        animalSpecies.setFluctuation(fluctuation);
+
+        animalSpecies.setAnimalType(animalSpeciesDTO.getAnimalType())
+                    .setMainFood(animalSpeciesDTO.getMainFood())
+                    .setMainDisease(animalSpeciesDTO.getMainDisease())
+                    .setLongevity(animalSpeciesDTO.getLongevity())
+                    .setFluctuation(fluctuation);
+
         return animalSpeciesRepository.save(animalSpecies);
     }
 
     @Override
-    public AnimalSpecies addAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, String name) {
-        AnimalSpecies animalSpecies = new AnimalSpecies();
-
+    public AnimalSpecies addAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, MultipartFile imageFile) {
+        
         //kiểm tra tên
-        Optional<AnimalSpecies> tmp = this.animalSpeciesRepository.findById(name);
+        Optional<AnimalSpecies> tmp = this.animalSpeciesRepository.findById(animalSpeciesDTO.getName());
         if(tmp.isPresent()){
-            throw new DataAlreadyExistsException("Đã tồn tại loài động vật với tên = "+ name);
+            throw new DataAlreadyExistsException("Đã tồn tại loài động vật với tên = "+ animalSpeciesDTO.getName());
         }
-        animalSpecies.setName(name);
-        animalSpecies.setAnimalType(animalSpeciesDTO.getAnimalType());
-        animalSpecies.setMainFood(animalSpeciesDTO.getMainFood());
-        animalSpecies.setMainDisease(animalSpeciesDTO.getMainDisease());
-        animalSpecies.setLongevity(animalSpeciesDTO.getLongevity());
-
+        String image = this.saveImage(imageFile);
         Fluctuation fluctuation = this.getFluctuationById(animalSpeciesDTO.getFluctuationId());
-        animalSpecies.setFluctuation(fluctuation);
+
+        AnimalSpecies animalSpecies =  AnimalSpecies.builder()
+                                    .name(animalSpeciesDTO.getName())
+                                    .animalType(animalSpeciesDTO.getAnimalType())
+                                    .image(image)
+                                    .mainFood(animalSpeciesDTO.getMainFood())
+                                    .mainDisease(animalSpeciesDTO.getMainDisease())
+                                    .longevity(animalSpeciesDTO.getLongevity())
+                                    .fluctuation(fluctuation)
+                                    .build();
+
         return animalSpeciesRepository.save(animalSpecies);
     }
 

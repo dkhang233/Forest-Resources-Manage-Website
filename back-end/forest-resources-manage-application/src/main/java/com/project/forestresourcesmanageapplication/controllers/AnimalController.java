@@ -1,5 +1,9 @@
 package com.project.forestresourcesmanageapplication.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -7,7 +11,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +22,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
@@ -83,15 +93,26 @@ public class AnimalController {
         return ResponseEntity.ok(animalSpecies);
     }
 
+    @GetMapping(value = "/species/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
+	public @ResponseBody byte[] getImageWithMediaType(@PathVariable String fileName) throws IOException {
+		Path uploadPath = Path.of("uploads", fileName);
+		InputStream in = Files.newInputStream(uploadPath);
+		return IOUtils.toByteArray(in);
+	}
+
     @PostMapping("/species/{name}")
-    public ResponseEntity<AnimalSpecies> addAnimalSpecies(@PathVariable String name, @RequestBody AnimalSpeciesDTO animalSpeciesDTO){
-        AnimalSpecies animalSpecies = this.animalStorageFacilitiesService.addAnimalSpecies(animalSpeciesDTO,name);
+    public ResponseEntity<AnimalSpecies> addAnimalSpecies(@PathVariable String name,
+     @RequestPart(name="body") AnimalSpeciesDTO animalSpeciesDTO,
+     @RequestParam(name="file-image", required = false) MultipartFile imageFile){
+        AnimalSpecies animalSpecies = this.animalStorageFacilitiesService.addAnimalSpecies(animalSpeciesDTO,imageFile);
         return ResponseEntity.status(HttpStatus.CREATED).body(animalSpecies);
     }
 
     @PutMapping("/species/{name}")
-    public ResponseEntity<AnimalSpecies> updateAnimalSpecies(@PathVariable String name, @RequestBody AnimalSpeciesDTO animalSpeciesDTO){
-        AnimalSpecies animalSpecies = this.animalStorageFacilitiesService.updateAnimalSpecies(name, animalSpeciesDTO);
+    public ResponseEntity<AnimalSpecies> updateAnimalSpecies(@PathVariable String name,
+     @RequestPart(name="body") AnimalSpeciesDTO animalSpeciesDTO,
+     @RequestParam(name="file-image", required = false) MultipartFile imageFile){
+        AnimalSpecies animalSpecies = this.animalStorageFacilitiesService.updateAnimalSpecies(animalSpeciesDTO,imageFile);
         return ResponseEntity.ok(animalSpecies);
     }
 

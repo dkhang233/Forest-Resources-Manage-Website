@@ -17,37 +17,31 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-//-----------------------CƠ SỞ LƯU TRỮ ĐỘNG VẬT
-
 @Entity
-@Table(name="animal_storage_facilities")
+@Table(name="wf_pt_relationship")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class AnimalStorageFacilities {
+public class WfPtRelationship {
     @Id
-    @Column(name="code")
-    private String code;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
+    private int id;
 
-    @Column(name="name",nullable = false,length = 100)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name="wood_facilities_code")
+    private WoodFacilities woodFacilities;
+
+    @ManyToOne
+    @JoinColumn(name="production_type_name")
+    private ProductionType productionType;
+
+    @Column(name="quantity")
+    private long quantity;
 
     @Column(name="date")
     private Date date;
-    
-    //sức chứa
-    @Column(name="capacity",nullable = false,length = 100)
-    private long capacity;
-
-    @ManyToOne
-    @JoinColumn(name="adminstration_code")
-    private Administration administration;
-
-    //thông tin chi tiết
-    @Column(name="detail")
-    private String detail;
-
 }
