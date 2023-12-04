@@ -46,3 +46,4 @@ public class WoodFacilities {
     @JoinColumn(name="operation_form_name")
     private OperationForm operationForm;
 }
+
