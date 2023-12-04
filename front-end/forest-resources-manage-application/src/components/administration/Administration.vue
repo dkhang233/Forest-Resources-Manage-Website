@@ -195,7 +195,7 @@ export default {
         },
         retrieveAdministrations() {
             // this.loadingStatus = true
-            retrieveSubAdministrationsWithHierarchy(this.userStore.administrativeName)
+            retrieveSubAdministrationsWithHierarchy(35)
                 .then((res) => {
                     this.treeData = res.data
                     this.loadingStatus = false

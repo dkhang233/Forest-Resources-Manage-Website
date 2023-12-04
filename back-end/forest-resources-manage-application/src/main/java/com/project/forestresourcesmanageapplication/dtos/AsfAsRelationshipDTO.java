@@ -8,6 +8,12 @@ import lombok.Data;
 @Data
 public class AsfAsRelationshipDTO {
     @NotBlank
+    private String codeASF;
+
+    @NotBlank
+    private String nameAS;
+
+    @NotBlank
     private long quantity;
 
     @NotBlank

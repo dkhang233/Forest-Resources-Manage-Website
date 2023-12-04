@@ -1,5 +1,6 @@
 package com.project.forestresourcesmanageapplication.servicesimpl;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -228,4 +229,10 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         this.asfAsRelationshipRepository.deleteById(asfAsRelationship.getId());
     }
 
+
+    //--------------------------THỐNG KÊ--------------------------------
+    // @Override
+    // public List<AsfAsRelationship> getAsfAsRelationshipWithYear(Date date) {
+    //     return this.getAsfAsRelationshipWithYear(date);
+    // }
 }

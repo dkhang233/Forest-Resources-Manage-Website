@@ -2,17 +2,17 @@
     <div id="left">
         <el-scrollbar height="690px" always>
             <el-menu active-text-color="#dd5862" text-color="#fff" class="side-bar"
-                @open="handleOpen" @close="handleClose" :collapse="this.appStore.flag" background-color="#124280"
+                @open="handleOpen" @close="handleClose" :collapse="this.appStore.flag" background-color="#FBFBFB"
                 menu-trigger="click" router>
                 <el-menu-item :index="`/main`" >
-                    <i class="icon"><font-awesome-icon class="iconfont" icon="fa-house" /></i>
+                    <i class="icon"><font-awesome-icon class="iconfont " icon="fa-house" style="color: #494965;"/></i>
                     <template #title>
                         <span class="title">Trang chủ</span>
                     </template>
                 </el-menu-item>
                 <el-sub-menu v-for="(item, index) in this.appStore.menu" :index='item.index' :key="index">
                     <template #title>
-                        <i class="icon"><font-awesome-icon class="iconfont" :icon="item.icon" /></i>
+                        <i class="icon"><font-awesome-icon class="iconfont" :icon="item.icon" style="color: #494965;" /></i>
                         <span class="title">{{ item.title }}</span>
                     </template>
                     <el-menu-item-group v-for="(list, index1) in item.content" :key="index1">
@@ -23,7 +23,7 @@
                 </el-sub-menu>
                 <el-sub-menu :index="''" >
                     <template #title>
-                        <i class="icon"><font-awesome-icon class="iconfont" icon="fa-gauge-high" /></i>
+                        <i class="icon"><font-awesome-icon class="iconfont" icon="fa-gauge-high" style="color: #494965;"/></i>
                         <span class="title">Hệ thống</span>
                     </template>
                     <el-menu-item-group>
@@ -74,13 +74,13 @@ export default {
 
 #left {
     min-height: 697px;
-    background-color: #124280;
+    background-color:#FBFBFB;
     z-index: 5;
     position: relative;
 }
 
 #left .title {
-    color: #fff;
+    color: #2C3E50 ;
     font-size: 16px;
     font-weight: bold;
     margin-left: 14px;
@@ -91,11 +91,19 @@ export default {
 }
 
 .el-submenu__title:hover {
-    background-color: #fff;
+    background-color: #2C3E50;
 }
 
-.el-submenu__title i {
-    color: #fbfbfc !important;
+.el-submenu__title{
+    color: #2C3E50;
+}
+
+.el-menu-item{
+    color: #2C3E50;
+}
+
+.el-sub-menu .el-icon{
+    color: #2C3E50;
 }
 
 .el-button {
