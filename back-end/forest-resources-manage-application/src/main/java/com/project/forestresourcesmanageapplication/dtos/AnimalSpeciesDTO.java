@@ -5,8 +5,12 @@ import lombok.Data;
 
 @Data
 public class AnimalSpeciesDTO {
+    private String name;
+
     @NotBlank
     private String animalType;
+
+    private String image;
 
     private String mainFood;
 

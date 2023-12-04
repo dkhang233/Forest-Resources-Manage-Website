@@ -38,6 +38,9 @@ public class AnimalSpecies {
     @Column(name="animal_type",nullable = false,length = 100)
     private String animalType;
 
+    @Column(name="image", length = 150)
+    private String image;
+
     @Column(name="main_food")
     private String mainFood;
 

@@ -238,6 +238,7 @@ DROP TABLE IF EXISTS `animal_species`;
 CREATE TABLE `animal_species`(
     `name` VARCHAR(100) NOT NULL,
     `animal_type` VARCHAR(100) NOT NULL COMMENT 'loài động vật',
+	`image` VARCHAR(150) NULL COMMENT 'ảnh',
     `main_food` VARCHAR(100) NULL COMMENT 'thức ăn chính',
     `main_disease` VARCHAR(100) NULL COMMENT 'bệnh chính',
     `longevity` INT NULL COMMENT 'tuổi thọ',
