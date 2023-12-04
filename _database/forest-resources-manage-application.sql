@@ -211,7 +211,7 @@ CREATE TABLE `animal_storage_facilities`(
     `code` VARCHAR(20) NOT NULL,
     `name` VARCHAR(100) NOT NULL UNIQUE,
     `date` DATE NULL,
-    `capacity` VARCHAR(20) NOT NULL COMMENT 'sức chứa',
+    `capacity` LONG NOT NULL COMMENT 'sức chứa',
     `adminstration_code` VARCHAR(20) NULL COMMENT 'id hành chính',
     `detail` varchar(256) NULL COMMENT 'thông tin chi tiết',
     PRIMARY KEY (`code`),
@@ -266,6 +266,63 @@ CREATE TABLE `asf_as_relationship`(
         REFERENCES `animal_species`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='bảng quan hệ CSLTDV - Loài động vật';
+
+-- -----------------------------------------------------
+-- Table Operation Form
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `operation_form`;
+CREATE TABLE `operation_form`(
+    `name` VARCHAR(100) NOT NULL,
+    `decription` VARCHAR(256) NULL COMMENT 'mô tả',
+    PRIMARY KEY (`name`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='hình thức hoạt động';
+
+-- -----------------------------------------------------
+-- Table Production Type
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `production_type`;
+CREATE TABLE `production_type`(
+    `wood_type` VARCHAR(100) NOT NULL COMMENT 'loại gỗ',
+    `capacity` LONG NULL COMMENT 'khả năng sản xuất',
+    PRIMARY KEY (`wood_type`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='loại hình sản xuất';
+
+-- -----------------------------------------------------
+-- Table Wood Facilities
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `wood_facilities`;
+CREATE TABLE `wood_facilities`(
+    `code` VARCHAR(20) NOT NULL,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `date` DATE NULL,
+	`capacity` LONG NOT NULL COMMENT 'sức chứa',
+    `adminstration_code` VARCHAR(20) NULL COMMENT 'id hành chính',
+    `operation_form_name` VARCHAR(100) NOT NULL COMMENT 'tên hình thức hoạt động',
+    PRIMARY KEY (`code`),
+    FOREIGN KEY (`adminstration_code`)
+        REFERENCES `administrations`(`code`),
+	FOREIGN KEY (`operation_form_name`)
+        REFERENCES `operation_form`(`name`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='cơ sở sản xuất chế biến gỗ';
+
+-- -----------------------------------------------------
+-- Table WF-PT Relationship
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `wf_pt_relationship`;
+CREATE TABLE `wf_pt_relationship`(
+    `id` INT NOT NULL,
+    `wood_facilities_code` VARCHAR(20) NOT NULL COMMENT 'code cơ sở lưu sản xuất chế biến gỗ',
+    `production_type_name` VARCHAR(100) NOT NULL COMMENT 'tên loại hình sản xuất',
+    `quantity` LONG NULL COMMENT 'số lượng',
+    `date` DATE NULL COMMENT 'ngày',
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`wood_facilities_code`)
+        REFERENCES `wood_facilities`(`code`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (`production_type_name`)
+        REFERENCES `production_type`(`wood_type`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='bảng quan hệ cơ sở gỗ - loại hình sản xuất';
 
 
 

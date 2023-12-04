@@ -13,7 +13,7 @@ public class AnimalStorageFacilitiesDTO {
     private Date date;
     
     @NotBlank
-    private String capacity;
+    private long capacity;
 
     @NotBlank
     private String adminstrationCode;
