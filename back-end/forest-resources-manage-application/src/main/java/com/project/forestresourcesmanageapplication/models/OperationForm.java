@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+
+//-----------------------------HÌNH THỨC HOẠT ĐỘNG
 @Entity
 @Table(name="operation_form")
 @Getter
@@ -23,9 +25,10 @@ import lombok.experimental.Accessors;
 @Builder
 public class OperationForm {
     @Id
-    @Column(name="name")
+    @Column(name="name",length = 100)
     private String name;
 
-    @Column(name="decription")
+    //mô tả
+    @Column(name="decription",length = 256)
     private String decription;
 }
