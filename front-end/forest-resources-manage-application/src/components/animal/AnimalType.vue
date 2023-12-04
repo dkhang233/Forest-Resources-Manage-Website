@@ -1,27 +1,25 @@
 <template>
     <el-row>
         <el-col :offset="2">
-            <h1 class=" text-[#21618C] text-[25px] font-bold m-3">
+            <h1 class=" text-[#2C3E50] text-[25px] font-bold m-3">
                 <font-awesome-icon class="mr-3" :icon="['fas', 'paw']" size="2xl" />
                 Quản lí động vật
             </h1>
         </el-col>
     </el-row>
-    <el-row v-loading="loadingStatus">
-        <el-col :span="20" :offset="2">
-            <el-card class="h-[550px]" shadow="always">
-                <el-table :data="filterTableData" class="h-[530px] w-[93rem]" fit>
-                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
+    <div class="grid grid-cols-20 pl-[100px] pr-[90px]" v-loading="loadingStatus">
+        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/dog.jpg" alt="" />
+        <div class="col-start-11">
+            <el-card class="h-[550px] w-[50rem] rounded-e-3xl" shadow="always">
+                <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer" fit @row-click="changeAnimalImage">
+                    <el-table-column  v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                         :prop="item.value">
                     </el-table-column>
-                    <el-table-column :min-width="120">
+                    <el-table-column :min-width="120" align="center">
                         <template #header>
                             <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
                         </template>
                         <template #default="scope">
-                            <el-switch class="ml-20" v-model="scope.row.is_active"
-                                @change="changeUserStatus(index, scope.row)" :loading="scope.row.loading"
-                                style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
                             <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
                         </template>
                     </el-table-column>
@@ -46,38 +44,26 @@
                         </el-form-item>
                     </div>
                     <div class="col-start-5 col-span-10">
-                        <el-form-item label="Username" prop="username">
-                            <el-input v-model="form.username" :disabled="formType == 'update'" />
+                        <el-form-item label="Tên" prop="name">
+                            <el-input v-model="form.name" :disabled="formType == 'update'" />
                         </el-form-item>
                         <div class="grid grid-cols-2 gap-5">
-                            <el-form-item label="Họ" prop="first_name">
-                                <el-input v-model="form.first_name" />
+                            <el-form-item label="Loại" prop="animalType">
+                                <el-input v-model="form.animalType" />
                             </el-form-item>
-                            <el-form-item label="Tên" prop="last_name">
-                                <el-input v-model="form.last_name" />
+                            <el-form-item label="Thức ăn chính" prop="mainFood">
+                                <el-input v-model="form.mainFood" />
                             </el-form-item>
                         </div>
-                        <el-form-item label="Email" prop="email">
-                            <el-input v-model="form.email" />
+                        <el-form-item label="Bệnh chính" prop="mainDisease">
+                            <el-input v-model="form.mainDisease" />
                         </el-form-item>
                         <div class="grid grid-cols-2 gap-5">
-                            <el-form-item label="Ngày sinh" prop="birth_date">
-                                <el-date-picker v-model="form.birth_date" type="date" placeholder="Chọn ngày sinh"
-                                    size="default" />
+                            <el-form-item label="Tuổi thọ" prop="longevity">
+                                <el-input v-model="form.longevity" size="default" />
                             </el-form-item>
-                            <el-form-item label="Địa chỉ" prop="address">
-                                <el-input v-model="form.address" />
-                            </el-form-item>
-                        </div>
-                        <div class="grid grid-cols-2 gap-5">
-                            <el-form-item label="Vai trò" prop="role">
-                                <el-select v-model="form.role" placeholder="Chọn vai trò">
-                                    <el-option label="User" value="user" />
-                                    <el-option label="Admin" value="admin" />
-                                </el-select>
-                            </el-form-item>
-                            <el-form-item label="Trực thuộc" prop="administration_name">
-                                <el-input v-model="form.administration_name" />
+                            <el-form-item label="Loại biến động" prop="fluctuationName">
+                                <el-input v-model="form.fluctuationName" />
                             </el-form-item>
                         </div>
                     </div>
@@ -116,98 +102,96 @@
                     </span>
                 </template>
             </el-dialog>
-        </el-col>
-    </el-row>
-    <el-row>
-        <el-col :offset="2">
-            <button class="w-full md:w-auto flex justify-center 
+        </div>
+        </div>
+        <el-row>
+            <el-col :offset="2">
+                <button class="w-full md:w-auto flex justify-center 
                         items-center p-3 mt-3 space-x-4 font-sans font-bold
                         text-white rounded-lg shadow-lg 
                         px-9 bg-blue-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="createNewUser">
-                <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
-                <span>Tạo mới</span>
-            </button>
-        </el-col>
-    </el-row>
+                    <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
+                    <span>Tạo mới</span>
+                </button>
+            </el-col>
+        </el-row>
 </template>
 
 <script>
-import { retrieveAllUsers, updateUser, createUser } from '@/api/user'
+import * as animalApi from '@/api/animal'
 import { retrieveAdministrationByName } from '@/api/administration'
-import { useUserStore } from "@/stores/user-store"
-import { mapStores } from 'pinia'
 export default {
     data() {
         return {
             loadingStatus: false,
             search: '',
+            animalImage:'',
             tableColumns: [
                 {
-                    title: 'Họ',
-                    value: 'first_name'
-                },
-                {
                     title: 'Tên',
-                    value: 'last_name'
+                    value: 'name'
                 },
                 {
-                    title: 'Username',
-                    value: 'username'
+                    title: 'Loại',
+                    value: 'animalType'
                 },
+                // {
+                //     title: 'Thức ăn chính',
+                //     value: 'mainFood'
+                // },
+                // {
+                //     title: 'Bệnh chính',
+                //     value: 'mainDisease'
+                // },
+                // {
+                //     title: 'Tuổi thọ',
+                //     value: 'longevity'
+                // },
                 {
-                    title: 'Vai trò',
-                    value: 'role'
-                },
-                {
-                    title: 'Trực thuộc',
-                    value: 'administration_name'
-                },
+                    title: 'Loại biến động',
+                    value: 'fluctuation[name]'
+                }
             ],
             tableData: [],
             filterTableData: [],
             dialogFormVisible: false,
             form: {
-                username: '',
-                first_name: '',
-                last_name: '',
-                email: '',
-                avatar: '',
-                address: '',
-                birth_date: '',
-                role: '',
-                is_active: true,
-                administration_name: ''
+                name: '',
+                animalType: '',
+                mainFood: '',
+                mainDisease: '',
+                longevity: '',
+                fluctuationName: '',
             },
             formBackUp: null,
             avatarFile: null,
             formType: 'update',
             rules: {
-                username: [{ validator: this.checkUsername, trigger: 'blur' }],
-                email: [{ validator: this.checkEmail, trigger: 'blur' }],
-                administration_name: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
+                // username: [{ validator: this.checkUsername, trigger: 'blur' }],
+                // email: [{ validator: this.checkEmail, trigger: 'blur' }],
+                // administration_name: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
             },
         }
     },
     computed: {
-        ...mapStores(useUserStore),
-        userAvatar() {
-            if (this.form.avatar.includes("http://")) {
-                return this.form.avatar
-            }
-            return "http://localhost:8088/api/v1/users/avatar/" + this.form.avatar
-        },
-        formTitle() {
-            return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'
-        }
+        // userAvatar() {
+        //     if (this.form.avatar.includes("http://")) {
+        //         return this.form.avatar
+        //     }
+        //     return "http://localhost:8088/api/v1/users/avatar/" + this.form.avatar
+        // },
+        // formTitle() {
+        //     return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'
+        // }
     },
     watch: {
         search(search) {
             this.filterTableData = this.tableData.filter(
                 (data) =>
                     !search ||
-                    data.username.toLowerCase().includes(search.toLowerCase())
+                    data.name.toLowerCase().includes(search.toLowerCase())
             )
         }
     },
@@ -215,13 +199,17 @@ export default {
         // Lấy dữ liệu từ serve 
         retrieveData() {
             this.loadingStatus = true
-            retrieveAllUsers().then((res) => {
+            animalApi.retrieveAllAnimalSpecies().then((res) => {
                 this.tableData = res.data
                 this.filterTableData = this.tableData
                 this.loadingStatus = false
             }).catch(err => console.log(err))
         },
 
+        changeAnimalImage(row){
+            console.log(row.name)
+            // this.animalImage 
+        },
         // Tạo tài khoản mới
         createNewUser() {
             this.formType = 'create'
@@ -230,16 +218,12 @@ export default {
                 this.$refs.ruleFormRef.clearValidate()
             }
             this.formBackUp = {
-                username: this.form.username,
-                first_name: this.form.first_name,
-                last_name: this.form.last_name,
-                email: this.form.email,
-                avatar: this.form.avatar,
-                address: this.form.address,
-                birth_date: this.form.birth_date,
-                role: this.form.role,
-                is_active: this.form.is_active,
-                administration_name: this.form.administration_name
+                name: '',
+                animalType: '',
+                mainFood: '',
+                mainDisease: '',
+                longevity: '',
+                fluctuationName: '',
             }
             this.dialogFormVisible = true
         },
@@ -305,17 +289,14 @@ export default {
             }
             this.formType = 'update'
             this.form = row
+            this.form.fluctuationName = row.fluctuation.name
             this.formBackUp = {
-                username: this.form.username,
-                first_name: this.form.first_name,
-                last_name: this.form.last_name,
-                email: this.form.email,
-                avatar: this.form.avatar,
-                address: this.form.address,
-                birth_date: this.form.birth_date,
-                role: this.form.role,
-                is_active: this.form.is_active,
-                administration_name: this.form.administration_name
+                name: this.form.name,
+                animalType: this.form.animalType,
+                mainFood: this.form.mainFood,
+                mainDisease: this.form.mainDisease,
+                longevity: this.form.longevity,
+                fluctuationName: this.form.fluctuationName,
             }
             this.dialogFormVisible = true
         },
@@ -390,16 +371,12 @@ export default {
                 )
                     .then(() => {
                         if (this.formBackUp != null) {
-                            this.form.username = this.formBackUp.username
-                            this.form.first_name = this.formBackUp.first_name
-                            this.form.last_name = this.formBackUp.last_name
-                            this.form.email = this.formBackUp.email
-                            this.form.avatar = this.formBackUp.avatar
-                            this.form.address = this.formBackUp.address
-                            this.form.birth_date = this.formBackUp.birth_date
-                            this.form.role = this.formBackUp.role
-                            this.form.is_active = this.formBackUp.is_active
-                            this.form.administration_name = this.formBackUp.administration_name
+                            this.form.name = this.form.name
+                            this.form.animalType = this.form.animalType
+                            this.form.mainFood = this.form.mainFood
+                            this.form.mainDisease = this.form.mainDisease
+                            this.form.longevity = this.form.longevity
+                            this.form.fluctuationName = this.form.fluctuationName
                         }
                         this.dialogFormVisible = false
                     })
@@ -426,14 +403,14 @@ export default {
                     )
                         .then(() => {
                             this.loadingStatus = true
-                            let user = new FormData()
-                            user.append('avatar-file', this.avatarFile)
+                            let animal = new FormData()
+                            animal.append('image-file', this.avatarFile)
                             let formJson = JSON.stringify(this.form)
                             const formData = new Blob([formJson], {
                                 type: 'application/json'
                             });
                             user.append('body', formData)
-                            updateUser(this.form.username, user)
+                            animalApi.updateAnimalSpecie(this.form.name, user)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -461,52 +438,16 @@ export default {
             })
         },
 
-        // Thay đổi trạng thái tài khoản của người dùng
-        changeUserStatus(index, row) {
-            row.loading = true
-            let user = new FormData()
-            user.append('avatar-file', this.avatarFile)
-            let formJson = JSON.stringify(row)
-            const formData = new Blob([formJson], {
-                type: 'application/json'
-            });
-            user.append('body', formData)
-            updateUser(row.username, user)
-                .then((res) => {
-                    row.loading = false
-                    this.$notify({
-                        title: 'Thành công',
-                        message: 'Cập nhập thành công',
-                        type: 'success'
-                    })
-                    return true
-                }).catch((err) => {
-                    row.loading = false
-                    row.is_active = !row.is_active
-                    this.$notify({
-                        title: 'Đã xảy ra lỗi',
-                        message: err.response.data.messages,
-                        type: 'error',
-                    })
-                    console.log(err.message)
-                    return false
-                })
-        },
 
         // Reset dữ liệu của form 
         resetFormData() {
             this.form = {
-                username: '',
-                first_name: '',
-                last_name: '',
-                email: '',
-                avatar: '',
-                avatarFile: null,
-                address: '',
-                birth_date: '',
-                role: '',
-                is_active: true,
-                administration_name: ''
+                name: '',
+                animalType: '',
+                mainFood: '',
+                mainDisease: '',
+                longevity: '',
+                fluctuationName: '',
             }
         },
 
@@ -543,4 +484,3 @@ export default {
     }
 }
 </script>
-

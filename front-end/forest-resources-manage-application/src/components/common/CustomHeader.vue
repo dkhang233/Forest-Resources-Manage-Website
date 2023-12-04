@@ -1,38 +1,136 @@
 <template>
-    <header id="topbar">
-        <el-row>
-            <el-col :span="4" class="topbar-left">
-                <i class="iconfont el-icon-menu"></i>
-                <span class="title">Forest Manage System</span>
-            </el-col>
-            <el-col :span="20" class="topbar-right">
-                <el-button @click="this.appStore.toggle(this.state)"><el-icon><Switch /></el-icon> </el-button>
-                <div class="user">
-                    <span>{{ user.userName }}</span>
-                    <img src="" class="user-img" ref="img" @click="showSetting()" />
-                    <transition name="fade">
-                        <div class="out" ref="out" v-if="loginFlag">
-                            <ul>
-                                <li><a href="@/user/infor">Thông tin</a></li>
-                                <li><a href="javascript:;">Cài đặt</a></li>
-                                <li class="exit" @click="exit()"><a href="javascript:;">Đăng xuất</a></li>
-                            </ul>
-                        </div>
-                    </transition>
+    <!-- Main navigation container -->
+    <nav
+        class="flex-no-wrap relative flex w-full items-center justify-between bg-[#FBFBFB] py-2 shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4">
+        <div class="flex w-full flex-wrap items-center justify-between px-3">
+            <!-- Hamburger button for mobile view -->
+            <button class="block border-0 bg-transparent px-2 
+                text-[#2C3E50] hover:no-underline hover:shadow-none 
+                focus:no-underline focus:shadow-none focus:outline-none 
+                focus:ring-0 dark:text-neutral-200 lg:hidden"
+                @click="changeHeaderView">
+                <!-- Hamburger icon -->
+                <span class="[&>svg]:w-7">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7">
+                        <path fill-rule="evenodd"
+                            d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </span>
+            </button>
+
+            <!-- Collapsible navigation container -->
+            <div class="!visible flex-grow basis-[100%] items-center lg:!flex lg:basis-auto" v-show="headerView">
+                <!-- Logo -->
+                <a class="mb-4 ml-2 mr-5 mt-3 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400 lg:mb-0 lg:mt-0"
+                    href="#">
+                    <img src="@/assets/logo/logo.png" class="w-[55px] h-[55px]"
+                        alt="TE Logo" loading="lazy" />
+                </a>
+                <!-- Left navigation links -->
+                <ul class="list-style-none mr-auto flex flex-col pl-0 lg:flex-row" data-te-navbar-nav-ref>
+                    <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                        <!-- Dashboard link -->
+                        <a class="text-[#2C3E50] transition duration-200 hover:text-neutral-400 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-zinc-400"
+                            href="#" data-te-nav-link-ref>Dashboard</a>
+                    </li>
+                    <!-- Team link -->
+                    <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                        <a class="text-[#2C3E50] transition duration-200 hover:text-neutral-400 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
+                            href="#" data-te-nav-link-ref>Team</a>
+                    </li>
+                    <!-- Projects link -->
+                    <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                        <a class="text-[#2C3E50] transition duration-200 hover:text-neutral-400 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
+                            href="#" data-te-nav-link-ref>Projects</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right elements -->
+            <div class="relative flex items-center">
+
+                <!-- Container with two dropdown menus -->
+                <div class="relative" data-te-dropdown-ref data-te-dropdown-alignment="end">
+                    <!-- First dropdown trigger -->
+                    <a class="hidden-arrow mr-4 flex items-center text-neutral-600 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
+                        href="#" id="dropdownMenuButton1" role="button" data-te-dropdown-toggle-ref aria-expanded="false">
+                        <!-- Dropdown trigger icon -->
+                        <span class="[&>svg]:w-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                                <path fill-rule="evenodd"
+                                    d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <!-- Notification counter -->
+                        <span
+                            class="absolute -mt-4 ml-2.5 rounded-full bg-danger px-[0.35em] py-[0.15em] text-[0.6rem] font-bold leading-none text-white">1</span>
+                    </a>
+                    <!-- First dropdown menu -->
+                    <ul class="absolute z-[1000] float-left m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-neutral-700 [&[data-te-dropdown-show]]:block"
+                        aria-labelledby="dropdownMenuButton1" data-te-dropdown-menu-ref>
+                        <!-- First dropdown menu items -->
+                        <li>
+                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
+                                href="#" data-te-dropdown-item-ref>Action</a>
+                        </li>
+                        <li>
+                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
+                                href="#" data-te-dropdown-item-ref>Another action</a>
+                        </li>
+                        <li>
+                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
+                                href="#" data-te-dropdown-item-ref>Something else here</a>
+                        </li>
+                    </ul>
                 </div>
-            </el-col>
-        </el-row>
-    </header>
+
+                <!-- Second dropdown container -->
+                <div class="relative" data-te-dropdown-ref data-te-dropdown-alignment="end">
+                    <!-- Second dropdown trigger -->
+                    <span
+                        class="hidden-arrow flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none"
+                        @click="showSetting" id="dropdownMenuButton2" role="button" data-te-dropdown-toggle-ref
+                        aria-expanded="false">
+                        <!-- User avatar -->
+                        <img src="https://tecdn.b-cdn.net/img/new/avatars/2.jpg" class="rounded-full"
+                            style="height: 50px; width: 50px" alt="" loading="lazy" />
+                    </span>
+                    <!-- Second dropdown menu -->
+                    <ul class="absolute z-[1000] right-1  min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-neutral-700 [&[data-te-dropdown-show]]:block"
+                        v-show="loginFlag">
+                        <!-- Second dropdown menu items -->
+                        <li>
+                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
+                                href="#">Action</a>
+                        </li>
+                        <li>
+                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
+                                href="#">Another action</a>
+                        </li>
+                        <li>
+                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
+                                href="#">Something else here</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
 </template>
 
 <script>
 import { mapStores } from 'pinia'
 import { useAppStore } from "../../stores/app-store"
+import { useUserStore } from '@/stores/user-store'
+
 export default {
     name: "customHeader",
     data() {
         return {
             loginFlag: false,
+            headerView: false,
             user: { //用户信息
                 userName: "Admin",
                 userId: null
@@ -43,19 +141,18 @@ export default {
         this.getUserInfo()
     },
     computed: {
-        ...mapStores(useAppStore)
+        ...mapStores(useAppStore, useUserStore)
     },
     methods: {
         //Hiển thị cài đặt tài khoản khi người dùng ấn vào avatar
         showSetting() {
             this.loginFlag = !this.loginFlag
         },
-        //左侧栏放大缩小
-        getUserInfo() { //获取用户信息
-            // let userName = this.$cookies.get("cname")
-            // let userId = this.$cookies.get("cid")
-            // this.user.userName = userName
-            // this.user.userId = userId
+        changeHeaderView() {
+            this.headerView = !this.headerView
+        },
+        getUserInfo() {
+            this.userStore.getInfor()
         },
         exit() {
             // let role = this.$cookies.get("role")
@@ -68,94 +165,9 @@ export default {
             // }
         }
     },
+    created() {
+        this.getUserInfo()
+    }
 }
 </script>
 
-<style scoped>
-
-#topbar {
-    position: relative;
-    z-index: 10;
-    background-color: #124280;
-    height: 80px;
-    width: 100%;
-    line-height: 80px;
-    color: #fff;
-    box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.5);
-}
-
-#topbar .topbar-left {
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-}
-
-.topbar-left{
-    font-size: 60px;
-}
-
-.topbar-left .title {
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.topbar-right {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.topbar-right .user-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-}
-
-.topbar-right .el-icon-menu {
-    font-size: 30px;
-    margin-left: 20px;
-}
-
-.topbar-right .user {
-    position: relative;
-    margin-right: 40px;
-    display: flex;
-}
-
-.topbar-right .user .user-img {
-    margin-top: 15px;
-    margin-left: 10px;
-    cursor: pointer;
-}
-
-.user .out {
-    font-size: 14px;
-    position: absolute;
-    top: 80px;
-    right: 0px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    padding: 12px;
-}
-
-.user .out ul {
-    list-style: none;
-}
-
-.user .out ul>li {
-    height: 26px;
-    line-height: 26px;
-}
-
-.out a {
-    text-decoration: none;
-    color: #000;
-}
-
-.out .exit {
-    margin-top: 4px;
-    padding-top: 4px;
-    border-top: 1px solid #ccc;
-}</style>

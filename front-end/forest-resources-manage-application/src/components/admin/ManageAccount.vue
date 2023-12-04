@@ -1,7 +1,7 @@
 <template>
     <el-row>
         <el-col :offset="2">
-            <h1 class=" text-[#21618C] text-[25px] font-bold m-3">
+            <h1 class=" text-[#2C3E50] text-[25px] font-bold m-3">
                 <font-awesome-icon class="margin-right: 10px" :icon="['fas', 'users-gear']" size="lg" />
                 Quản lí tài khoản người dùng
             </h1>
@@ -9,7 +9,7 @@
     </el-row>
     <el-row v-loading="loadingStatus">
         <el-col :span="20" :offset="2">
-            <el-card class="h-[550px]" shadow="always">
+            <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
                 <el-table :data="filterTableData" class="h-[530px] w-[93rem]" fit>
                     <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                         :prop="item.value">
@@ -19,7 +19,7 @@
                             <el-input v-model="search" size="large" placeholder="Tìm kiếm theo username" />
                         </template>
                         <template #default="scope">
-                            <el-switch class="ml-20" v-model="scope.row.is_active"
+                            <el-switch class="ml-20" v-model="scope.row.isActive"
                                 @change="changeUserStatus(index, scope.row)" :loading="scope.row.loading"
                                 style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
                             <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
@@ -50,19 +50,19 @@
                             <el-input v-model="form.username" :disabled="formType == 'update'" />
                         </el-form-item>
                         <div class="grid grid-cols-2 gap-5">
-                            <el-form-item label="Họ" prop="first_name">
-                                <el-input v-model="form.first_name" />
+                            <el-form-item label="Họ" prop="firstName">
+                                <el-input v-model="form.firstName" />
                             </el-form-item>
-                            <el-form-item label="Tên" prop="last_name">
-                                <el-input v-model="form.last_name" />
+                            <el-form-item label="Tên" prop="lastName">
+                                <el-input v-model="form.lastName" />
                             </el-form-item>
                         </div>
                         <el-form-item label="Email" prop="email">
                             <el-input v-model="form.email" />
                         </el-form-item>
                         <div class="grid grid-cols-2 gap-5">
-                            <el-form-item label="Ngày sinh" prop="birth_date">
-                                <el-date-picker v-model="form.birth_date" type="date" placeholder="Chọn ngày sinh"
+                            <el-form-item label="Ngày sinh" prop="birthDate">
+                                <el-date-picker v-model="form.birthDate" type="date" placeholder="Chọn ngày sinh"
                                     size="default" />
                             </el-form-item>
                             <el-form-item label="Địa chỉ" prop="address">
@@ -76,8 +76,8 @@
                                     <el-option label="Admin" value="admin" />
                                 </el-select>
                             </el-form-item>
-                            <el-form-item label="Trực thuộc" prop="administration_name">
-                                <el-input v-model="form.administration_name" />
+                            <el-form-item label="Trực thuộc" prop="administrationName">
+                                <el-input v-model="form.administrationName" />
                             </el-form-item>
                         </div>
                     </div>
@@ -121,8 +121,8 @@
     <el-row>
         <el-col :offset="2">
             <button class="w-full md:w-auto flex justify-center 
-                        items-center p-3 mt-3 space-x-4 font-sans font-bold
-                        text-white rounded-lg shadow-lg 
+                        items-center p-3 mt-3 ml-4 space-x-4 font-sans font-bold
+                        text-white rounded-[10px] shadow-lg 
                         px-9 bg-blue-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="createNewUser">
@@ -146,11 +146,11 @@ export default {
             tableColumns: [
                 {
                     title: 'Họ',
-                    value: 'first_name'
+                    value: 'firstName'
                 },
                 {
                     title: 'Tên',
-                    value: 'last_name'
+                    value: 'lastName'
                 },
                 {
                     title: 'Username',
@@ -162,7 +162,7 @@ export default {
                 },
                 {
                     title: 'Trực thuộc',
-                    value: 'administration_name'
+                    value: 'administrationName'
                 },
             ],
             tableData: [],
@@ -170,15 +170,15 @@ export default {
             dialogFormVisible: false,
             form: {
                 username: '',
-                first_name: '',
-                last_name: '',
+                firstName: '',
+                lastName: '',
                 email: '',
                 avatar: '',
                 address: '',
-                birth_date: '',
+                birthDate: '',
                 role: '',
-                is_active: true,
-                administration_name: ''
+                isActive: true,
+                administrationName: ''
             },
             formBackUp: null,
             avatarFile: null,
@@ -186,7 +186,7 @@ export default {
             rules: {
                 username: [{ validator: this.checkUsername, trigger: 'blur' }],
                 email: [{ validator: this.checkEmail, trigger: 'blur' }],
-                administration_name: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
+                administrationName: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
             },
         }
     },
@@ -231,15 +231,15 @@ export default {
             }
             this.formBackUp = {
                 username: this.form.username,
-                first_name: this.form.first_name,
-                last_name: this.form.last_name,
+                firstName: this.form.firstName,
+                lastName: this.form.lastName,
                 email: this.form.email,
                 avatar: this.form.avatar,
                 address: this.form.address,
-                birth_date: this.form.birth_date,
+                birthDate: this.form.birthDate,
                 role: this.form.role,
-                is_active: this.form.is_active,
-                administration_name: this.form.administration_name
+                isActive: this.form.isActive,
+                administrationName: this.form.administrationName
             }
             this.dialogFormVisible = true
         },
@@ -307,15 +307,15 @@ export default {
             this.form = row
             this.formBackUp = {
                 username: this.form.username,
-                first_name: this.form.first_name,
-                last_name: this.form.last_name,
+                firstName: this.form.firstName,
+                lastName: this.form.lastName,
                 email: this.form.email,
                 avatar: this.form.avatar,
                 address: this.form.address,
-                birth_date: this.form.birth_date,
+                birthDate: this.form.birthDate,
                 role: this.form.role,
-                is_active: this.form.is_active,
-                administration_name: this.form.administration_name
+                isActive: this.form.isActive,
+                administrationName: this.form.administrationName
             }
             this.dialogFormVisible = true
         },
@@ -391,15 +391,15 @@ export default {
                     .then(() => {
                         if (this.formBackUp != null) {
                             this.form.username = this.formBackUp.username
-                            this.form.first_name = this.formBackUp.first_name
-                            this.form.last_name = this.formBackUp.last_name
+                            this.form.firstName = this.formBackUp.firstName
+                            this.form.lastName = this.formBackUp.lastName
                             this.form.email = this.formBackUp.email
                             this.form.avatar = this.formBackUp.avatar
                             this.form.address = this.formBackUp.address
-                            this.form.birth_date = this.formBackUp.birth_date
+                            this.form.birthDate = this.formBackUp.birthDate
                             this.form.role = this.formBackUp.role
-                            this.form.is_active = this.formBackUp.is_active
-                            this.form.administration_name = this.formBackUp.administration_name
+                            this.form.isActive = this.formBackUp.isActive
+                            this.form.administrationName = this.formBackUp.administrationName
                         }
                         this.dialogFormVisible = false
                     })
@@ -482,7 +482,7 @@ export default {
                     return true
                 }).catch((err) => {
                     row.loading = false
-                    row.is_active = !row.is_active
+                    row.isActive = !row.isActive
                     this.$notify({
                         title: 'Đã xảy ra lỗi',
                         message: err.response.data.messages,
@@ -497,16 +497,16 @@ export default {
         resetFormData() {
             this.form = {
                 username: '',
-                first_name: '',
-                last_name: '',
+                firstName: '',
+                lastName: '',
                 email: '',
                 avatar: '',
                 avatarFile: null,
                 address: '',
-                birth_date: '',
+                birthDate: '',
                 role: '',
-                is_active: true,
-                administration_name: ''
+                isActive: true,
+                administrationName: ''
             }
         },
 

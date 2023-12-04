@@ -1,6 +1,6 @@
 <template>
     <h2 class="font-mono mb-5 text-4xl font-bold">Xin chào</h2>
-    <p class="max-w-sm mb-12 font-sans font-light text-gray-600">Vui lòng đăng nhập để sử dụng hệ thống</p>
+    <p class="max-w-sm mb-12 font-sans font-light text-black">Vui lòng đăng nhập để sử dụng hệ thống</p>
     <el-form :model="form">
         <el-form-item>
             <input type="text"
@@ -15,7 +15,7 @@
     </el-form>
     <!-- Middle Content -->
     <div class="flex flex-col items-center justify-between mt-6 space-y-6 md:flex-row md:space-y-0">
-        <a class="mr-3 font-light text-cyan-700 hover:underline" href="#/forgetpass">Quên mật khẩu</a>
+        <a class="mr-3 font-light text-black hover:underline" href="#/forgetpass">Quên mật khẩu</a>
         <button class="w-full md:w-auto flex justify-center 
                         items-center p-6 space-x-4 font-sans font-bold
                         text-white rounded-md shadow-lg 
@@ -35,6 +35,10 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia';
+import { useUserStore } from '@/stores/user-store'
+import * as userApi from '@/api/user'
+
 export default {
     data() {
         return {
@@ -44,10 +48,24 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapStores(useUserStore)
+    },
     methods: {
         login() {
-            this.$router.push({ path: '/main' })
-        }
-    }
+            userApi.retrieveUserByUserName(this.form.username)
+                .then((res) => {
+                    $cookies.set('user', res.data)
+                    this.$router.push({ path: '/main' })
+                })
+                .catch((err) => {
+                    this.$message({
+                        message: 'Username hoặc mật khẩu không chính xác',
+                        type: 'error',
+                    })
+                    console.log(err)
+                })
+        },
+    },
 }
 </script>
