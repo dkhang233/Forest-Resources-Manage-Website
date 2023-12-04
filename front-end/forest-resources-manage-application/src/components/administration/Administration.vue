@@ -12,7 +12,7 @@
                         <template #default="{ node, data }">
                             <span class="custom-tree-node">
                                 <span>{{ node.label }}</span>
-                                <a @click="showNode(data)">Chi tiết</a>
+                                <a class="text-blue-500 ml-[100px] hover:text-blue-300" @click="showNode(data)">Chi tiết</a>
                             </span>
                         </template>
                     </el-tree-v2>
@@ -272,13 +272,4 @@ export default {
     height: 500px;
 }
 
-a:hover {
-    color: #5DADE2;
-}
-
-a {
-    font-size: 15px;
-    margin-left: 200px;
-    color: #BDC3C7
-}
 </style>

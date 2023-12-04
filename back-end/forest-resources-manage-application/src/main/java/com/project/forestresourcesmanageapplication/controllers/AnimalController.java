@@ -5,11 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
@@ -93,7 +89,7 @@ public class AnimalController {
         return ResponseEntity.ok(animalSpecies);
     }
 
-    @GetMapping(value = "/species/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/species/images/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
 	public @ResponseBody byte[] getImageWithMediaType(@PathVariable String fileName) throws IOException {
 		Path uploadPath = Path.of("uploads", fileName);
 		InputStream in = Files.newInputStream(uploadPath);
