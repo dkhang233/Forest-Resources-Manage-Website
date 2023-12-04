@@ -1,5 +1,5 @@
 <template>
-    <h2 class="font-mono mb-5 text-4xl font-bold">Xin chào</h2>
+    <h2 class=" mb-5 text-4xl font-bold">Xin chào</h2>
     <p class="max-w-sm mb-12 font-sans font-light text-black">Vui lòng đăng nhập để sử dụng hệ thống</p>
     <el-form :model="form">
         <el-form-item>
