@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import StackedAreaChart from '../common/StackedAreaChart.vue';
+import StackedAreaChart from '../chart/StackedAreaChart.vue';
 export default {
     name: "animalFacility",
     components:{

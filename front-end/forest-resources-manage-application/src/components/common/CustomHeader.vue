@@ -7,8 +7,7 @@
             <button class="block border-0 bg-transparent px-2 
                 text-[#2C3E50] hover:no-underline hover:shadow-none 
                 focus:no-underline focus:shadow-none focus:outline-none 
-                focus:ring-0 dark:text-neutral-200 lg:hidden"
-                @click="changeHeaderView">
+                focus:ring-0 dark:text-neutral-200 lg:hidden" @click="changeHeaderView">
                 <!-- Hamburger icon -->
                 <span class="[&>svg]:w-7">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7">
@@ -24,8 +23,7 @@
                 <!-- Logo -->
                 <a class="mb-4 ml-2 mr-5 mt-3 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400 lg:mb-0 lg:mt-0"
                     href="#">
-                    <img src="@/assets/logo/logo.png" class="w-[55px] h-[55px]"
-                        alt="TE Logo" loading="lazy" />
+                    <img src="@/assets/logo/logo.png" class="w-[55px] h-[55px]" alt="TE Logo" loading="lazy" />
                 </a>
                 <!-- Left navigation links -->
                 <ul class="list-style-none mr-auto flex flex-col pl-0 lg:flex-row" data-te-navbar-nav-ref>
@@ -67,23 +65,6 @@
                         <span
                             class="absolute -mt-4 ml-2.5 rounded-full bg-danger px-[0.35em] py-[0.15em] text-[0.6rem] font-bold leading-none text-white">1</span>
                     </a>
-                    <!-- First dropdown menu -->
-                    <ul class="absolute z-[1000] float-left m-0 hidden min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-neutral-700 [&[data-te-dropdown-show]]:block"
-                        aria-labelledby="dropdownMenuButton1" data-te-dropdown-menu-ref>
-                        <!-- First dropdown menu items -->
-                        <li>
-                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                href="#" data-te-dropdown-item-ref>Action</a>
-                        </li>
-                        <li>
-                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                href="#" data-te-dropdown-item-ref>Another action</a>
-                        </li>
-                        <li>
-                            <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                href="#" data-te-dropdown-item-ref>Something else here</a>
-                        </li>
-                    </ul>
                 </div>
 
                 <!-- Second dropdown container -->
@@ -94,8 +75,8 @@
                         @click="showSetting" id="dropdownMenuButton2" role="button" data-te-dropdown-toggle-ref
                         aria-expanded="false">
                         <!-- User avatar -->
-                        <img src="https://tecdn.b-cdn.net/img/new/avatars/2.jpg" class="rounded-full"
-                            style="height: 50px; width: 50px" alt="" loading="lazy" />
+                        <img :src="avatar" class="rounded-full" style="height: 50px; width: 50px" alt="" loading="lazy"  v-if="avatar != ''"/>
+                        <img src="@/assets/image/default-avatar.png" class="rounded-full" style="height: 50px; width: 50px" alt="" loading="lazy" v-if="avatar == ''" />
                     </span>
                     <!-- Second dropdown menu -->
                     <ul class="absolute z-[1000] right-1  min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-neutral-700 [&[data-te-dropdown-show]]:block"
@@ -103,7 +84,7 @@
                         <!-- Second dropdown menu items -->
                         <li>
                             <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                href="#">Action</a>
+                                href="#/main/profile">Thông tin tài khoản</a>
                         </li>
                         <li>
                             <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
@@ -141,7 +122,16 @@ export default {
         this.getUserInfo()
     },
     computed: {
-        ...mapStores(useAppStore, useUserStore)
+        ...mapStores(useAppStore, useUserStore),
+        avatar() {
+            let avatar = this.userStore.avatar
+            console.log(avatar)
+            if (avatar == '') {
+                return ''
+            } else {
+                return "http://localhost:8088/api/v1/users/avatar/" + avatar
+            }
+        }
     },
     methods: {
         //Hiển thị cài đặt tài khoản khi người dùng ấn vào avatar

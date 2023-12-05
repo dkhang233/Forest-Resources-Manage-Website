@@ -11,23 +11,27 @@ export const constantRoutes = [
         component: () => import('@/components/common/Home')
       },
       {
+        path : 'profile',
+        component : () => import('@/components/user/UserInfor')
+      },
+      {
         path: 'access',
-        component: () => import('../components/admin/ManageAccess')
+        component: () => import('@/components/admin/ManageAccess')
       },
       {
         path: 'account',
-        component: () => import('../components/admin/ManageAccount')
+        component: () => import('@/components/admin/ManageAccount')
       }, {
         path: 'administration',
-        component: () => import('../components/administration/Administration')
+        component: () => import('@/components/administration/Administration')
       },
       {
         path: 'seedtype',
-        component: () => import('../components/seed/SeedType')
+        component: () => import('@/components/seed/SeedType')
       },
       {
         path: 'seedfacility',
-        component: () => import('../components/seed/SeedFacility')
+        component: () => import('@/components/seed/SeedFacility')
       },
       {
         path: 'woodtype',
@@ -35,15 +39,15 @@ export const constantRoutes = [
       },
       {
         path: 'woodfacility',
-        component: () => import('../components/wood/WoodFacility')
+        component: () => import('@/components/wood/WoodFacility')
       },
       {
         path: 'animaltype',
-        component: () => import('../components/animal/AnimalType')
+        component: () => import('@/components/animal/AnimalType')
       },
       {
         path: 'animalfacility',
-        component: () => import('../components/animal/AnimalFacility')
+        component: () => import('@/components/animal/AnimalFacility')
       }
     ]
   },
