@@ -34,7 +34,8 @@ import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
 import com.project.forestresourcesmanageapplication.models.Fluctuation;
-import com.project.forestresourcesmanageapplication.responses.AnimalQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.YearQuantity;
@@ -153,11 +154,11 @@ public class AnimalController {
     
 //--------------------------THỐNG KÊ DỮ LIỆU VỀ SỐ LƯỢNG----------------------
     //thống kê số lượng của tất cả các loài động vật trong 1 cơ sở
-    @GetMapping("/species/facilities/{facilitiesCode}")
-    public ResponseEntity<List<AnimalQuantity>> getAllQuantityAnimalByCode(@PathVariable(value = "facilitiesCode") String code){
-        List<AnimalQuantity> animalQuantities = this.animalStorageFacilitiesService.getQuantityOfAllAnimalByFacilitiesCode(code);
-        return ResponseEntity.ok(animalQuantities);
-    }
+    // @GetMapping("/species/facilities/{facilitiesCode}")
+    // public ResponseEntity<List<AnimalQuantity>> getAllQuantityAnimalByCode(@PathVariable(value = "facilitiesCode") String code){
+    //     List<AnimalQuantity> animalQuantities = this.animalStorageFacilitiesService.getQuantityOfAllAnimalByFacilitiesCode(code);
+    //     return ResponseEntity.ok(animalQuantities);
+    // }
 
     //thống kê số lượng theo tháng của 1 con vật trong 1 cơ sở
     @GetMapping("/species/facilities/month/{facilitiesCode}/{animalName}/{year}")
@@ -178,6 +179,20 @@ public class AnimalController {
     public ResponseEntity<List<YearQuantity>> getQuantityAnimalWithYear(@PathVariable(value = "facilitiesCode") String code, @PathVariable(value = "animalName") String name){
         List<YearQuantity> yearQuantities = this.animalStorageFacilitiesService.getQuantityAnimalWithYear(code,name);
         return ResponseEntity.ok(yearQuantities);
+    }
+
+    //lấy tổng số lượng của các cơ sở động vật trước 1 khoảng thời gian nào đó
+    @GetMapping("/species/facilities-quantity/{date}")
+    public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilities(@PathVariable(value = "date") Date date){
+        List<FacilitiesQuantity> facilitiesQuantities = this.animalStorageFacilitiesService.getQuantityOfFacilitiesBeforeTime(date);
+        return ResponseEntity.ok(facilitiesQuantities);
+    }
+
+    //lấy số lượng của các loại động vật trong các cơ sở động vật trước 1 khoảng thời gian nào đó
+    @GetMapping("/species/animals-quantity/{date}")
+    public ResponseEntity<List<AnimalsQuantity>> getQuantityOfAllAnimal(@PathVariable(value = "date") Date date){
+        List<AnimalsQuantity> animalsQuantities = this.animalStorageFacilitiesService.getQuantityOfAllAnimalBeforeTime(date);
+        return ResponseEntity.ok(animalsQuantities);
     }
 
     //lấy tất cả dữ liệu trong 1 khoảng thời gian

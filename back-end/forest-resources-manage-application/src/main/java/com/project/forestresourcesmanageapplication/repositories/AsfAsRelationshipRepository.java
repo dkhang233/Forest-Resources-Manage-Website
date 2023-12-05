@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
+import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 
 @Repository
 public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelationship,Integer> {
@@ -29,4 +31,15 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
 
     @Query("SELECT a FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code AND a.animalSpecies.name = :name AND a.date <= :date ")
     Optional<List<AsfAsRelationship>> selectAsfAsRelationshipBeforeTime(@Param("code") String code, @Param("name") String name , @Param("date") Date date);
+
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity(a.animalStorageFacilities.code , SUM(a.quantity)) " 
+        +" FROM AsfAsRelationship a WHERE a.date <= :date"
+        +" GROUP BY a.animalStorageFacilities")
+    Optional<List<FacilitiesQuantity>> selectAllQuantityOfFacilities(@Param("date") Date date);
+
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity)) " 
+        +" FROM AsfAsRelationship a WHERE a.date <= :date"
+        +" GROUP BY a.animalStorageFacilities, a.animalSpecies"
+        +" ORDER BY a.animalStorageFacilities.code , a.animalSpecies.name DESC")
+    Optional<List<AnimalsQuantity>> selectAllQuantityOfAllAnimal(@Param("date") Date date);
 }
