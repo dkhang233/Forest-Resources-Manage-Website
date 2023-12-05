@@ -8,11 +8,13 @@
         </el-col>
     </el-row>
     <div class="grid grid-cols-20 pl-[100px] pr-[90px]" v-loading="loadingStatus">
-        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/dog.jpg" alt="" />
+        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/dog.jpg" alt="" v-if="image == ''" />
+        <img class="h-[550px] rounded-s-3xl" src="image" alt="" v-if="image != ''" />
         <div class="col-start-11">
             <el-card class="h-[550px] w-[50rem] rounded-e-3xl" shadow="always">
-                <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer" fit @row-click="changeAnimalImage">
-                    <el-table-column  v-for="(item, index) in tableColumns" :key="index" :label="item.title"
+                <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
+                    style="--el-table-row-hover-bg-color: #D0D3D4;" fit @row-click="changeAnimalImage">
+                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                         :prop="item.value">
                     </el-table-column>
                     <el-table-column :min-width="120" align="center">
@@ -33,14 +35,15 @@
                     label-position="top">
                     <div class="col-span-3">
                         <el-form-item class="" prop="avatar">
-                            <input ref="uploadInput" @change="handleFileChange" type="file" v-show="false" />
                             <img @click="openFileInput" class="rounded-full shadow-lg hover:cursor-pointer hover:opacity-60"
-                                src="@/assets/image/default-avatar.png" v-if="form.avatar == ''" />
-                            <img @click="openFileInput" class="rounded-full shadow-lg " :src="userAvatar"
-                                v-if="form.avatar != ''" />
+                                src="@/assets/image/no-image.png" v-if="form.image == ''" />
+                            <img @click="openFileInput" class="rounded-full shadow-lg " :src="animalImage"
+                                v-if="form.image != ''" />
                             <font-awesome-icon
                                 class="shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] p-2 hover:cursor-pointer hover:opacity-60 hover:text-red-600"
-                                v-if="form.avatar != ''" @click="resetAvatar" :icon="['fas', 'trash-can']" size="lg" />
+                                v-if="form.image != ''" @click="resertImage" :icon="['fas', 'trash-can']" size="lg" />
+                            <input class="mt-[50px]" ref="uploadInput" @change="handleFileChange" type="file"
+                                v-show="false" />
                         </el-form-item>
                     </div>
                     <div class="col-start-5 col-span-10">
@@ -63,7 +66,10 @@
                                 <el-input v-model="form.longevity" size="default" />
                             </el-form-item>
                             <el-form-item label="Loại biến động" prop="fluctuationName">
-                                <el-input v-model="form.fluctuationName" />
+                                <el-select v-model="form.fluctuationName" class="m-2" placeholder="Select">
+                                    <el-option key="1" label="Theo chu kỳ" value="Theo chu kỳ" />
+                                    <el-option key="2" label="Không theo chu kỳ" value="Không theo chu kỳ" />
+                                </el-select>
                             </el-form-item>
                         </div>
                     </div>
@@ -103,20 +109,20 @@
                 </template>
             </el-dialog>
         </div>
-        </div>
-        <el-row>
-            <el-col :offset="2">
-                <button class="w-full md:w-auto flex justify-center 
+    </div>
+    <el-row>
+        <el-col :offset="2">
+            <button class="w-full md:w-auto flex justify-center 
                         items-center p-3 mt-3 space-x-4 font-sans font-bold
                         text-white rounded-lg shadow-lg 
                         px-9 bg-blue-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="createNewUser">
-                    <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
-                    <span>Tạo mới</span>
-                </button>
-            </el-col>
-        </el-row>
+                        border transition hover:-translate-y-0.5 duration-150" @click="createNewAnimal">
+                <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
+                <span>Tạo mới</span>
+            </button>
+        </el-col>
+    </el-row>
 </template>
 
 <script>
@@ -127,7 +133,7 @@ export default {
         return {
             loadingStatus: false,
             search: '',
-            animalImage:'',
+            image: '',
             tableColumns: [
                 {
                     title: 'Tên',
@@ -160,13 +166,14 @@ export default {
             form: {
                 name: '',
                 animalType: '',
+                image: '',
                 mainFood: '',
                 mainDisease: '',
                 longevity: '',
                 fluctuationName: '',
             },
             formBackUp: null,
-            avatarFile: null,
+            imageFile: null,
             formType: 'update',
             rules: {
                 // username: [{ validator: this.checkUsername, trigger: 'blur' }],
@@ -176,15 +183,15 @@ export default {
         }
     },
     computed: {
-        // userAvatar() {
-        //     if (this.form.avatar.includes("http://")) {
-        //         return this.form.avatar
-        //     }
-        //     return "http://localhost:8088/api/v1/users/avatar/" + this.form.avatar
-        // },
-        // formTitle() {
-        //     return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'
-        // }
+        animalImage() {
+            if (this.form.image.includes("http://")) {
+                return this.form.image
+            }
+            return "http://localhost:8088/api/v1/animal-storage-facilities/species/images/" + this.form.image
+        },
+        formTitle() {
+            return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'
+        }
     },
     watch: {
         search(search) {
@@ -206,12 +213,11 @@ export default {
             }).catch(err => console.log(err))
         },
 
-        changeAnimalImage(row){
-            console.log(row.name)
-            // this.animalImage 
+        changeAnimalImage(row) {
+            this.image = row.image
         },
         // Tạo tài khoản mới
-        createNewUser() {
+        createNewAnimal() {
             this.formType = 'create'
             this.resetFormData()
             if (this.$refs.ruleFormRef != null) {
@@ -220,6 +226,7 @@ export default {
             this.formBackUp = {
                 name: '',
                 animalType: '',
+                image: '',
                 mainFood: '',
                 mainDisease: '',
                 longevity: '',
@@ -244,19 +251,19 @@ export default {
                     )
                         .then(() => {
                             this.loadingStatus = true
-                            let user = new FormData()
-                            user.append('avatar-file', this.avatarFile)
+                            let animal = new FormData()
+                            animal.append('file-image', this.imageFile)
                             let formJson = JSON.stringify(this.form)
                             const formData = new Blob([formJson], {
                                 type: 'application/json'
                             });
-                            user.append('body', formData)
-                            createUser(user)
+                            animal.append('body', formData)
+                            createUser(animal)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
                                         title: 'Thành công',
-                                        message: 'Tạo tài khoản thành công',
+                                        message: 'Thêm loại động vật thành công',
                                         type: 'success'
                                     })
                                     this.retrieveData()
@@ -264,7 +271,7 @@ export default {
                                     this.loadingStatus = false
                                     this.$notify({
                                         title: 'Đã xảy ra lỗi',
-                                        message: err.response.data.messages,  //response.data.messages
+                                        message: '',  //response.data.messages
                                         type: 'error',
                                     })
                                     console.log(err.message)
@@ -293,6 +300,7 @@ export default {
             this.formBackUp = {
                 name: this.form.name,
                 animalType: this.form.animalType,
+                image: this.form.image,
                 mainFood: this.form.mainFood,
                 mainDisease: this.form.mainDisease,
                 longevity: this.form.longevity,
@@ -310,32 +318,32 @@ export default {
         // Xứ lí khi ấn vào avatar
         openFileInput() {
             this.$refs.uploadInput.click()
+            this.$refs.uploadInput.value = null
         },
         // XỬ lí khi người dùng chọn file
         handleFileChange(event) {
             let file = event.target.files[0]
-            if (!file.type.startsWith('image')) {
-                this.$message.error('Ảnh đại diện phải là ảnh!')
-            } else if (file.size / 1024 / 1024 > 10) {
-                this.$message.error('Ảnh đại diện phải có kích thước nhỏ hơn 10MB!')
-            } else {
-                this.avatarFile = file
-                if (file != null) {
-                    let avatar = URL.createObjectURL(file);
-                    this.form.avatar = avatar
+            if (file != null) {
+                if (!file.type.startsWith('image')) {
+                    this.$message.error('Ảnh động vật phải là file ảnh!')
+                } else if (file.size / 1024 / 1024 > 10) {
+                    this.$message.error('Ảnh  động vật  phải có kích thước nhỏ hơn 10MB!')
+                } else {
+                    this.imageFile = file
+                    let image = URL.createObjectURL(file);
+                    this.form.image = image
                 }
             }
         },
 
         // Xóa avatar
-        resetAvatar() {
-            this.form.avatar = ''
-            this.avatarFile = null
+        resertImage() {
+            this.form.image = ''
+            this.imageFile = null
         },
 
         // Hàm xử lí khi ấn vào nút "Xóa"
         handleDelete(index, row) {
-            console.log(index, row)
             this.$confirm(
                 'Xóa thông tin này. Tiếp tục?',
                 'Xác nhận',
@@ -347,7 +355,6 @@ export default {
             )
                 .then(() => {
                     // this.updateAdministration()
-                    console.log('submit!')
                     this.dialogFormVisible = false
                 })
                 .catch(() => {
@@ -371,13 +378,16 @@ export default {
                 )
                     .then(() => {
                         if (this.formBackUp != null) {
-                            this.form.name = this.form.name
-                            this.form.animalType = this.form.animalType
-                            this.form.mainFood = this.form.mainFood
-                            this.form.mainDisease = this.form.mainDisease
-                            this.form.longevity = this.form.longevity
-                            this.form.fluctuationName = this.form.fluctuationName
+                            this.form.name = this.formBackUp.name
+                            this.form.image = this.formBackUp.image
+                            this.form.animalType = this.formBackUp.animalType
+                            this.form.mainFood = this.formBackUp.mainFood
+                            this.form.mainDisease = this.formBackUp.mainDisease
+                            this.form.longevity = this.formBackUp.longevity
+                            this.form.fluctuationName = this.formBackUp.fluctuationName
                         }
+                        this.imageFile = null
+                        console.log(this.imageFile)
                         this.dialogFormVisible = false
                     })
                     .catch(() => {
@@ -404,13 +414,13 @@ export default {
                         .then(() => {
                             this.loadingStatus = true
                             let animal = new FormData()
-                            animal.append('image-file', this.avatarFile)
+                            animal.append('file-image', this.imageFile)
                             let formJson = JSON.stringify(this.form)
                             const formData = new Blob([formJson], {
                                 type: 'application/json'
                             });
-                            user.append('body', formData)
-                            animalApi.updateAnimalSpecie(this.form.name, user)
+                            animal.append('body', formData)
+                            animalApi.updateAnimalSpecie(this.form.name, animal)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -443,6 +453,7 @@ export default {
         resetFormData() {
             this.form = {
                 name: '',
+                image: '',
                 animalType: '',
                 mainFood: '',
                 mainDisease: '',
@@ -484,3 +495,5 @@ export default {
     }
 }
 </script>
+
+
