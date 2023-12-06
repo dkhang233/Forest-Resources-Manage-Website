@@ -32,6 +32,8 @@ import com.project.forestresourcesmanageapplication.repositories.AnimalSpeciesRe
 import com.project.forestresourcesmanageapplication.repositories.AnimalStorageFacilitiesRepository;
 import com.project.forestresourcesmanageapplication.repositories.AsfAsRelationshipRepository;
 import com.project.forestresourcesmanageapplication.repositories.FluctuationRepository;
+import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
@@ -339,30 +341,6 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         return asRelationships;
     }
 
-    // @Override 
-    // public Long getQuantityAnimalOfFacilitiesCode(String code, String name){
-    //     List<AsfAsRelationship> asRelationships = this.asfAsRelationshipRepository.selectAsfAsRelationshipByAnimalAndCode(code,name)
-    //     .orElseThrow(() -> new DataNotFoundException("không tồn tại loài động vật này trong cơ sở lưu trữ" ));
-    //     long sum = 0;
-    //     for(AsfAsRelationship a : asRelationships){
-    //         sum+=a.getQuantity();
-    //     }
-    //     return sum;
-    // }
-    
-    // @Override
-    // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code){
-    //     List<AnimalQuantity> animalQuantities = new ArrayList<>();
-    //     List<AnimalSpecies> listAnimalSpecies = this.asfAsRelationshipRepository.selectAllAnimalSpeciesByFacilitiesCode(code)
-    //     .orElseThrow( () -> new DataNotFoundException("cơ sở lưu trữ này không có loài động vật nào"));
-    //     for(AnimalSpecies a : listAnimalSpecies){
-    //         long quantity = this.getQuantityAnimalOfFacilitiesCode(code, a.getName());
-    //         AnimalQuantity tmp = new AnimalQuantity(a.getName(),quantity);
-    //         animalQuantities.add(tmp);
-    //     }
-    //     return animalQuantities;
-    // }
-    
     //hàm hỗ trợ cho hàm bên dưới
     public Long getQuantityAnimalWithMonth(String code, String name, int month, int year){
         YearMonth yearMonth = YearMonth.of(year, month);
@@ -378,17 +356,31 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         return sum;
     }
 
+    // thống kê số lượng theo tháng của 1 con vật trong tất cả cơ sở
     @Override
-    public List<MonthQuantity> getQuantityAnimalWithMonthOfYear(String code, String name, int year){
-        List<MonthQuantity> monthQuantities = new ArrayList<>();
+    public List<AnimalMonthQuantity> getMonthQuantityByAnimalName(String name, int year){
+        List<AnimalMonthQuantity> animalMonthQuantities = new ArrayList<>();
         for(int i=1;i<=12;i++){
-            long quantity = this.getQuantityAnimalWithMonth(code, name, i, year);
-            MonthQuantity tmp = new MonthQuantity(i,quantity);
-            monthQuantities.add(tmp);
+            YearMonth yearMonth = YearMonth.of(year, i);
+            int day = yearMonth.lengthOfMonth();
+            LocalDate localDate = LocalDate.of(year, i , day);
+            Date date = Date.valueOf(localDate);
+            List<AnimalMonthQuantity> animalMonthQuantities2 = this.asfAsRelationshipRepository.selectMonthQuantityByAnimalNameWithMonth(i, name, date)
+            .orElseThrow( () -> new DataNotFoundException("Không tồn tại cơ sở dữ liệu"));
+            animalMonthQuantities.addAll(animalMonthQuantities2);
         }
-        return monthQuantities;
+        return animalMonthQuantities;
     }
-    
+
+    // thống kê số lượng theo quý của 1 con vật trong tất cả cơ sở
+    // @Override
+    // public List<AnimalQuarterQuantity> getQuarterQuantityByAnimalName(String name, int year){
+    //     List<AnimalQuarterQuantity> animalQuarterQuantities = new ArrayList<>();
+    //     for(int i=1;i<=12;i+=3){
+    //         long quantity1 = this.asfAsRelationshipRepository.getMonthQuantityOfAnimal(name, name, null)
+    //     }
+    // }
+
     @Override
     public List<QuarterQuantity> getQuantityAnimalWithQuarterOfYear(String code, String name, int year){
         List<QuarterQuantity> quarterQuantities = new ArrayList<>();

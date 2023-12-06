@@ -12,8 +12,11 @@ import org.springframework.stereotype.Repository;
 
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
+import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
+import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 
 @Repository
 public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelationship,Integer> {
@@ -37,9 +40,25 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
         +" GROUP BY a.animalStorageFacilities")
     Optional<List<FacilitiesQuantity>> selectAllQuantityOfFacilities(@Param("date") Date date);
 
-    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity)) " 
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.name , a.animalSpecies.name , SUM(a.quantity)) " 
         +" FROM AsfAsRelationship a WHERE a.date <= :date"
         +" GROUP BY a.animalStorageFacilities, a.animalSpecies"
-        +" ORDER BY a.animalStorageFacilities.code , a.animalSpecies.name DESC")
+        +" ORDER BY a.animalStorageFacilities.name , a.animalSpecies.name DESC")
     Optional<List<AnimalsQuantity>> selectAllQuantityOfAllAnimal(@Param("date") Date date);
+
+    @Query("SELECT SUM(a.quantity) FROM AsfAsRelationship a"
+        +" WHERE a.animalStorageFacilities.code = :code AND a.animalSpecies.name = :name AND a.date <= :date")
+    long getMonthQuantityOfAnimal(@Param("code") String code, @Param("name") String name , @Param("date") Date date);
+
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity(a.animalStorageFacilities.name , a.animalSpecies.name , NEW com.project.forestresourcesmanageapplication.responses.MonthQuantity(:month , SUM(a.quantity) ))" 
+        +" FROM AsfAsRelationship a WHERE a.animalSpecies.name = :name AND a.date <= :date "
+        +" GROUP BY a.animalStorageFacilities, a.animalSpecies"
+        +" ORDER BY a.animalStorageFacilities.name , a.animalSpecies.name DESC")
+    Optional<List<AnimalMonthQuantity>> selectMonthQuantityByAnimalNameWithMonth(@Param("month") int month ,@Param("name") String name , @Param("date") Date date);
+
+    // @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity(a.animalStorageFacilities.name , a.animalSpecies.name , NEW com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity(:quarter , :quarterQuantity))" 
+    //     +" FROM AsfAsRelationship a WHERE a.animalSpecies.name = :name AND a.date <= :date "
+    //     +" GROUP BY a.animalStorageFacilities, a.animalSpecies"
+    //     +" ORDER BY a.animalStorageFacilities.name , a.animalSpecies.name DESC")
+    // Optional<List<AnimalQuarterQuantity>> selectQuarterQuantityByAnimalNameWithQuarter(@Param("quarter") int month ,@Param("quarterQuantity") long quarterQuantity ,@Param("name") String name , @Param("date") Date date);
 }

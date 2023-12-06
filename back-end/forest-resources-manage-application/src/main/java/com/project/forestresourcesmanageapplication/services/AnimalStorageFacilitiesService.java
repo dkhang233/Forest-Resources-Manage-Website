@@ -15,6 +15,8 @@ import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
 import com.project.forestresourcesmanageapplication.models.Fluctuation;
+import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
@@ -57,10 +59,10 @@ public interface AnimalStorageFacilitiesService {
     // public Long getQuantityAnimalOfFacilitiesCode(String code, String name);//lấy số lượng của 1 con vật trong 1 cơ sở tính đến thời điểm hiện tại
 
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
-    public List<MonthQuantity> getQuantityAnimalWithMonthOfYear(String code, String name, int year);
     public List<QuarterQuantity> getQuantityAnimalWithQuarterOfYear(String code, String name, int year);
     public List<YearQuantity> getQuantityAnimalWithYear(String code, String name);
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(Date date);
     public List<AnimalsQuantity> getQuantityOfAllAnimalBeforeTime(Date date);
-    
+    public List<AnimalMonthQuantity> getMonthQuantityByAnimalName(String name, int year);
+    // public List<AnimalQuarterQuantity> getQuarterQuantityByAnimalName(String name, int year);
 }
