@@ -35,11 +35,11 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
     @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity(a.animalStorageFacilities.code , SUM(a.quantity)) " 
         +" FROM AsfAsRelationship a WHERE a.date <= :date"
         +" GROUP BY a.animalStorageFacilities")
-    Optional<List<FacilitiesQuantity>> selectAllQuantityOfFacilities(@Param("date") Date date);
+   List<FacilitiesQuantity> selectAllQuantityOfFacilities(@Param("date") Date date);
 
     @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity)) " 
         +" FROM AsfAsRelationship a WHERE a.date <= :date"
         +" GROUP BY a.animalStorageFacilities, a.animalSpecies"
         +" ORDER BY a.animalStorageFacilities.code , a.animalSpecies.name DESC")
-    Optional<List<AnimalsQuantity>> selectAllQuantityOfAllAnimal(@Param("date") Date date);
+   List<AnimalsQuantity> selectAllQuantityOfAllAnimal(@Param("date") Date date);
 }
