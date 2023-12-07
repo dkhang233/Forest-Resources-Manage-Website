@@ -24,7 +24,7 @@ export default {
     },
     data() {
         return {
-            endDate: '2021-11-30',
+            endDate: '2022-03-30',
             chartLabel: [],
             chartData: new Map(),
             chartLabelCopy: [],
@@ -52,7 +52,7 @@ export default {
                 .then((res) => {
                     for (let i = res.data.length - 1; i >= 0; i--) {
                         let label = res.data[i].date.slice(0, 7)
-                       this.chartLabel.push(label)
+                        this.chartLabel.push(label)
                         for (let j = 0; j < res.data[i].data.length; j++) {
                             if (this.chartData.has(res.data[i].data[j].facilitiesCode)) {
                                 let tmp = this.chartData.get(res.data[i].data[j].facilitiesCode)
@@ -67,9 +67,15 @@ export default {
                 .catch((err) => {
                     this.chartData = this.chartDataCopy
                     this.chartLabel = this.chartLabelCopy
+                    let errorMessage = ''
+                    try {
+                        errorMessage =  err.response.data.messages
+                    } catch(err){
+                        console.log(err)
+                    }
                     this.$notify({
                         title: 'Đã xảy ra lỗi',
-                        message: err.response.data.messages,
+                        message: errorMessage,
                         type: 'error',
                     })
                 })
