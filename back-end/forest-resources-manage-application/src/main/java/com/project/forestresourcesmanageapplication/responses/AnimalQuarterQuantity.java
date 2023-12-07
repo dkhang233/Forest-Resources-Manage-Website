@@ -9,8 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AnimalsQuantity {
+public class AnimalQuarterQuantity {
     private String facilitiesName;
-    private String animalName;
-    private long quantity;
+    private QuarterQuantity quarterQuantity;
 }
