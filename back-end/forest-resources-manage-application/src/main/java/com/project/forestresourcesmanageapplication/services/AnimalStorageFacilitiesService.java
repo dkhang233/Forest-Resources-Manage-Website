@@ -77,8 +77,8 @@ public interface AnimalStorageFacilitiesService {
     public List<AsfAsRelationship> getAsfAsRelationshipByFacilitiesInYear(String code, int year);//lấy dữ liệu của 1 cơ sở trong năm
 
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
-    public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(Date date);
-    public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate endDate);
+    public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date);
+    public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate beginDate,LocalDate endDate);
     public List<AnimalsQuantity> getQuantityOfAllAnimalBeforeTime(Date date);
     public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year);
     public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year);
