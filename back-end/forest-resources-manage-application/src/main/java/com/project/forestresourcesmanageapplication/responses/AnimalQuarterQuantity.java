@@ -11,6 +11,5 @@ import lombok.Setter;
 @Setter
 public class AnimalQuarterQuantity {
     private String facilitiesName;
-    private String animalName;
     private QuarterQuantity quarterQuantity;
 }

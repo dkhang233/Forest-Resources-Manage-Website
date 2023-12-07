@@ -1,5 +1,6 @@
 package com.project.forestresourcesmanageapplication.repositories;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +17,7 @@ public interface AnimalStorageFacilitiesRepository extends JpaRepository<AnimalS
 
     @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.name = :name")
     Optional<AnimalStorageFacilities> findByName(String name);
+
+    @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.date <= :date ORDER BY a.code DESC")
+    List<AnimalStorageFacilities> findAllBeforeTime(Date date);
 } 
