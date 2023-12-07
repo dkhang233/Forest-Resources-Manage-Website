@@ -15,6 +15,10 @@ import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
 import com.project.forestresourcesmanageapplication.models.Fluctuation;
+
+import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalYearQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
@@ -54,13 +58,11 @@ public interface AnimalStorageFacilitiesService {
     public List<AsfAsRelationship> getAsfAsRelationshipWithTime(Date startDate,Date endDate);//lấy dữ liệu trong 1 khoảng thời gian
     public List<AsfAsRelationship> getAsfAsRelationshipInYear(int year);//lấy dữ liệu trong 1 năm
     public List<AsfAsRelationship> getAsfAsRelationshipByFacilitiesInYear(String code, int year);//lấy dữ liệu của 1 cơ sở trong năm
-    // public Long getQuantityAnimalOfFacilitiesCode(String code, String name);//lấy số lượng của 1 con vật trong 1 cơ sở tính đến thời điểm hiện tại
 
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
-    public List<MonthQuantity> getQuantityAnimalWithMonthOfYear(String code, String name, int year);
-    public List<QuarterQuantity> getQuantityAnimalWithQuarterOfYear(String code, String name, int year);
-    public List<YearQuantity> getQuantityAnimalWithYear(String code, String name);
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(Date date);
     public List<AnimalsQuantity> getQuantityOfAllAnimalBeforeTime(Date date);
-    
+    public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year);
+    public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year);
+    public List<AnimalYearQuantity> getYearQuantityOfFacilities(int year);
 }
