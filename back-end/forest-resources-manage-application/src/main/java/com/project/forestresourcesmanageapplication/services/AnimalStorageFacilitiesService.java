@@ -21,39 +21,56 @@ import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuant
 import com.project.forestresourcesmanageapplication.responses.AnimalYearQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.YearQuantity;
 
 public interface AnimalStorageFacilitiesService {
 
-    //Animal-Storage-Facilities
-    public List<AnimalStorageFacilities> getAllAnimalStorageFacilities() ;
-    public AnimalStorageFacilities updateAnimalStorageFacilities(String code, AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO);
+    // Animal-Storage-Facilities
+    public List<AnimalStorageFacilities> getAllAnimalStorageFacilities();
+
+    public AnimalStorageFacilities updateAnimalStorageFacilities(String code,
+            AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO);
+
     public AnimalStorageFacilities getAnimalStorageFacilitiesByCode(String code);
-    public AnimalStorageFacilities addAnimalStorageFacilities(AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO,String code);
+
+    public AnimalStorageFacilities addAnimalStorageFacilities(AnimalStorageFacilitiesDTO animalStorageFacilitiesDTO,
+            String code);
+
     public void deleteAnimalStorageFacilitiesByCode(String code);
 
-    //Animal-Species
+    // Animal-Species
     public List<AnimalSpecies> getAllAnimalSpecies();
+
     public AnimalSpecies updateAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, MultipartFile imageFile);
+
     public AnimalSpecies getAnimalSpeciesByName(String name);
+
     public AnimalSpecies addAnimalSpecies(AnimalSpeciesDTO animalSpeciesDTO, MultipartFile imageFile);
+
     public void deleteAnimalSpeciesByName(String name);
+
     public List<AnimalSpecies> getAllAnimalSpeciesByFacilitiesCode(String code);
 
-    //ASF-AS-Relationship
+    // ASF-AS-Relationship
     public List<AsfAsRelationship> getAllAsfAsRelationships();
-    public AsfAsRelationship updateAsfAsRelationship(int id , AsfAsRelationshipDTO asfAsRelationshipDTO);
+
+    public AsfAsRelationship updateAsfAsRelationship(int id, AsfAsRelationshipDTO asfAsRelationshipDTO);
+
     public AsfAsRelationship getAsfAsRelationshipById(int id);
+
     public AsfAsRelationship addAsfAsRelationship(AsfAsRelationshipDTO asfAsRelationshipDTO);
+
     public void deleteAsfAsRelationshipById(int id);
 
-    //Fluctuation
+    // Fluctuation
     public List<Fluctuation> getAllFluctuations();
+
     public Fluctuation getFluctuationById(int id);
-    
-    //Thống kê
+
+    // Thống kê
     public List<AsfAsRelationship> getAll();
     public List<AsfAsRelationship> getAsfAsRelationshipWithTime(Date startDate,Date endDate);//lấy dữ liệu trong 1 khoảng thời gian
     public List<AsfAsRelationship> getAsfAsRelationshipInYear(int year);//lấy dữ liệu trong 1 năm
@@ -61,6 +78,7 @@ public interface AnimalStorageFacilitiesService {
 
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(Date date);
+    public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate endDate);
     public List<AnimalsQuantity> getQuantityOfAllAnimalBeforeTime(Date date);
     public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year);
     public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year);
