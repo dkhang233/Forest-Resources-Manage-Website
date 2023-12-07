@@ -30,6 +30,10 @@ import "leaflet/dist/leaflet.css";
 //import tailwind css
 import '@/assets/tailwind.css'
 
+//Vue-datepicker
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+
 const app = createApp(App)
 
 app.use(VueCookies)
@@ -57,6 +61,7 @@ app.component("l-map", LMap);
 app.component("l-tile-layer", LTileLayer);
 app.component("l-marker", LMarker);
 app.component('font-awesome-icon', FontAwesomeIcon)
+app.component('VueDatePicker', VueDatePicker);
 
 //mount 
 app.mount('#app')
