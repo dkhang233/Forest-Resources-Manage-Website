@@ -450,7 +450,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         int count = 1;
         List<FacilitiesQuantityInMoth> allData = new ArrayList<>();
         endDate = this.caculateDate(endDate);
-        while (count <= 12) { // Thống kê 2 tháng trước endDate
+        while (count <= 9) { // Thống kê 12 tháng trước endDate
             List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(endDate);
             FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(endDate).data(data).build();
             allData.add(tmp);

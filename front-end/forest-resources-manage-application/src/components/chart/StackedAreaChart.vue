@@ -36,7 +36,7 @@ export default {
   props: ['chartLabel', 'chartData'],
   data() {
     return {
-      legendData : []
+      legendData: []
     }
   },
   computed: {

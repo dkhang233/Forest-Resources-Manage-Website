@@ -26,7 +26,9 @@ export default {
         return {
             endDate: '2021-11-30',
             chartLabel: [],
-            chartData: new Map()
+            chartData: new Map(),
+            chartLabelCopy: [],
+            chartDataCopy: new Map()
         }
     },
     computed: {
@@ -34,10 +36,13 @@ export default {
     },
     watch: {
         endDate(newEndDate) {
-            console.log(newEndDate)
             let day = (newEndDate.getDate() < 10 ? "0" + newEndDate.getDate() : newEndDate.getDate())
-            let month = (newEndDate.getMonth() < 10 ? "0".concat(newEndDate.getMonth() + 1) : newEndDate.getMonth() + 1)
+            let month = (newEndDate.getMonth() < 9 ? "0".concat(newEndDate.getMonth() + 1) : newEndDate.getMonth() + 1)
             let endDate = newEndDate.getFullYear() + '-' + month + '-' + day
+            this.chartLabelCopy = this.chartLabel
+            this.chartLabel = []
+            this.chartDataCopy = this.chartData
+            this.chartData.clear()
             this.setupAnimalQuantityData(endDate)
         }
     },
@@ -47,7 +52,7 @@ export default {
                 .then((res) => {
                     for (let i = res.data.length - 1; i >= 0; i--) {
                         let label = res.data[i].date.slice(0, 7)
-                        this.chartLabel.push(label)
+                       this.chartLabel.push(label)
                         for (let j = 0; j < res.data[i].data.length; j++) {
                             if (this.chartData.has(res.data[i].data[j].facilitiesCode)) {
                                 let tmp = this.chartData.get(res.data[i].data[j].facilitiesCode)
@@ -60,6 +65,8 @@ export default {
                     }
                 })
                 .catch((err) => {
+                    this.chartData = this.chartDataCopy
+                    this.chartLabel = this.chartLabelCopy
                     this.$notify({
                         title: 'Đã xảy ra lỗi',
                         message: err.response.data.messages,
