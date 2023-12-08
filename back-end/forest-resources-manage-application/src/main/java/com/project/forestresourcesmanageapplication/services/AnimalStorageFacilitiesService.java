@@ -79,7 +79,7 @@ public interface AnimalStorageFacilitiesService {
 
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date);
-    public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate endDate);
+    public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate beginDate,LocalDate endDate);
     public List<AnimalsQuantity> getQuantityOfAllAnimalBeforeTime(Date date);
     public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year);
     public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year);

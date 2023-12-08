@@ -362,9 +362,8 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         return asRelationships;
     }
 
-
-    //hàm hỗ trợ cho hàm bên dưới
-    public Long getMonthQuantityOfFacilities(String name, int month, int year){
+    // hàm hỗ trợ cho hàm bên dưới
+    public Long getMonthQuantityOfFacilities(String name, int month, int year) {
         YearMonth yearMonth = YearMonth.of(year, month);
         int day = yearMonth.lengthOfMonth();
         LocalDate localDate = LocalDate.of(year, month, day);
@@ -383,38 +382,41 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     // thống kê số lượng theo tháng trong tất cả cơ sở
     @Override
 
-    public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year){
+    public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year) {
         List<AnimalMonthQuantity> animalMonthQuantities = new ArrayList<>();
-        for(int i=1;i<=12;i++){
+        for (int i = 1; i <= 12; i++) {
             YearMonth yearMonth = YearMonth.of(year, i);
             int day = yearMonth.lengthOfMonth();
-            LocalDate localDate = LocalDate.of(year, i , day);
+            LocalDate localDate = LocalDate.of(year, i, day);
             Date date = Date.valueOf(localDate);
-            List<AnimalMonthQuantity> animalMonthQuantities2 = this.asfAsRelationshipRepository.selectMonthQuantityOfFacilities(i,date)
-            .orElseThrow( () -> new DataNotFoundException("Không tồn tại cơ sở dữ liệu"));
+            List<AnimalMonthQuantity> animalMonthQuantities2 = this.asfAsRelationshipRepository
+                    .selectMonthQuantityOfFacilities(i, date);
             animalMonthQuantities.addAll(animalMonthQuantities2);
+        }
+        if (animalMonthQuantities.isEmpty()) {
+            throw new DataNotFoundException("Dữ liệu trong năm "
+                    + year + " chưa tồn tại");
         }
         return animalMonthQuantities;
     }
 
-    
     // thống kê số lượng theo quý trong tất cả cơ sở
     @Override
-    public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year){
+    public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year) {
         List<AnimalQuarterQuantity> listAQQ = new ArrayList<>();
         String str = year + "-12-30";
         Date date = Date.valueOf(str);
         List<AnimalStorageFacilities> listASF = this.animalStorageFacilitiesRepository.findAllBeforeTime(date);
-        for(AnimalStorageFacilities asf : listASF){
-            int quarter=1;
-            for(int i=1;i<=12;i+=3){
+        for (AnimalStorageFacilities asf : listASF) {
+            int quarter = 1;
+            for (int i = 1; i <= 12; i += 3) {
                 long quantity1 = this.getMonthQuantityOfFacilities(asf.getName(), i, year);
-                long quantity2 = this.getMonthQuantityOfFacilities(asf.getName(), i+1, year);
-                long quantity3 = this.getMonthQuantityOfFacilities(asf.getName(), i+2, year);
-                long quantity = (quantity1+quantity2+quantity3)/3 ;
+                long quantity2 = this.getMonthQuantityOfFacilities(asf.getName(), i + 1, year);
+                long quantity3 = this.getMonthQuantityOfFacilities(asf.getName(), i + 2, year);
+                long quantity = (quantity1 + quantity2 + quantity3) / 3;
                 AnimalQuarterQuantity tmp = new AnimalQuarterQuantity();
                 tmp.setFacilitiesName(asf.getName());
-                QuarterQuantity quarterQuantity = new QuarterQuantity(quarter,quantity);
+                QuarterQuantity quarterQuantity = new QuarterQuantity(quarter, quantity);
                 tmp.setQuarterQuantity(quarterQuantity);
                 listAQQ.add(tmp);
                 quarter++;
@@ -423,6 +425,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         }
         return listAQQ;
     }
+
 
     //Hàm hỗ trợ cho thống kê theo quý
 //--------------------START--------------------
@@ -529,21 +532,21 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
 
 
     // thống kê số lượng theo năm trong tất cả cơ sở (4 năm trước thời điểm xét)
-    public List<AnimalYearQuantity> getYearQuantityOfFacilities(int year){
+    public List<AnimalYearQuantity> getYearQuantityOfFacilities(int year) {
         List<AnimalYearQuantity> listAYQ = new ArrayList<>();
         String str = year + "-12-30";
         Date date = Date.valueOf(str);
         List<AnimalStorageFacilities> listASF = this.animalStorageFacilitiesRepository.findAllBeforeTime(date);
-        for(AnimalStorageFacilities asf : listASF){
-            for(int y=year;y>=year-3;y--){
+        for (AnimalStorageFacilities asf : listASF) {
+            for (int y = year; y >= year - 3; y--) {
                 long sum = 0;
-                for(int i=1;i<=12;i++){
-                    sum+=this.getMonthQuantityOfFacilities(asf.getName(), i, y);
+                for (int i = 1; i <= 12; i++) {
+                    sum += this.getMonthQuantityOfFacilities(asf.getName(), i, y);
                 }
-                long quantity = sum/12;
+                long quantity = sum / 12;
                 AnimalYearQuantity tmp = new AnimalYearQuantity();
                 tmp.setFacilitiesName(asf.getName());
-                YearQuantity yearQuantity = new YearQuantity(y,quantity);
+                YearQuantity yearQuantity = new YearQuantity(y, quantity);
                 tmp.setYearQuantity(yearQuantity);
                 listAYQ.add(tmp);
             }
@@ -554,25 +557,28 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     @Override
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date) {
         List<FacilitiesQuantity> facilitiesQuantities = this.asfAsRelationshipRepository
-                .selectAllQuantityOfFacilities( Date.valueOf(date));
-        if(facilitiesQuantities.isEmpty()){
-            throw new DataNotFoundException("Dữ liệu trong tháng "+date.getMonthValue()+" năm "+date.getYear()+" chưa tồn tại");
+                .selectAllQuantityOfFacilities(Date.valueOf(date));
+        if (facilitiesQuantities.isEmpty()) {
+            throw new DataNotFoundException(
+                    "Dữ liệu trong tháng " + date.getMonthValue() + " năm " + date.getYear() + " chưa tồn tại");
         }
         return facilitiesQuantities;
     }
 
-  @Override
-    public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate endDate) {
-        int count = 1;
+    @Override
+    public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate beginDate, LocalDate endDate) {
         List<FacilitiesQuantityInMoth> allData = new ArrayList<>();
         endDate = this.caculateDate(endDate);
-        while (count <= 9) { // Thống kê 12 tháng trước endDate
+        while (endDate.isAfter(beginDate)) { // Thống kê 12 tháng trước endDate
+            if (endDate.isAfter(LocalDate.now())) {
+                throw new DataNotFoundException("Dữ liệu trong tháng " + endDate.getMonthValue() + " năm "
+                        + endDate.getYear() + " chưa tồn tại");
+            }
             List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(endDate);
             FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(endDate).data(data).build();
             allData.add(tmp);
             endDate = endDate.minusMonths(1);
             endDate = this.caculateDate(endDate);
-            count ++ ;
         }
         return allData;
     }

@@ -35,13 +35,13 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
     @Query("SELECT a FROM AsfAsRelationship a WHERE a.animalStorageFacilities.code = :code AND a.animalSpecies.name = :name AND a.date <= :date ")
     Optional<List<AsfAsRelationship>> selectAsfAsRelationshipBeforeTime(@Param("code") String code, @Param("name") String name , @Param("date") Date date);
 
-    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity(a.animalStorageFacilities.code , SUM(a.quantity)) " 
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity(a.animalStorageFacilities.name , SUM(a.quantity)) " 
         +" FROM AsfAsRelationship a WHERE a.date <= :date"
         +" GROUP BY a.animalStorageFacilities")
    List<FacilitiesQuantity> selectAllQuantityOfFacilities(@Param("date") Date date);
 
 
-    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.name , a.animalSpecies.name , SUM(a.quantity) ) " 
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity) ) " 
         +" FROM AsfAsRelationship a WHERE a.date <= :date"
         +" GROUP BY a.animalStorageFacilities, a.animalSpecies"
         +" ORDER BY a.animalStorageFacilities.code , a.animalSpecies.name DESC")
@@ -57,7 +57,7 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
         +" FROM AsfAsRelationship a WHERE a.date <= :date"
         +" GROUP BY a.animalStorageFacilities"
         +" ORDER BY a.animalStorageFacilities.name DESC")
-    Optional<List<AnimalMonthQuantity>> selectMonthQuantityOfFacilities(@Param("month") int month , @Param("date") Date date);
+    List<AnimalMonthQuantity> selectMonthQuantityOfFacilities(@Param("month") int month , @Param("date") Date date);
     
     // @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity(a.animalStorageFacilities.name , a.animalSpecies.name , NEW com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity(:quarter , :quarterQuantity))" 
     //     +" FROM AsfAsRelationship a WHERE a.animalSpecies.name = :name AND a.date <= :date "

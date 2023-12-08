@@ -181,18 +181,21 @@ public class AnimalController {
     // // thống kê số lượng theo tháng của 1 con vật trong 1 cơ sở
     // @GetMapping("/species/facilities/month/{facilitiesCode}/{animalName}/{year}")
     // public ResponseEntity<List<MonthQuantity>> getQuantityAnimalWithMonth(
-    //         @PathVariable(value = "facilitiesCode") String code, @PathVariable(value = "animalName") String name,
-    //         @PathVariable(value = "year") int year) {
-    //     List<MonthQuantity> monthQuantities = this.animalStorageFacilitiesService.getQuantityAnimalWithMonthOfYear(code,
-    //             name, year);
-    //     return ResponseEntity.ok(monthQuantities);
+    // @PathVariable(value = "facilitiesCode") String code, @PathVariable(value =
+    // "animalName") String name,
+    // @PathVariable(value = "year") int year) {
+    // List<MonthQuantity> monthQuantities =
+    // this.animalStorageFacilitiesService.getQuantityAnimalWithMonthOfYear(code,
+    // name, year);
+    // return ResponseEntity.ok(monthQuantities);
     // }
 
     // thống kê số lượng theo tháng trong tất cả cơ sở
     @GetMapping("/species/facilities/month/{year}")
     public ResponseEntity<List<AnimalMonthQuantity>> getMonthQuantityAnimalWithYear(
             @PathVariable(value = "year") int year) {
-        List<AnimalMonthQuantity> animalMonthQuantities = this.animalStorageFacilitiesService.getMonthQuantityOfFacilities(year);
+        List<AnimalMonthQuantity> animalMonthQuantities = this.animalStorageFacilitiesService
+                .getMonthQuantityOfFacilities(year);
         return ResponseEntity.ok(animalMonthQuantities);
     }
 
@@ -200,9 +203,11 @@ public class AnimalController {
     @GetMapping("/species/facilities/quarter/{year}")
     public ResponseEntity<List<AnimalQuarterQuantity>> getQuarterQuantityAnimalWithYear(
             @PathVariable(value = "year") int year) {
-        List<AnimalQuarterQuantity> animalQuarterQuantities = this.animalStorageFacilitiesService.getQuarterQuantityOfFacilities(year);
+        List<AnimalQuarterQuantity> animalQuarterQuantities = this.animalStorageFacilitiesService
+                .getQuarterQuantityOfFacilities(year);
         return ResponseEntity.ok(animalQuarterQuantities);
     }
+
     @GetMapping("/species/facilities/quarter/{startDate}/{endDate}")
     public ResponseEntity<List<FacilitiesQuantityInQuarter>> getQuarterQuantityAnimalWithTime(
             @PathVariable(value = "startDate") LocalDate startDate,
@@ -212,14 +217,15 @@ public class AnimalController {
     }
 
     
+
     // thống kê số lượng theo năm trong tất cả cơ sở (4 năm trước năm xét)
     @GetMapping("/species/facilities/year/{year}")
     public ResponseEntity<List<AnimalYearQuantity>> getYearQuantityAnimalWithYear(
             @PathVariable(value = "year") int year) {
-        List<AnimalYearQuantity> animalYearQuantities = this.animalStorageFacilitiesService.getYearQuantityOfFacilities(year);
+        List<AnimalYearQuantity> animalYearQuantities = this.animalStorageFacilitiesService
+                .getYearQuantityOfFacilities(year);
         return ResponseEntity.ok(animalYearQuantities);
     }
-
 
     // lấy tổng số lượng của các cơ sở động vật trước 1 khoảng thời gian nào đó
     @GetMapping("/species/facilities-quantity/{date}")
@@ -230,36 +236,40 @@ public class AnimalController {
         return ResponseEntity.ok(facilitiesQuantities);
     }
 
-
-    @GetMapping("/species/facilities-quantity/month/{endDate}")
+    @GetMapping("/species/facilities-quantity/month/{beginMonth}/{endMonth}")
     public ResponseEntity<List<FacilitiesQuantityInMoth>> getQuantityOfFacilitiesWithTime(
-            @PathVariable(value = "endDate") LocalDate endDate) {
+            @PathVariable(value = "beginMonth") LocalDate beginMonth,
+            @PathVariable(value = "endMonth") LocalDate endMonth) {
         List<FacilitiesQuantityInMoth> facilitiesQuantities = this.animalStorageFacilitiesService
-                .getQuantityOfFacilitiesWithTime(endDate);
+                .getQuantityOfFacilitiesWithTime(beginMonth,endMonth);
         return ResponseEntity.ok(facilitiesQuantities);
     }
 
     // lấy số lượng của các loại động vật trong các cơ sở động vật trước 1 khoảng
     // thời gian nào đó
 
-    //lấy tổng số lượng của các cơ sở động vật tại thời điểm hiện tại
+    // lấy tổng số lượng của các cơ sở động vật tại thời điểm hiện tại
     @GetMapping("/species/facilities-quantity")
-    public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilitiesNow(){
-        LocalDate date = LocalDate.now();
-        List<FacilitiesQuantity> facilitiesQuantities = this.animalStorageFacilitiesService.getQuantityOfFacilitiesBeforeTime(date);
+
+    public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilitiesNow() {
+        List<FacilitiesQuantity> facilitiesQuantities = this.animalStorageFacilitiesService
+                .getQuantityOfFacilitiesBeforeTime(LocalDate.now());
         return ResponseEntity.ok(facilitiesQuantities);
     }
 
-    //lấy số lượng của các loại động vật trong các cơ sở động vật tại thời điểm hiện tại
+    // lấy số lượng của các loại động vật trong các cơ sở động vật tại thời điểm
+    // hiện tại
     @GetMapping("/species/animals-quantity")
-    public ResponseEntity<List<AnimalsQuantity>> getQuantityOfAllAnimalNow(){
-        long millis = System.currentTimeMillis();  
+    public ResponseEntity<List<AnimalsQuantity>> getQuantityOfAllAnimalNow() {
+        long millis = System.currentTimeMillis();
         Date date = new java.sql.Date(millis);
-        List<AnimalsQuantity> animalsQuantities = this.animalStorageFacilitiesService.getQuantityOfAllAnimalBeforeTime(date);
+        List<AnimalsQuantity> animalsQuantities = this.animalStorageFacilitiesService
+                .getQuantityOfAllAnimalBeforeTime(date);
         return ResponseEntity.ok(animalsQuantities);
     }
 
-    //lấy số lượng của các loại động vật trong các cơ sở động vật trước 1 khoảng thời gian nào đó
+    // lấy số lượng của các loại động vật trong các cơ sở động vật trước 1 khoảng
+    // thời gian nào đó
 
     @GetMapping("/species/animals-quantity/{date}")
     public ResponseEntity<List<AnimalsQuantity>> getQuantityOfAllAnimal(@PathVariable(value = "date") Date date) {
