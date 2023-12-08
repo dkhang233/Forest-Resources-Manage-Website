@@ -22,6 +22,7 @@ import com.project.forestresourcesmanageapplication.responses.AnimalYearQuantity
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.YearQuantity;
@@ -77,10 +78,12 @@ public interface AnimalStorageFacilitiesService {
     public List<AsfAsRelationship> getAsfAsRelationshipByFacilitiesInYear(String code, int year);//lấy dữ liệu của 1 cơ sở trong năm
 
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
-    public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(Date date);
+    public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date);
     public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate endDate);
     public List<AnimalsQuantity> getQuantityOfAllAnimalBeforeTime(Date date);
     public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year);
     public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year);
     public List<AnimalYearQuantity> getYearQuantityOfFacilities(int year);
+
+    public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate, LocalDate endDate);
 }

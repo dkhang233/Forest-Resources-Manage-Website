@@ -41,6 +41,7 @@ import com.project.forestresourcesmanageapplication.responses.AnimalYearQuantity
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.YearQuantity;
@@ -202,6 +203,14 @@ public class AnimalController {
         List<AnimalQuarterQuantity> animalQuarterQuantities = this.animalStorageFacilitiesService.getQuarterQuantityOfFacilities(year);
         return ResponseEntity.ok(animalQuarterQuantities);
     }
+    @GetMapping("/species/facilities/quarter/{startDate}/{endDate}")
+    public ResponseEntity<List<FacilitiesQuantityInQuarter>> getQuarterQuantityAnimalWithTime(
+            @PathVariable(value = "startDate") LocalDate startDate,
+            @PathVariable(value = "endDate") LocalDate endDate) {
+        List<FacilitiesQuantityInQuarter> facilitiesQuantityInQuarters = this.animalStorageFacilitiesService.getQuarterQuantityOfFacilitiesWithTime(startDate,endDate);
+        return ResponseEntity.ok(facilitiesQuantityInQuarters);
+    }
+
     
     // thống kê số lượng theo năm trong tất cả cơ sở (4 năm trước năm xét)
     @GetMapping("/species/facilities/year/{year}")
@@ -236,8 +245,7 @@ public class AnimalController {
     //lấy tổng số lượng của các cơ sở động vật tại thời điểm hiện tại
     @GetMapping("/species/facilities-quantity")
     public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilitiesNow(){
-        long millis = System.currentTimeMillis();  
-        Date date = new java.sql.Date(millis);
+        LocalDate date = LocalDate.now();
         List<FacilitiesQuantity> facilitiesQuantities = this.animalStorageFacilitiesService.getQuantityOfFacilitiesBeforeTime(date);
         return ResponseEntity.ok(facilitiesQuantities);
     }
@@ -285,5 +293,4 @@ public class AnimalController {
                 .getAsfAsRelationshipByFacilitiesInYear(code, year);
         return ResponseEntity.ok(asRelationships);
     }
-
 }

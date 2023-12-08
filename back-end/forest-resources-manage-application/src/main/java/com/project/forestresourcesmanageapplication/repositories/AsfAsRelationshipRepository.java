@@ -48,7 +48,7 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
    List<AnimalsQuantity> selectAllQuantityOfAllAnimal(@Param("date") Date date);
 
 
-    @Query("SELECT SUM(a.quantity) AS quantity FROM AsfAsRelationship a"
+    @Query("SELECT SUM(a.quantity) FROM AsfAsRelationship a"
         +" WHERE a.animalStorageFacilities.name = :name AND a.date <= :date"
         +" GROUP BY a.animalStorageFacilities")
     Optional<Long> getMonthQuantityOfFacilities(@Param("name") String name, @Param("date") Date date);
