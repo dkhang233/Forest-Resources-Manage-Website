@@ -1,5 +1,7 @@
 package com.project.forestresourcesmanageapplication.responses;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class FacilitiesQuantity {
-    private String facilitiesCode;
-    private long quantity;
+public class FacilitiesQuantityInQuarter {
+    private String quarter;
+    private List<FacilitiesQuantity> data;
 }
