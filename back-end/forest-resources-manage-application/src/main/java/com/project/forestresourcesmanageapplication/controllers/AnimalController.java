@@ -42,6 +42,7 @@ import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.YearQuantity;
@@ -216,6 +217,15 @@ public class AnimalController {
         return ResponseEntity.ok(facilitiesQuantityInQuarters);
     }
 
+    //thống kê theo năm
+    @GetMapping("/species/facilities/year/{startYear}/{endYear}")
+    public ResponseEntity<List<FacilitiesQuantityInYear>> getYearQuantityAnimalWithYear(
+            @PathVariable(value = "startYear") int startYear,
+            @PathVariable(value = "endYear") int endYear) {
+        List<FacilitiesQuantityInYear> facilitiesQuantityInYears = this.animalStorageFacilitiesService
+                .getYearQuantityOfFacilitiesWithTime(startYear,endYear);
+        return ResponseEntity.ok(facilitiesQuantityInYears);
+    }
     
 
     // thống kê số lượng theo năm trong tất cả cơ sở (4 năm trước năm xét)

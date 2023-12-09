@@ -23,6 +23,7 @@ import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
 import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.YearQuantity;
@@ -86,4 +87,5 @@ public interface AnimalStorageFacilitiesService {
     public List<AnimalYearQuantity> getYearQuantityOfFacilities(int year);
 
     public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate, LocalDate endDate);
+    public List<FacilitiesQuantityInYear> getYearQuantityOfFacilitiesWithTime(int startYear, int endYear);
 }
