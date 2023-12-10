@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
+import com.project.forestresourcesmanageapplication.dtos.ResetPasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
 import com.project.forestresourcesmanageapplication.services.UserService;
 
@@ -73,7 +74,17 @@ public class UserController {
 		return ResponseEntity.ok(username);
 	}
 	
-
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
+		this.userService.resetPassword(resetPasswordDTO);
+		return ResponseEntity.ok("");
+	}
+	
+	@PostMapping("/verify-otp")
+	public ResponseEntity<?> verifyOtp(@RequestBody String email,@RequestBody String otp) {
+		this.userService.verifyOtp(email, otp);
+		return ResponseEntity.ok("");
+	}
 	// @PostMapping("{username}/avatar")
 	// public ResponseEntity<String> uploadAvatar(@RequestParam(name = "model")
 	// String model,@RequestParam(name = "avatar") MultipartFile file){

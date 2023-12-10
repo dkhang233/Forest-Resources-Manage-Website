@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
 import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
+import com.project.forestresourcesmanageapplication.dtos.ResetPasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
@@ -21,6 +24,8 @@ import com.project.forestresourcesmanageapplication.models.User;
 import com.project.forestresourcesmanageapplication.repositories.AdministrationRepository;
 import com.project.forestresourcesmanageapplication.repositories.UserRepository;
 import com.project.forestresourcesmanageapplication.services.UserService;
+import com.project.forestresourcesmanageapplication.utils.EmailUtil;
+import com.project.forestresourcesmanageapplication.utils.OtpUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final AdministrationRepository administrationRepository;
+	private final EmailUtil emailUtil;
+	private final OtpUtil otpUtil;
 
 	@Override
 	public List<UserDTO> retrieveAllUsers() {
@@ -134,11 +141,32 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String login(LoginDTO loginDTO) {
-		User user =  this.userRepository.findById(loginDTO.getUsername()).orElseThrow(() -> new DataNotFoundException("Username hoặc mật khẩu không chính xác"));
-		if (user.isActive() != true || ! user.getPassword().equals(loginDTO.getPassword())){
+		User user = this.userRepository.findById(loginDTO.getUsername())
+				.orElseThrow(() -> new DataNotFoundException("Username hoặc mật khẩu không chính xác"));
+		if (user.isActive() != true || !user.getPassword().equals(loginDTO.getPassword())) {
 			throw new InvalidDataException("Username hoặc mật khẩu không chính xác");
 		}
 		return loginDTO.getUsername();
+	}
+
+	@Override
+	public void resetPassword(ResetPasswordDTO resetPasswordDTO) {
+		User user = this.userRepository.findByEmail(resetPasswordDTO.getEmail())
+				.orElseThrow(() -> new DataNotFoundException("Email chưa được sử dụng"));
+		String otp = otpUtil.generateOtp();
+		user.setOtp(otp);
+		user.setOtpGeneratedTime(LocalDateTime.now());
+		this.emailUtil.sendOtpEmail(user.getUsername(), resetPasswordDTO.getEmail(), otp);
+	}
+
+	@Override
+	public boolean verifyOtp(String email, String otp) {
+		User user = this.userRepository.findByEmail(email)
+				.orElseThrow(() -> new DataNotFoundException("Email chưa được sử dụng"));
+		if (user.getOtp().equals(otp) && Duration.between(LocalDateTime.now(),user.getOtpGeneratedTime()).toSeconds() < (5*60)) {
+			return true;
+		}
+		throw new InvalidDataException("Mã xác thực không chính xác");
 	}
 
 	// Chuyển từ user sang userDTO

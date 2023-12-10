@@ -1,6 +1,7 @@
 package com.project.forestresourcesmanageapplication.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,6 +58,12 @@ public class User {
 	@Column(name = "role")
 	@Enumerated(EnumType.STRING)
 	private Role role ;
+	
+	@Column(name = "otp")
+	private String otp;
+
+	@Column(name = "otp_generated_time")
+	private LocalDateTime otpGeneratedTime;
 	
 	@ManyToOne
 	@JoinColumn(name = "administration_code")
