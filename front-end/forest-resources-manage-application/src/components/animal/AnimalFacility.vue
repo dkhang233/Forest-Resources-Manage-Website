@@ -43,7 +43,7 @@
 <script>
 import StackedAreaChart from '../chart/StackedAreaChart.vue';
 import *  as animalApi from '@/api/animal';
-import { format ,startOfQuarter } from "date-fns"
+import { format, startOfQuarter } from "date-fns"
 export default {
     name: "animalFacility",
     components: {
@@ -117,13 +117,35 @@ export default {
 
     },
     watch: {
+        dataType(newValue) {
+            if (newValue == 'month') {
+                if (this.formatBeginMonth && this.formatEndMonth != null) {
+                    this.chartLabelCopy = this.chartLabel
+                    this.chartLabel = []
+                    this.chartDataCopy = this.chartData
+                    this.chartData.clear()
+                    this.setupAnimalQuantityDataByMonth(this.formatBeginMonth, this.formatEndMonth)
+                }
+            }
+            else if (newValue == 'quarter') {
+                if (this.formatBeginQuarter && this.formatEndQuarter != null) {
+                    this.chartLabelCopy = this.chartLabel
+                    this.chartLabel = []
+                    this.chartDataCopy = this.chartData
+                    this.chartData.clear()
+                    this.setupAnimalQuantityDataByQuarter(this.formatBeginQuarter, this.formatEndQuarter)
+                }
+            }
+            else
+                this.setupAnimalQuantityDataByQuarter
+        },
         formatBeginMonth(newBeginMonth) {
             if (newBeginMonth != null) {
                 this.chartLabelCopy = this.chartLabel
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityData(newBeginMonth, this.formatEndMonth)
+                this.setupAnimalQuantityDataByMonth(newBeginMonth, this.formatEndMonth)
             }
         },
         formatEndMonth(newEndMoth) {
@@ -132,14 +154,26 @@ export default {
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityData(this.formatBeginMonth, newEndMoth)
+                this.setupAnimalQuantityDataByMonth(this.formatBeginMonth, newEndMoth)
             }
         },
         formatBeginQuarter(newBeginQuarter) {
-            console.log(newBeginQuarter)
+            if (newBeginQuarter != null) {
+                this.chartLabelCopy = this.chartLabel
+                this.chartLabel = []
+                this.chartDataCopy = this.chartData
+                this.chartData.clear()
+                this.setupAnimalQuantityDataByQuarter(newBeginQuarter, this.formatEndQuarter)
+            }
         },
         formatEndQuarter(newEndQuarter) {
-            console.log(newEndQuarter)
+            if (newEndQuarter != null) {
+                this.chartLabelCopy = this.chartLabel
+                this.chartLabel = []
+                this.chartDataCopy = this.chartData
+                this.chartData.clear()
+                this.setupAnimalQuantityDataByQuarter(this.formatBeginQuarter, newEndQuarter)
+            }
         },
         beginYear(newBeginYear) {
             console.log(newBeginYear)
@@ -149,11 +183,44 @@ export default {
         }
     },
     methods: {
-        setupAnimalQuantityData(beginMonth, endMonth) {
-            animalApi.retrieveAnimalQuantityInMoth(beginMonth, endMonth)
+        setupAnimalQuantityDataByMonth(beginQuarter, endQuarter) {
+            animalApi.retrieveAnimalQuantityInMoth(beginQuarter, endQuarter)
                 .then((res) => {
-                    for (let i = res.data.length - 1; i >= 0; i--) {
+                    for (let i = 0; i <= res.data.length - 1; i++) {
                         let label = res.data[i].date.slice(0, 7)
+                        this.chartLabel.push(label)
+                        for (let j = 0; j < res.data[i].data.length; j++) {
+                            if (this.chartData.has(res.data[i].data[j].facilitiesName)) {
+                                let tmp = this.chartData.get(res.data[i].data[j].facilitiesName)
+                                tmp.push(res.data[i].data[j].quantity)
+                                this.chartData.set(res.data[i].data[j].facilitiesName, tmp)
+                            } else {
+                                this.chartData.set(res.data[i].data[j].facilitiesName, [res.data[i].data[j].quantity])
+                            }
+                        }
+                    }
+                })
+                .catch((err) => {
+                    this.chartData = this.chartDataCopy
+                    this.chartLabel = this.chartLabelCopy
+                    let errorMessage = ''
+                    try {
+                        errorMessage = err.response.data.messages
+                    } catch (err) {
+                        console.log(err)
+                    }
+                    this.$notify({
+                        title: 'Đã xảy ra lỗi',
+                        message: errorMessage,
+                        type: 'error',
+                    })
+                })
+        },
+        setupAnimalQuantityDataByQuarter(beginQuarter, endQuarter) {
+            animalApi.retrieveAnimalQuantityInQuarter(beginQuarter, endQuarter)
+                .then((res) => {
+                    for (let i = 0; i <= res.data.length - 1; i++) {
+                        let label = res.data[i].quarter
                         this.chartLabel.push(label)
                         for (let j = 0; j < res.data[i].data.length; j++) {
                             if (this.chartData.has(res.data[i].data[j].facilitiesName)) {
@@ -188,7 +255,7 @@ export default {
         }
     },
     created() {
-        this.setupAnimalQuantityData(this.formatBeginMonth, this.formatEndMonth)
+        this.setupAnimalQuantityDataByMonth(this.formatBeginMonth, this.formatEndMonth)
     }
 }
 </script>

@@ -371,7 +371,8 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         LocalDate localDate = LocalDate.of(year, month, day);
         Date date = Date.valueOf(localDate);
         return this.asfAsRelationshipRepository.getMonthQuantityOfFacilities(name, date)
-        .orElseThrow(() -> new DataNotFoundException("Không tồn tại dữ liệu của "+name+" trong tháng "+month+" năm "+year));
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Không tồn tại dữ liệu của " + name + " trong tháng " + month + " năm " + year));
     }
 
     public long getMonthQuantityOfFacilities(String name, LocalDate date){
@@ -394,6 +395,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         }catch(Exception e){
             return i;
         }
+
     }
 
     // thống kê số lượng theo tháng trong tất cả cơ sở
@@ -443,39 +445,39 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         return listAQQ;
     }
 
-
-    //Hàm hỗ trợ cho thống kê theo quý
-//--------------------START--------------------
-    public String changeToQuarter(LocalDate date){
+    // Hàm hỗ trợ cho thống kê theo quý
+    // --------------------START--------------------
+    public String changeToQuarter(LocalDate date) {
         int month = date.getMonthValue();
         int year = date.getYear();
+
         return (month >= 1 && month <= 3)     ? "Q1-"+year :
                 (month >= 4 && month <= 6)    ? "Q2-"+year :
-                (month >= 7 && month <= 9)    ? "Q3-"+year :
-                                                "Q4-"+year;
+                (month >= 7 && month <= 9)    ? "Q3-"+year : "Q4-"+year;
     }
-    
+
     public LocalDate getLastDayOfQuarter(LocalDate date) {
         LocalDate firstDayOfQuarter = date.with(date.getMonth().firstMonthOfQuarter())
-                                    .with(TemporalAdjusters.firstDayOfMonth());
+                .with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastDayOfQuarter = firstDayOfQuarter.plusMonths(2)
-                                    .with(TemporalAdjusters.lastDayOfMonth());
+                .with(TemporalAdjusters.lastDayOfMonth());
         return lastDayOfQuarter;
     }
 
     public LocalDate getFirstDayOfQuarter(LocalDate date) {
         LocalDate firstDayOfQuarter = date.with(date.getMonth().firstMonthOfQuarter())
-                                    .with(TemporalAdjusters.firstDayOfMonth());
+                .with(TemporalAdjusters.firstDayOfMonth());
         return firstDayOfQuarter;
     }
 
-    public List<FacilitiesQuantity> getQuarterFacilitiesWithStartDate(LocalDate startDate){
+    public List<FacilitiesQuantity> getQuarterFacilitiesWithStartDate(LocalDate startDate) {
         List<FacilitiesQuantity> list = new ArrayList<>();
         LocalDate lastDayOfQuarter = this.getLastDayOfQuarter(startDate);
-        List<AnimalStorageFacilities> listASF = this.animalStorageFacilitiesRepository.findAllBeforeTime(Date.valueOf(lastDayOfQuarter));
-        for(AnimalStorageFacilities asf : listASF){
-            long sum=0;
-            int i=0;
+        List<AnimalStorageFacilities> listASF = this.animalStorageFacilitiesRepository
+                .findAllBeforeTime(Date.valueOf(lastDayOfQuarter));
+        for (AnimalStorageFacilities asf : listASF) {
+            long sum = 0;
+            int i = 0;
             // while (startDate.getMonthValue()<=lastDayOfQuarter.getMonthValue()){
             //     sum+=this.getMonthQuantityOfFacilities(asf.getName(), startDate.getMonthValue(), startDate.getYear());
             //     i++;
@@ -483,13 +485,16 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
             for(int j=1;j<=3;j++){
                 sum+=this.getMonthQuantityOfFacilities(asf.getName(), startDate);
                 i=this.getTotalBeforeFuntion(asf.getName(), startDate, i);
+
                 startDate = startDate.plusMonths(1);
             }
-            if(i==0){
-                throw new DataNotFoundException("Dữ liệu trong "+this.changeToQuarter(startDate)+" của "+asf.getName()+" không tồn tại");
+            if (i == 0) {
+                throw new DataNotFoundException("Dữ liệu trong " + this.changeToQuarter(startDate) + " của "
+                        + asf.getName() + " không tồn tại");
             }
             long quantity = sum/i;
             FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getCode(),quantity);
+
             list.add(facilitiesQuantity);
         }
         return list;
@@ -516,8 +521,9 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                     break;
                 }
             }
-            if(sum==0){
-                throw new DataNotFoundException("Dữ liệu trong "+this.changeToQuarter(endDate)+" của "+asf.getName()+" không tồn tại");
+            if (sum == 0) {
+                throw new DataNotFoundException(
+                        "Dữ liệu trong " + this.changeToQuarter(endDate) + " của " + asf.getName() + " không tồn tại");
             }
             long quantity = sum/i;
             FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getCode(),quantity);
@@ -525,9 +531,9 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         }
         return list;
     }
-//---------------------------END--------------------------
+    // ---------------------------END--------------------------
 
-    //thống kê số lượng theo quý trong tất cả cơ sở (NEW)
+    // thống kê số lượng theo quý trong tất cả cơ sở (NEW)
     @Override
     public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate, LocalDate endDate){
         if(this.changeToQuarter(startDate).equals(this.changeToQuarter(endDate))
@@ -536,14 +542,14 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                 throw new DataAccessResourceFailureException("Ngày bắt đầu và ngày kết thúc không hợp lệ .Vui lòng nhập lại");
             }
         List<FacilitiesQuantityInQuarter> list = new ArrayList<>();
-        while(true){
+        while (true) {
             FacilitiesQuantityInQuarter tmp = new FacilitiesQuantityInQuarter();
             List<FacilitiesQuantity> data = this.getQuarterFacilitiesWithStartDate(startDate);
             tmp.setQuarter(this.changeToQuarter(startDate));
             tmp.setData(data);
             list.add(tmp);
             LocalDate firstDayNextQuarter = this.getLastDayOfQuarter(startDate).plusDays(1);
-            if(this.changeToQuarter(firstDayNextQuarter).equals(this.changeToQuarter(endDate))){
+            if (this.changeToQuarter(firstDayNextQuarter).equals(this.changeToQuarter(endDate))) {
                 List<FacilitiesQuantity> data2 = this.getQuarterFacilitiesWithEndDate(endDate);
                 FacilitiesQuantityInQuarter tmp2 = new FacilitiesQuantityInQuarter();
                 tmp2.setQuarter(this.changeToQuarter(endDate));
@@ -552,7 +558,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                 break;
             }
             startDate = firstDayNextQuarter;
-        }    
+        }
         return list;
     }
 
@@ -613,6 +619,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         return list;
     }
 
+
     // thống kê số lượng theo năm trong tất cả cơ sở (4 năm trước thời điểm xét)
     public List<AnimalYearQuantity> getYearQuantityOfFacilities(int year) {
         List<AnimalYearQuantity> listAYQ = new ArrayList<>();
@@ -650,17 +657,18 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     @Override
     public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate beginDate, LocalDate endDate) {
         List<FacilitiesQuantityInMoth> allData = new ArrayList<>();
+        beginDate = this.caculateDate(beginDate);
         endDate = this.caculateDate(endDate);
-        while (endDate.isAfter(beginDate)) { // Thống kê 12 tháng trước endDate
-            if (endDate.isAfter(LocalDate.now())) {
-                throw new DataNotFoundException("Dữ liệu trong tháng " + endDate.getMonthValue() + " năm "
-                        + endDate.getYear() + " chưa tồn tại");
-            }
-            List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(endDate);
-            FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(endDate).data(data).build();
+        if (endDate.isAfter(LocalDate.now())) {
+            throw new DataNotFoundException("Dữ liệu trong tháng " + endDate.getMonthValue() + " năm "
+                    + endDate.getYear() + " chưa tồn tại");
+        }
+        while (beginDate.isBefore(endDate.plusDays(1))) {
+            List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(beginDate);
+            FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(beginDate).data(data).build();
             allData.add(tmp);
-            endDate = endDate.minusMonths(1);
-            endDate = this.caculateDate(endDate);
+            beginDate = beginDate.plusMonths(1);
+            beginDate = this.caculateDate(beginDate);
         }
         return allData;
     }

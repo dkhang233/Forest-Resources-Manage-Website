@@ -53,9 +53,9 @@ export default {
     },
     methods: {
         login() {
-            userApi.retrieveUserByUserName(this.form.username)
+            userApi.login(this.form)
                 .then((res) => {
-                    $cookies.set('user', res.data)
+                    $cookies.set('username', res.data)
                     this.$router.push({ path: '/main' })
                 })
                 .catch((err) => {

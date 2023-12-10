@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
 import com.project.forestresourcesmanageapplication.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("${api.prefix}/users")
@@ -63,6 +66,13 @@ public class UserController {
 		InputStream in = Files.newInputStream(uploadPath);
 		return IOUtils.toByteArray(in);
 	}
+
+	@PostMapping("/login")
+	public ResponseEntity<String> postMethodName(@RequestBody LoginDTO loginDTO) {
+		String username = this.userService.login(loginDTO);
+		return ResponseEntity.ok(username);
+	}
+	
 
 	// @PostMapping("{username}/avatar")
 	// public ResponseEntity<String> uploadAvatar(@RequestParam(name = "model")
