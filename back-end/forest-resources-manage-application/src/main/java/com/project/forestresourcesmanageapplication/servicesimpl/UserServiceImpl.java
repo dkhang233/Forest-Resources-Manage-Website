@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
+import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
@@ -129,6 +130,15 @@ public class UserServiceImpl implements UserService {
 		}
 
 		return uniqueFileName;
+	}
+
+	@Override
+	public String login(LoginDTO loginDTO) {
+		User user =  this.userRepository.findById(loginDTO.getUsername()).orElseThrow(() -> new DataNotFoundException("Username hoặc mật khẩu không chính xác"));
+		if (user.isActive() != true || ! user.getPassword().equals(loginDTO.getPassword())){
+			throw new InvalidDataException("Username hoặc mật khẩu không chính xác");
+		}
+		return loginDTO.getUsername();
 	}
 
 	// Chuyển từ user sang userDTO

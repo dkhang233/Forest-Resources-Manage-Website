@@ -1,4 +1,5 @@
 import { defineStore } from "pinia"
+import * as userApi from "@/api/user"
 
 export const useUserStore = defineStore('user', {
     state: () => ({
@@ -24,16 +25,20 @@ export const useUserStore = defineStore('user', {
     },
     actions: {
         getInfor() {
-            this.username = $cookies.get('user').username
-            this.firstName = $cookies.get('user').firstName
-            this.lastName = $cookies.get('user').lastName
-            this.email = $cookies.get('user').email
-            this.avatar = $cookies.get('user').avatar
-            this.address = $cookies.get('user').address
-            this.birthDate = $cookies.get('user').birthDate
-            this.role = $cookies.get('user').role
-            this.administration = $cookies.get('user').administrationName
-            this.active = $cookies.get('user').active
+            userApi.retrieveUserByUserName($cookies.get('username'))
+                .then((res) => {
+                    this.username = res.data.username
+                    this.firstName = res.data.firstName
+                    this.lastName = res.data.lastName
+                    this.email = res.data.email
+                    this.avatar = res.data.avatar
+                    this.address = res.data.address
+                    this.birthDate = res.data.birthDate
+                    this.role = res.data.role
+                    this.administration = res.data.administrationName
+                    this.active = res.data.active
+                })
+                .catch((err) => console.log(err))
         },
 
     }

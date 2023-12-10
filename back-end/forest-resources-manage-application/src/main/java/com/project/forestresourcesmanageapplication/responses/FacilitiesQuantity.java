@@ -10,6 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FacilitiesQuantity {
-    private String facilitiesCode;
+    private String facilitiesName;
     private long quantity;
 }

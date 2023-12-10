@@ -11,8 +11,8 @@ export const constantRoutes = [
         component: () => import('@/components/common/Home')
       },
       {
-        path : 'profile',
-        component : () => import('@/components/user/UserInfor')
+        path: 'profile',
+        component: () => import('@/components/user/UserInfor')
       },
       {
         path: 'access',
@@ -79,6 +79,14 @@ export const constantRoutes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes: constantRoutes
+})
+
+router.beforeEach(async (to, from) => {
+  if (
+    !$cookies.get('username') && to.path !== '/'
+  ) {
+    return { path: '/' }
+  }
 })
 
 export default router

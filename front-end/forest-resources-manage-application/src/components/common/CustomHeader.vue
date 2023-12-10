@@ -92,7 +92,7 @@
                         </li>
                         <li>
                             <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                href="#">Something else here</a>
+                                @click="logout">Đăng xuất</a>
                         </li>
                     </ul>
                 </div>
@@ -144,15 +144,9 @@ export default {
         getUserInfo() {
             this.userStore.getInfor()
         },
-        exit() {
-            // let role = this.$cookies.get("role")
-            // this.$router.push({ path: "/" }) //跳转到登录页面
-            // this.$cookies.remove("cname") //清除cookie
-            // this.$cookies.remove("cid")
-            // this.$cookies.remove("role")
-            // if (role == 0) {
-            //     this.menu.pop()
-            // }
+        logout() {
+            this.$router.push({ path: "/" })
+            $cookies.remove("username")
         }
     },
     created() {

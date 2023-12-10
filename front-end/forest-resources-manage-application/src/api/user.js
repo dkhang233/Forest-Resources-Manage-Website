@@ -1,5 +1,6 @@
 import { apiClient } from "./index"
 
+export const login = (user) => apiClient.post("users/login",user)
 export const retrieveAllUsers = () => apiClient.get("users");
 
 export const retrieveUserByUserName = (username) => apiClient.get(`users/${username}`);
