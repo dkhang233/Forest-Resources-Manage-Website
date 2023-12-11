@@ -550,7 +550,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
             list.add(tmp);
             LocalDate firstDayNextQuarter = this.getLastDayOfQuarter(startDate).plusDays(1);
             if (this.changeToQuarter(firstDayNextQuarter).equals(this.changeToQuarter(endDate))) {
-                List<FacilitiesQuantity> data2 = this.getQuarterFacilitiesWithEndDate(endDate);
+                List<FacilitiesQuantity> data2 = this.getQuarterFacilitiesWithStartDate(endDate);
                 FacilitiesQuantityInQuarter tmp2 = new FacilitiesQuantityInQuarter();
                 tmp2.setQuarter(this.changeToQuarter(endDate));
                 tmp2.setData(data2);
