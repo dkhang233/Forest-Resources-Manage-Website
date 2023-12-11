@@ -43,14 +43,12 @@ import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
-import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.YearQuantity;
 import com.project.forestresourcesmanageapplication.services.AdminstrationService;
 import com.project.forestresourcesmanageapplication.services.AnimalStorageFacilitiesService;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.OverridesAttribute;
 import lombok.RequiredArgsConstructor;
 
 @Service
