@@ -60,15 +60,15 @@ export const constantRoutes = [
         component: () => import('@/components/login/LoginForm')
       },
       {
-        path: 'forgetpass',
+        path: 'forget-pass',
         component: () => import('@/components/login/ForgetPass')
       },
       {
-        path: 'authenticatecode',
+        path: 'authenticate-code',
         component: () => import('@/components/login/AuthenticateCode')
       },
       {
-        path: 'changepass',
+        path: 'change-pass',
         component: () => import('@/components/login/ChangePass')
       }
     ]
@@ -82,11 +82,23 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
+  const userStore = useUserStore()
   if (
-    !$cookies.get('username') && to.path !== '/'
+    !$cookies.get('username') && to.path !== '/' && to.path !== '/forget-pass' && to.path !== '/authenticate-code' && to.path !== '/change-pass'
   ) {
     return { path: '/' }
   }
+})
+
+router.beforeEach(async (to, from) => {
+  if (
+    to.path === '/main/access' || to.path === '/main/account'
+  ) {
+    if ($cookies.get('role') !== 'admin') {
+      return false
+    }
+  }
+  return true
 })
 
 export default router

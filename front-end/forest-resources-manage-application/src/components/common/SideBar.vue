@@ -20,7 +20,7 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-sub-menu>
-                <el-sub-menu :index="''">
+                <el-sub-menu :index="''" v-if="userStore.role ==='admin'">
                     <template #title>
                         <i class="icon"><font-awesome-icon class="iconfont" icon="fa-gauge-high"
                                 style="color: #494965;" /></i>

@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import * as userApi from "@/api/user"
 export default {
     data() {
         return {
@@ -39,7 +40,22 @@ export default {
     },
     methods: {
         send() {
-            this.$router.push({ path: 'authenticatecode' })
+            userApi.resetPassword(this.form)
+                .then((res) => {
+                    this.$router.push({ path: "/authenticate-code" })
+                })
+                .catch((err) => {
+                    let message = ""
+                    try {
+                        message = err.response.data.messages
+                    } catch (error) {
+                        console.log(error)
+                    }
+                    this.$message({
+                        message: message,
+                        type: 'error'
+                    })
+                })
         }
     }
 }

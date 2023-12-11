@@ -49,6 +49,9 @@
                         <el-form-item label="Username" prop="username">
                             <el-input v-model="form.username" :disabled="formType == 'update'" />
                         </el-form-item>
+                        <el-form-item label="Mật khẩu" prop="password" v-if="formType == 'create'">
+                            <el-input type="password" show-password v-model="form.password" />
+                        </el-form-item>
                         <div class="grid grid-cols-2 gap-5">
                             <el-form-item label="Họ" prop="firstName">
                                 <el-input v-model="form.firstName" />
@@ -170,6 +173,7 @@ export default {
             dialogFormVisible: false,
             form: {
                 username: '',
+                password: '',
                 firstName: '',
                 lastName: '',
                 email: '',
@@ -185,6 +189,7 @@ export default {
             formType: 'update',
             rules: {
                 username: [{ validator: this.checkUsername, trigger: 'blur' }],
+                password: [{ validator: this.checkPassword, trigger: 'blur' }],
                 email: [{ validator: this.checkEmail, trigger: 'blur' }],
                 administrationName: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
             },
@@ -226,7 +231,7 @@ export default {
         createNewUser() {
             this.formType = 'create'
             this.resetFormData()
-            if(this.$refs.ruleFormRef != null){
+            if (this.$refs.ruleFormRef != null) {
                 this.$refs.ruleFormRef.clearValidate()
             }
             this.formBackUp = {
@@ -300,7 +305,7 @@ export default {
 
         //Hàm xử lí khi ấn vào nút "Chi tiết"
         handleEdit(index, row) {
-            if(this.$refs.ruleFormRef != null){
+            if (this.$refs.ruleFormRef != null) {
                 this.$refs.ruleFormRef.clearValidate()
             }
             this.formType = 'update'
@@ -497,6 +502,7 @@ export default {
         resetFormData() {
             this.form = {
                 username: '',
+                password: '',
                 firstName: '',
                 lastName: '',
                 email: '',
@@ -513,6 +519,12 @@ export default {
         checkUsername(rule, value, callback) {
             if (value == '') {
                 callback(new Error('Vui lòng nhập username'))
+            }
+            return callback()
+        },
+        checkPassword(rule, value, callback) {
+            if (value == '') {
+                callback(new Error('Vui lòng nhập mật khẩu'))
             }
             return callback()
         },

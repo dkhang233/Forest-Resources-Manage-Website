@@ -36,9 +36,11 @@
 </template>
 
 <script>
+import * as userApi from "@/api/user"
 export default {
     data() {
         return {
+            checkFormStatus: false,
             form: {
                 password: "",
                 retypePassword: ""
@@ -46,8 +48,47 @@ export default {
         }
     },
     methods: {
+        checkForm() {
+            if (this.form.password != "") {
+                if (this.form.password == this.form.retypePassword) {
+                    this.checkFormStatus = true
+                }
+            }
+            else {
+                this.$message({
+                    message: "Mật khẩu nhập lại không trùng khớp",
+                    type: "error"
+                })
+            }
+        },
         send() {
-            this.$router.push({ path: '/' })
+            this.checkForm()
+            if (this.checkFormStatus) {
+                console.log("a")
+                let newPassword = {
+                    password: this.form.password,
+                    otp: $cookies.get('otp')
+                }
+                console.log("b")
+                userApi.changePassword(newPassword)
+                    .then((res) => {
+                        console.log("dsdsd" + res.data)
+                        this.$router.push({ path: '/' })
+                    })
+                    .catch((err) => {
+                        let message = ""
+                        try {
+                            message = err.response.data.messages
+                        } catch (error) {
+                            console.log(error)
+                        }
+                        this.$message({
+                            message: message,
+                            type: 'error',
+                            title: "Đã xảy ra lỗi"
+                        })
+                    })
+            }
         }
     }
 }

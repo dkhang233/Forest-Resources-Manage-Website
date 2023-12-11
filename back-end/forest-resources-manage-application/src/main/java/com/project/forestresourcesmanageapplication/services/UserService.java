@@ -4,16 +4,19 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.ChangePasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
+import com.project.forestresourcesmanageapplication.dtos.NewUserDTO;
 import com.project.forestresourcesmanageapplication.dtos.ResetPasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
+import com.project.forestresourcesmanageapplication.dtos.verifyOtpDTO;
 
 public interface UserService {
 	List<UserDTO> retrieveAllUsers();
 
-	UserDTO createUser(UserDTO userDTO, MultipartFile avatarFile);
+	UserDTO createUser(NewUserDTO newUserDTO, MultipartFile avatarFile);
 
-	UserDTO retrieveUserByUsername(String username);
+	UserDTO retrieveUserByUsernameOrEmail(String usernameOrEmail);
 
 	UserDTO updateUser(String username, UserDTO userDTO, MultipartFile avatarFile);
 
@@ -21,6 +24,8 @@ public interface UserService {
 
 	void resetPassword(ResetPasswordDTO resetPasswordDTO);
 
-	boolean verifyOtp(String email,String otp);
+	String verifyOtp(verifyOtpDTO verifyOtpDTO);
+
+    void changePassword(ChangePasswordDTO changePasswordDTO);
 
 }

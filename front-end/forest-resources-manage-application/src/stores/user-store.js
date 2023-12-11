@@ -37,6 +37,8 @@ export const useUserStore = defineStore('user', {
                     this.role = res.data.role
                     this.administration = res.data.administrationName
                     this.active = res.data.active
+
+                    $cookies.set("role",this.role)
                 })
                 .catch((err) => console.log(err))
         },

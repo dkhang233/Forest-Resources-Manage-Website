@@ -2,8 +2,9 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { VueCookies } from 'vue-cookies'
 
-import router from './router'
 import { createPinia } from 'pinia'
+import router from './router'
+
 
 //import element-plus
 import 'element-plus/dist/index.css'
@@ -40,12 +41,12 @@ app.use(VueCookies)
 
 // app.prototype.$echarts = echarts
 
-//router
-app.use(router)
-
 //pinia
 const pinia = createPinia()
 app.use(pinia)
+
+//router
+app.use(router)
 
 //element-plus
 app.use(ElementPlus)

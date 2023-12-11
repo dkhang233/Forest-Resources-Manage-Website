@@ -5,7 +5,7 @@
         <el-form-item>
             <input type="text"
                 class="w-full p-6 mb-3 border border-gray-300 rounded-md placeholder:font-sans placeholder:font-light"
-                placeholder="Mã xác nhận" v-model="form.code" />
+                placeholder="Mã xác nhận" v-model="form.otp" />
         </el-form-item>
     </el-form>
     <!-- Middle Content -->
@@ -29,17 +29,35 @@
 </template>
 
 <script>
+import * as userApi from "@/api/user"
 export default {
     data() {
         return {
             form: {
-                code: ""
+                otp: ""
             }
         }
     },
     methods: {
         send() {
-            this.$router.push({ path: '/changepass' })
+            userApi.verifyOtp(this.form)
+                .then((res) => {
+                    $cookies.set("otp", res.data)
+                    this.$router.push({ path: "/change-pass" })
+                })
+                .catch((err) => {
+                    let message = ""
+                    try {
+                        message = err.response.data.messages
+                    } catch (error) {
+                        console.log(error)
+                    }
+                    this.$message({
+                        message: message,
+                        type: 'error',
+                        title: "Đã xảy ra lỗi"
+                    })
+                })
         }
     }
 }

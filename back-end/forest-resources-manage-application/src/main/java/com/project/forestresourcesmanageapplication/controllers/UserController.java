@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.ChangePasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
+import com.project.forestresourcesmanageapplication.dtos.NewUserDTO;
 import com.project.forestresourcesmanageapplication.dtos.ResetPasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
+import com.project.forestresourcesmanageapplication.dtos.verifyOtpDTO;
 import com.project.forestresourcesmanageapplication.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -41,15 +44,15 @@ public class UserController {
 	}
 
 	@PostMapping("")
-	public ResponseEntity<UserDTO> createUser(@RequestPart(name = "body") UserDTO userDTO,
+	public ResponseEntity<UserDTO> createUser(@RequestPart(name = "body") NewUserDTO newUserDTO,
 			@RequestParam(name = "avatar-file", required = false) MultipartFile avatarFile) {
-		userDTO = this.userService.createUser(userDTO, avatarFile);
+		UserDTO userDTO = this.userService.createUser(newUserDTO, avatarFile);
 		return ResponseEntity.ok(userDTO);
 	}
 
-	@GetMapping("/{username}")
-	public ResponseEntity<UserDTO> retrieveUserByUsername(@PathVariable String username) {
-		UserDTO userDTO = this.userService.retrieveUserByUsername(username);
+	@GetMapping("/{usernameOrEmail}")
+	public ResponseEntity<UserDTO> retrieveUserByUsername(@PathVariable(name = "usernameOrEmail") String usernameOrEmail) {
+		UserDTO userDTO = this.userService.retrieveUserByUsernameOrEmail(usernameOrEmail);
 		return ResponseEntity.ok(userDTO);
 	}
 
@@ -79,11 +82,17 @@ public class UserController {
 		this.userService.resetPassword(resetPasswordDTO);
 		return ResponseEntity.ok("");
 	}
+
+	@PostMapping("/change-password")
+	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+		this.userService.changePassword(changePasswordDTO);
+		return ResponseEntity.ok("Mật khẩu đã được thay đổi");
+	}
 	
 	@PostMapping("/verify-otp")
-	public ResponseEntity<?> verifyOtp(@RequestBody String email,@RequestBody String otp) {
-		this.userService.verifyOtp(email, otp);
-		return ResponseEntity.ok("");
+	public ResponseEntity<?> verifyOtp(@RequestBody verifyOtpDTO verifyOtpDTO) {
+		String otp = this.userService.verifyOtp(verifyOtpDTO);
+		return ResponseEntity.ok(otp);
 	}
 	// @PostMapping("{username}/avatar")
 	// public ResponseEntity<String> uploadAvatar(@RequestParam(name = "model")

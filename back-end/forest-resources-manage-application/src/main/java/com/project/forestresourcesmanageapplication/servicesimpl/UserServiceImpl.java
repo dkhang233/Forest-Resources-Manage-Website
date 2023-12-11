@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
+import com.project.forestresourcesmanageapplication.dtos.ChangePasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
+import com.project.forestresourcesmanageapplication.dtos.NewUserDTO;
 import com.project.forestresourcesmanageapplication.dtos.ResetPasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
+import com.project.forestresourcesmanageapplication.dtos.verifyOtpDTO;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
@@ -48,22 +51,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDTO createUser(UserDTO userDTO, MultipartFile avatarFile) {
-		if (this.userRepository.findById(userDTO.getUsername()).isPresent()) {
+	public UserDTO createUser(NewUserDTO newUserDTO, MultipartFile avatarFile) {
+		if (this.userRepository.findById(newUserDTO.getUsername()).isPresent()) {
 			throw new DataAlreadyExistsException("Username đã tồn tại");
 		}
-		User user = this.mapUserDTOToUser(userDTO);
+		User user = this.mapNewUserDTOToUser(newUserDTO);
 		String avatar = this.saveImage(avatarFile);
 		user.setAvatar(avatar);
-		user.setPassword("password");
 		this.userRepository.save(user);
-		userDTO = this.mapUserToUserDTO(user);
+		UserDTO userDTO = this.mapUserToUserDTO(user);
 		return userDTO;
 	}
 
 	@Override
-	public UserDTO retrieveUserByUsername(String username) {
-		User user = this.userRepository.findById(username)
+	public UserDTO retrieveUserByUsernameOrEmail(String usernameOrEmail) {
+		User user = this.userRepository.findByUsernameOrEmail(usernameOrEmail)
 				.orElseThrow(() -> new DataNotFoundException("Không tìm thấy tài khoản"));
 		UserDTO userDTO = this.mapUserToUserDTO(user);
 		return userDTO;
@@ -141,7 +143,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String login(LoginDTO loginDTO) {
-		User user = this.userRepository.findById(loginDTO.getUsername())
+		User user = this.userRepository.findByUsernameOrEmail(loginDTO.getUsername())
 				.orElseThrow(() -> new DataNotFoundException("Username hoặc mật khẩu không chính xác"));
 		if (user.isActive() != true || !user.getPassword().equals(loginDTO.getPassword())) {
 			throw new InvalidDataException("Username hoặc mật khẩu không chính xác");
@@ -156,17 +158,28 @@ public class UserServiceImpl implements UserService {
 		String otp = otpUtil.generateOtp();
 		user.setOtp(otp);
 		user.setOtpGeneratedTime(LocalDateTime.now());
+		this.userRepository.save(user);
 		this.emailUtil.sendOtpEmail(user.getUsername(), resetPasswordDTO.getEmail(), otp);
 	}
 
 	@Override
-	public boolean verifyOtp(String email, String otp) {
-		User user = this.userRepository.findByEmail(email)
-				.orElseThrow(() -> new DataNotFoundException("Email chưa được sử dụng"));
-		if (user.getOtp().equals(otp) && Duration.between(LocalDateTime.now(),user.getOtpGeneratedTime()).toSeconds() < (5*60)) {
-			return true;
+	public String verifyOtp(verifyOtpDTO verifyOtpDTO) {
+		User user = this.userRepository.findByOtp(verifyOtpDTO.getOtp())
+				.orElseThrow(() -> new DataNotFoundException("Mã OTP không chính xác"));
+		String otp = user.getOtp();
+		if (otp.equals(verifyOtpDTO.getOtp())
+				&& Duration.between(LocalDateTime.now(), user.getOtpGeneratedTime()).toSeconds() < (5 * 60)) {
+			return verifyOtpDTO.getOtp();
 		}
 		throw new InvalidDataException("Mã xác thực không chính xác");
+	}
+
+	@Override
+	public void changePassword(ChangePasswordDTO changePasswordDTO) {
+		User user = this.userRepository.findByOtp(changePasswordDTO.getOtp())
+				.orElseThrow(() -> new DataNotFoundException("Mã otp không chính xác"));
+		user.setPassword(changePasswordDTO.getPassword());	
+		this.userRepository.save(user);
 	}
 
 	// Chuyển từ user sang userDTO
@@ -205,4 +218,22 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	public User mapNewUserDTOToUser(NewUserDTO newUserDTO){
+		Administration administration = this.administrationRepository.findByName(newUserDTO.getAdministrationName())
+				.orElseThrow(() -> new DataNotFoundException("Đơn vị hành chính trực thuộc không tồn tại"));
+		User user = User.builder()
+				.username(newUserDTO.getUsername())
+				.password(newUserDTO.getPassword())
+				.firstName(newUserDTO.getFirstName())
+				.lastName(newUserDTO.getLastName())
+				.email(newUserDTO.getEmail())
+				.avatar(newUserDTO.getAvatar())
+				.address(newUserDTO.getAddress())
+				.birthDate(newUserDTO.getBirthDate())
+				.isActive(newUserDTO.isActive())
+				.role(newUserDTO.getRole())
+				.administration(administration)
+				.build();
+		return user;
+	}
 }
