@@ -333,6 +333,7 @@ export default {
 
         // Xứ lí khi ấn vào avatar
         openFileInput() {
+            this.$refs.uploadInput.value = null
             this.$refs.uploadInput.click()
         },
         // XỬ lí khi người dùng chọn file

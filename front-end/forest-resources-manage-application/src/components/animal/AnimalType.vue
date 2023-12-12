@@ -8,8 +8,8 @@
         </el-col>
     </el-row>
     <div class="grid grid-cols-20 pl-[100px] pr-[90px]" v-loading="loadingStatus">
-        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/dog.jpg" alt="" v-if="image == ''" />
-        <img class="h-[550px] rounded-s-3xl" src="image" alt="" v-if="image != ''" />
+        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/dog.jpg" alt="" v-if="animalImage == ''" />
+        <img class="h-[550px] rounded-s-3xl" :src="animalImage" alt="" v-if="animalImage != ''" />
         <div class="col-start-11">
             <el-card class="h-[550px] w-[50rem] rounded-e-3xl" shadow="always">
                 <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
@@ -127,7 +127,8 @@
 
 <script>
 import * as animalApi from '@/api/animal'
-import { retrieveAdministrationByName } from '@/api/administration'
+import * as administrationApi from '@/api/administration'
+import { ro } from 'date-fns/locale'
 export default {
     data() {
         return {
@@ -184,10 +185,18 @@ export default {
     },
     computed: {
         animalImage() {
-            if (this.form.image.includes("http://")) {
+            if (this.form.image == null || this.form.image == '') {
+                console.log(this.form.image)
+                return ''
+            }
+            else if (this.form.image.includes("http://")) {
+                console.log(this.form.image)
                 return this.form.image
             }
-            return "http://localhost:8088/api/v1/animal-storage-facilities/species/images/" + this.form.image
+            else {
+                console.log(this.form.image)
+                return "http://localhost:8088/api/v1/animal-storage-facilities/species/images/" + this.form.image
+            }
         },
         formTitle() {
             return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'
@@ -214,7 +223,7 @@ export default {
         },
 
         changeAnimalImage(row) {
-            this.image = row.image
+            this.form.image = row.image
         },
         // Tạo tài khoản mới
         createNewAnimal() {
@@ -258,7 +267,7 @@ export default {
                                 type: 'application/json'
                             });
                             animal.append('body', formData)
-                            createUser(animal)
+                            animalApi.createAmimal(animal)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -415,6 +424,7 @@ export default {
                             this.loadingStatus = true
                             let animal = new FormData()
                             animal.append('file-image', this.imageFile)
+                            this.form.fluctuationId = this.form.fluctuationName === 'Không theo chu kỳ' ? 2 : 1
                             let formJson = JSON.stringify(this.form)
                             const formData = new Blob([formJson], {
                                 type: 'application/json'
@@ -428,14 +438,19 @@ export default {
                                         message: 'Cập nhập thành công',
                                         type: 'success'
                                     })
+                                    this.retrieveData()
                                 }).catch((err) => {
                                     this.loadingStatus = false
-                                    this.$notify({
-                                        title: 'Đã xảy ra lỗi',
-                                        message: err.response.data.messages,
-                                        type: 'error',
-                                    })
-                                    console.log(err.message)
+                                    try {
+                                        this.$notify({
+                                            title: 'Đã xảy ra lỗi',
+                                            message: err.response.data.messages,
+                                            type: 'error',
+                                        })
+                                        console.log(err.message)
+                                    } catch (error) {
+                                        console.log(error)
+                                    }
                                 })
                             this.dialogFormVisible = false
                         })
@@ -483,7 +498,7 @@ export default {
             if (value === '') {
                 callback(new Error('Vui lòng nhập tên đơn vị hành chính trực thuộc'))
             } else {
-                retrieveAdministrationByName(value)
+                administrationApi.retrieveAdministrationByName(value)
                     .then(res => callback())
                     .catch(err => callback(new Error('Đơn vị hành chính không tồn tại')))
             }
