@@ -469,6 +469,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     }
 
     public List<FacilitiesQuantity> getQuarterFacilitiesWithStartDate(LocalDate startDate) {
+        LocalDate dateTmp = startDate;
         List<FacilitiesQuantity> list = new ArrayList<>();
         LocalDate lastDayOfQuarter = this.getLastDayOfQuarter(startDate);
         List<AnimalStorageFacilities> listASF = this.animalStorageFacilitiesRepository
@@ -476,12 +477,8 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         for (AnimalStorageFacilities asf : listASF) {
             long sum = 0;
             int i = 0;
-            // while (startDate.getMonthValue()<=lastDayOfQuarter.getMonthValue()){
-            //     sum+=this.getMonthQuantityOfFacilities(asf.getName(), startDate.getMonthValue(), startDate.getYear());
-            //     i++;
-            //     startDate = startDate.plusMonths(1);
             for(int j=1;j<=3;j++){
-                sum+=this.getMonthQuantityOfFacilities(asf.getName(), startDate);
+                sum+=this.getMonthQuantityOfFacilities(asf.getName(), startDate);   
                 i=this.getTotalBeforeFuntion(asf.getName(), startDate, i);
 
                 startDate = startDate.plusMonths(1);
@@ -494,6 +491,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
             FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getCode(),quantity);
 
             list.add(facilitiesQuantity);
+            startDate = dateTmp;
         }
         return list;
     }
@@ -547,15 +545,8 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
             tmp.setData(data);
             list.add(tmp);
             LocalDate firstDayNextQuarter = this.getLastDayOfQuarter(startDate).plusDays(1);
-            if (this.changeToQuarter(firstDayNextQuarter).equals(this.changeToQuarter(endDate))) {
-                List<FacilitiesQuantity> data2 = this.getQuarterFacilitiesWithStartDate(endDate);
-                FacilitiesQuantityInQuarter tmp2 = new FacilitiesQuantityInQuarter();
-                tmp2.setQuarter(this.changeToQuarter(endDate));
-                tmp2.setData(data2);
-                list.add(tmp2);
-                break;
-            }
             startDate = firstDayNextQuarter;
+            if(startDate.isAfter(endDate)) break;
         }
         return list;
     }
@@ -566,6 +557,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         List<FacilitiesQuantity> list = new ArrayList<>();
         String endDate = year+"-12-30";
         LocalDate startDate = LocalDate.of(year, 1, 1);
+        LocalDate dateTmp = startDate;
         // LocalDate endDate = LocalDate.of(year, 12, 30);
         List<AnimalStorageFacilities> listASF = this.animalStorageFacilitiesRepository.findAllBeforeTime(Date.valueOf(endDate));
         for(AnimalStorageFacilities asf : listASF){
@@ -581,6 +573,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
             long quantity = sum/i;
             FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getCode(),quantity);
             list.add(facilitiesQuantity);
+            startDate = dateTmp;
         }
         return list;
     }
