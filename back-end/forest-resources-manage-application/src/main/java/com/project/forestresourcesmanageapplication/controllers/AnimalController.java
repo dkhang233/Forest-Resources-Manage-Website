@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.sql.Date;
 
 import java.time.LocalDate;
-
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -31,13 +31,9 @@ import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
-import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
 import com.project.forestresourcesmanageapplication.models.Fluctuation;
-import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalYearQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
-import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalsQuantityInFacility;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
@@ -164,6 +160,7 @@ public class AnimalController {
     }
 
     // --------------------------THỐNG KÊ DỮ LIỆU VỀ SỐ LƯỢNG----------------------
+
     // thống kê số lượng của tất cả các loài động vật trong 1 cơ sở
     // @GetMapping("/species/facilities/{facilitiesCode}")
     // public ResponseEntity<List<AnimalQuantity>>
@@ -186,126 +183,151 @@ public class AnimalController {
     // return ResponseEntity.ok(monthQuantities);
     // }
 
-    // thống kê số lượng theo tháng trong tất cả cơ sở
-    @GetMapping("/species/facilities/month/{year}")
-    public ResponseEntity<List<AnimalMonthQuantity>> getMonthQuantityAnimalWithYear(
-            @PathVariable(value = "year") int year) {
-        List<AnimalMonthQuantity> animalMonthQuantities = this.animalStorageFacilitiesService
-                .getMonthQuantityOfFacilities(year);
-        return ResponseEntity.ok(animalMonthQuantities);
+    // ------Thống kê số lượng theo tháng trong tất cả cơ sở-------
+    @GetMapping("/species/facilities/month/{beginMonth}/{endMonth}")
+    public ResponseEntity<List<FacilitiesQuantityInMoth>> getQuantityOfFacilitiesWithTime(
+            @PathVariable(value = "beginMonth") LocalDate beginMonth,
+            @PathVariable(value = "endMonth") LocalDate endMonth) {
+        List<FacilitiesQuantityInMoth> facilitiesQuantities = this.animalStorageFacilitiesService
+                .getQuantityOfFacilitiesWithTime(beginMonth, endMonth);
+        return ResponseEntity.ok(facilitiesQuantities);
     }
 
-    // thống kê số lượng theo quý trong tất cả cơ sở
-    @GetMapping("/species/facilities/quarter/{year}")
-    public ResponseEntity<List<AnimalQuarterQuantity>> getQuarterQuantityAnimalWithYear(
-            @PathVariable(value = "year") int year) {
-        List<AnimalQuarterQuantity> animalQuarterQuantities = this.animalStorageFacilitiesService
-                .getQuarterQuantityOfFacilities(year);
-        return ResponseEntity.ok(animalQuarterQuantities);
-    }
-
+    // -------Thống kê số lượng theo quý trong tất cả cơ sở----------
     @GetMapping("/species/facilities/quarter/{startDate}/{endDate}")
     public ResponseEntity<List<FacilitiesQuantityInQuarter>> getQuarterQuantityAnimalWithTime(
             @PathVariable(value = "startDate") LocalDate startDate,
             @PathVariable(value = "endDate") LocalDate endDate) {
-        List<FacilitiesQuantityInQuarter> facilitiesQuantityInQuarters = this.animalStorageFacilitiesService.getQuarterQuantityOfFacilitiesWithTime(startDate,endDate);
+        List<FacilitiesQuantityInQuarter> facilitiesQuantityInQuarters = this.animalStorageFacilitiesService
+                .getQuarterQuantityOfFacilitiesWithTime(startDate, endDate);
         return ResponseEntity.ok(facilitiesQuantityInQuarters);
     }
 
-    //thống kê theo năm
+    // -------Thống kê số lượng theo nắm trong tất cả cơ sở----------
     @GetMapping("/species/facilities/year/{startYear}/{endYear}")
     public ResponseEntity<List<FacilitiesQuantityInYear>> getYearQuantityAnimalWithYear(
             @PathVariable(value = "startYear") int startYear,
             @PathVariable(value = "endYear") int endYear) {
         List<FacilitiesQuantityInYear> facilitiesQuantityInYears = this.animalStorageFacilitiesService
-                .getYearQuantityOfFacilitiesWithTime(startYear,endYear);
+                .getYearQuantityOfFacilitiesWithTime(startYear, endYear);
         return ResponseEntity.ok(facilitiesQuantityInYears);
     }
-    
 
-    // thống kê số lượng theo năm trong tất cả cơ sở (4 năm trước năm xét)
-    @GetMapping("/species/facilities/year/{year}")
-    public ResponseEntity<List<AnimalYearQuantity>> getYearQuantityAnimalWithYear(
-            @PathVariable(value = "year") int year) {
-        List<AnimalYearQuantity> animalYearQuantities = this.animalStorageFacilitiesService
-                .getYearQuantityOfFacilities(year);
-        return ResponseEntity.ok(animalYearQuantities);
+    // @GetMapping("/species/facilities/quarter/{year}")
+    // public ResponseEntity<List<AnimalQuarterQuantity>>
+    // getQuarterQuantityAnimalWithYear(
+    // @PathVariable(value = "year") int year) {
+    // List<AnimalQuarterQuantity> animalQuarterQuantities =
+    // this.animalStorageFacilitiesService
+    // .getQuarterQuantityOfFacilities(year);
+    // return ResponseEntity.ok(animalQuarterQuantities);
+    // }
+
+    // @GetMapping("/species/facilities/month/{year}")
+    // public ResponseEntity<List<AnimalMonthQuantity>>
+    // getMonthQuantityAnimalWithYear(
+    // @PathVariable(value = "year") int year) {
+    // List<AnimalMonthQuantity> animalMonthQuantities =
+    // this.animalStorageFacilitiesService
+    // .getMonthQuantityOfFacilities(year);
+    // return ResponseEntity.ok(animalMonthQuantities);
+    // }
+
+    // -----------------Thống kê số lượng từng loại động vật theo tháng tại các cơ
+    // sở--------------
+    @GetMapping("/species/facility-quantity/month/{begin}/{end}")
+    public ResponseEntity<?> retrieveQuantiyOfFacilityByMonth(@PathVariable(name = "begin") LocalDate begin,
+            @PathVariable(name = "end") LocalDate end) {
+        return ResponseEntity.ok("");
+    }
+
+    // -----------------Thống kê số lượng từng loại động vật theo quý tại các cơ
+    // sở--------------
+    @GetMapping("/species/facility-quantity/quarter/{begin}/{end}")
+    public ResponseEntity<?> retrieveQuantiyOfFacilityByQuarter(@PathVariable(name = "begin") LocalDate begin,
+            @PathVariable(name = "end") LocalDate end) {
+        return ResponseEntity.ok("");
+    }
+
+    // -----------------Thống kê số lượng từng loại động vật theo năm tại các cơ
+    // sở--------------
+    @GetMapping("/species/facility-quantity/year/{begin}/{end}")
+    public ResponseEntity<?> retrieveQuantiyOfFacilityByYear(@PathVariable(name = "begin") LocalDate begin,
+            @PathVariable(name = "end") LocalDate end) {
+        return ResponseEntity.ok("");
+    }
+
+    // ----------lấy số lượng của các loại động vật trong các cơ sở động vật tại thời điểm
+    // hiện tại-------------------
+    @GetMapping("/species/facility-quantity/now")
+    public ResponseEntity<HashMap<String, List<AnimalsQuantity>>> getQuantityOfAllAnimalNow() {
+        HashMap<String, List<AnimalsQuantity>> animalsQuantities = this.animalStorageFacilitiesService
+                .getQuantityOfAllAnimalBeforeTime(LocalDate.now());
+        return ResponseEntity.ok(animalsQuantities);
     }
 
     // lấy tổng số lượng của các cơ sở động vật trước 1 khoảng thời gian nào đó
-    @GetMapping("/species/facilities-quantity/{date}")
-    public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilities(
-            @PathVariable(value = "date") LocalDate date) {
-        List<FacilitiesQuantity> facilitiesQuantities = this.animalStorageFacilitiesService
-                .getQuantityOfFacilitiesBeforeTime(date);
-        return ResponseEntity.ok(facilitiesQuantities);
-    }
-
-    @GetMapping("/species/facilities-quantity/month/{beginMonth}/{endMonth}")
-    public ResponseEntity<List<FacilitiesQuantityInMoth>> getQuantityOfFacilitiesWithTime(
-            @PathVariable(value = "beginMonth") LocalDate beginMonth,
-            @PathVariable(value = "endMonth") LocalDate endMonth) {
-        List<FacilitiesQuantityInMoth> facilitiesQuantities = this.animalStorageFacilitiesService
-                .getQuantityOfFacilitiesWithTime(beginMonth,endMonth);
-        return ResponseEntity.ok(facilitiesQuantities);
-    }
+    // @GetMapping("/species/facility-quantity/{date}")
+    // public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilities(
+    // @PathVariable(value = "date") LocalDate date) {
+    // List<FacilitiesQuantity> facilitiesQuantities =
+    // this.animalStorageFacilitiesService
+    // .getQuantityOfFacilitiesBeforeTime(date);
+    // return ResponseEntity.ok(facilitiesQuantities);
+    // }
 
     // lấy số lượng của các loại động vật trong các cơ sở động vật trước 1 khoảng
     // thời gian nào đó
 
     // lấy tổng số lượng của các cơ sở động vật tại thời điểm hiện tại
-    @GetMapping("/species/facilities-quantity")
-
-    public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilitiesNow() {
-        List<FacilitiesQuantity> facilitiesQuantities = this.animalStorageFacilitiesService
-                .getQuantityOfFacilitiesBeforeTime(LocalDate.now());
-        return ResponseEntity.ok(facilitiesQuantities);
-    }
-
-    // lấy số lượng của các loại động vật trong các cơ sở động vật tại thời điểm
-    // hiện tại
-    @GetMapping("/species/animals-quantity")
-    public ResponseEntity<List<AnimalsQuantity>> getQuantityOfAllAnimalNow() {
-        long millis = System.currentTimeMillis();
-        Date date = new java.sql.Date(millis);
-        List<AnimalsQuantity> animalsQuantities = this.animalStorageFacilitiesService
-                .getQuantityOfAllAnimalBeforeTime(date);
-        return ResponseEntity.ok(animalsQuantities);
-    }
+    // @GetMapping("/species/facility-quantity")
+    // public ResponseEntity<List<FacilitiesQuantity>> getQuantityOfFacilitiesNow()
+    // {
+    // List<FacilitiesQuantity> facilitiesQuantities =
+    // this.animalStorageFacilitiesService
+    // .getQuantityOfFacilitiesBeforeTime(LocalDate.now());
+    // return ResponseEntity.ok(facilitiesQuantities);
+    // }
 
     // lấy số lượng của các loại động vật trong các cơ sở động vật trước 1 khoảng
     // thời gian nào đó
 
-    @GetMapping("/species/animals-quantity/{date}")
-    public ResponseEntity<List<AnimalsQuantity>> getQuantityOfAllAnimal(@PathVariable(value = "date") Date date) {
-        List<AnimalsQuantity> animalsQuantities = this.animalStorageFacilitiesService
-                .getQuantityOfAllAnimalBeforeTime(date);
-        return ResponseEntity.ok(animalsQuantities);
-    }
+    // @GetMapping("/species/animals-quantity/{date}")
+    // public ResponseEntity<List<AnimalsQuantity>>
+    // getQuantityOfAllAnimal(@PathVariable(value = "date") Date date) {
+    // List<AnimalsQuantity> animalsQuantities = this.animalStorageFacilitiesService
+    // .getQuantityOfAllAnimalBeforeTime(date);
+    // return ResponseEntity.ok(animalsQuantities);
+    // }
 
     // lấy tất cả dữ liệu trong 1 khoảng thời gian
 
-    @GetMapping("/statistical/{startDate}/{endDate}")
-    public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationship(
-            @PathVariable(value = "startDate") Date startDate, @PathVariable(value = "endDate") Date endDate) {
-        List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService
-                .getAsfAsRelationshipWithTime(startDate, endDate);
-        return ResponseEntity.ok(asRelationships);
-    }
+    // @GetMapping("/statistical/{startDate}/{endDate}")
+    // public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationship(
+    // @PathVariable(value = "startDate") Date startDate, @PathVariable(value =
+    // "endDate") Date endDate) {
+    // List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService
+    // .getAsfAsRelationshipWithTime(startDate, endDate);
+    // return ResponseEntity.ok(asRelationships);
+    // }
 
     // lấy tất cả dữ liệu trong 1 năm
-    @GetMapping("/statistical/{year}")
-    public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationshipInYear(@PathVariable int year) {
-        List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService.getAsfAsRelationshipInYear(year);
-        return ResponseEntity.ok(asRelationships);
-    }
+    // @GetMapping("/statistical/{year}")
+    // public ResponseEntity<List<AsfAsRelationship>>
+    // getAsfAsRelationshipInYear(@PathVariable int year) {
+    // List<AsfAsRelationship> asRelationships =
+    // this.animalStorageFacilitiesService.getAsfAsRelationshipInYear(year);
+    // return ResponseEntity.ok(asRelationships);
+    // }
 
     // lấy dữ liệu của 1 cơ sở lưu trữ trong 1 năm
-    @GetMapping("/statistical/facilities/{facilitiesCode}/{year}")
-    public ResponseEntity<List<AsfAsRelationship>> getAsfAsRelationshipByFacilitiesIdInYear(
-            @PathVariable(value = "facilitiesCode") String code, @PathVariable(value = "year") int year) {
-        List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService
-                .getAsfAsRelationshipByFacilitiesInYear(code, year);
-        return ResponseEntity.ok(asRelationships);
-    }
+    // @GetMapping("/statistical/facilities/{facilitiesCode}/{year}")
+    // public ResponseEntity<List<AsfAsRelationship>>
+    // getAsfAsRelationshipByFacilitiesIdInYear(
+    // @PathVariable(value = "facilitiesCode") String code, @PathVariable(value =
+    // "year") int year) {
+    // List<AsfAsRelationship> asRelationships = this.animalStorageFacilitiesService
+    // .getAsfAsRelationshipByFacilitiesInYear(code, year);
+    // return ResponseEntity.ok(asRelationships);
+    // }
 }

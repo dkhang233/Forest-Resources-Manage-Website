@@ -15,7 +15,7 @@
     </el-form>
     <!-- Middle Content -->
     <div class="flex flex-col items-center justify-between mt-6 space-y-6 md:flex-row md:space-y-0">
-        <a class="mr-3 font-light text-black hover:underline" href="#/forget-pass">Quên mật khẩu</a>
+        <a class="mr-3 font-light text-black hover:underline hover:text-blue-500" href="#/forget-pass">Quên mật khẩu</a>
         <button class="w-full md:w-auto flex justify-center 
                         items-center p-6 space-x-4 font-sans font-bold
                         text-white rounded-md shadow-lg 
@@ -32,6 +32,10 @@
             </svg>
         </button>
     </div>
+
+    <!-- <div class="ml-[80px] mt-[50px] ">
+        <a class="font-light text-black hover:underline hover:text-blue-500" href="#/register">Đăng ký tài khoản</a>
+    </div> -->
 </template>
 
 <script>

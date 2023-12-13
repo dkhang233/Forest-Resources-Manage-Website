@@ -2,8 +2,8 @@ package com.project.forestresourcesmanageapplication.services;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,15 +18,12 @@ import com.project.forestresourcesmanageapplication.models.Fluctuation;
 
 import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalYearQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
+import com.project.forestresourcesmanageapplication.responses.AnimalsQuantityInFacility;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
-import com.project.forestresourcesmanageapplication.responses.MonthQuantity;
-import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
-import com.project.forestresourcesmanageapplication.responses.YearQuantity;
 
 public interface AnimalStorageFacilitiesService {
 
@@ -81,10 +78,9 @@ public interface AnimalStorageFacilitiesService {
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date);
     public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate beginDate,LocalDate endDate);
-    public List<AnimalsQuantity> getQuantityOfAllAnimalBeforeTime(Date date);
+    public HashMap<String, List<AnimalsQuantity>> getQuantityOfAllAnimalBeforeTime(LocalDate date);
     public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year);
     public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year);
-    public List<AnimalYearQuantity> getYearQuantityOfFacilities(int year);
 
     public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate, LocalDate endDate);
     public List<FacilitiesQuantityInYear> getYearQuantityOfFacilitiesWithTime(int startYear, int endYear);

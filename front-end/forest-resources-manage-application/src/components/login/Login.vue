@@ -7,7 +7,7 @@
                 <!-- Top Content -->
                 <router-view></router-view>
                 <!-- Border -->
-                <div class="mt-12 border-b border-b-gray-300"></div>
+                <div class=" mt-10 border-b border-b-gray-300"></div>
             </div>
 
             <!-- Right Side -->

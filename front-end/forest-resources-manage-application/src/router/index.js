@@ -60,6 +60,10 @@ export const constantRoutes = [
         component: () => import('@/components/login/LoginForm')
       },
       {
+        path: '/register',
+        component: () => import('@/components/login/RegisterForm')
+      },
+      {
         path: 'forget-pass',
         component: () => import('@/components/login/ForgetPass')
       },
