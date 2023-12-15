@@ -30,7 +30,8 @@
             <el-dialog class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
-                    dark:bg-neutral-700" top="2vh" v-model="dialogFormVisible" :title="formTitle">
+                    dark:bg-neutral-700" top="2vh" v-model="dialogFormVisible" :title="formTitle"
+                :before-close="handleCancel">
                 <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
                     label-position="top">
                     <div class="col-span-3">
@@ -94,13 +95,6 @@
                         border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false"
                             v-if="formType == 'update'">
                             Xóa
-                        </button>
-                        <button class="p-2 mr-3 col-start-11  font-sans font-bold text-sm 
-                        text-white rounded-lg shadow-lg 
-                        px-5 bg-[#839192] shadow-blue-100 
-                        hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="handleCancel">
-                            Quay lại
                         </button>
                         <button class=" p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
@@ -381,7 +375,16 @@ export default {
 
         // Hàm xử lí khi ấn vào nút "Quay lại"
         handleCancel() {
-            if (this.form == this.formBackUp) {
+            if (this.form.username == this.formBackUp.username
+                && this.form.firstName == this.formBackUp.firstName
+                && this.form.lastName == this.formBackUp.lastName
+                && this.form.email == this.formBackUp.email
+                && this.form.avatar == this.formBackUp.avatar
+                && this.form.address == this.formBackUp.address
+                && this.form.birthDate == this.formBackUp.birthDate
+                && this.form.role == this.formBackUp.role
+                && this.form.isActive == this.formBackUp.isActive
+                && this.form.administrationName == this.formBackUp.administrationName) {
                 this.dialogFormVisible = false
             }
             else {

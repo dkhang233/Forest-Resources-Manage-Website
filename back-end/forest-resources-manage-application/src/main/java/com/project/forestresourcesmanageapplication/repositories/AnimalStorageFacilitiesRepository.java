@@ -12,12 +12,12 @@ import com.project.forestresourcesmanageapplication.models.AnimalStorageFaciliti
 
 @Repository
 public interface AnimalStorageFacilitiesRepository extends JpaRepository<AnimalStorageFacilities,String>{
-    @Query("SELECT a FROM AnimalStorageFacilities a ORDER BY a.code DESC")
+    @Query("SELECT a FROM AnimalStorageFacilities a ORDER BY a.code")
     List<AnimalStorageFacilities> findAll();
 
     @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.name = :name")
     Optional<AnimalStorageFacilities> findByName(String name);
 
-    @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.date <= :date ORDER BY a.code DESC")
+    @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.date <= :date ORDER BY a.name")
     List<AnimalStorageFacilities> findAllBeforeTime(Date date);
 } 

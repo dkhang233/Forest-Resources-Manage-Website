@@ -19,7 +19,6 @@ import com.project.forestresourcesmanageapplication.models.Fluctuation;
 import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalsQuantityInFacility;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
@@ -84,4 +83,6 @@ public interface AnimalStorageFacilitiesService {
 
     public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate, LocalDate endDate);
     public List<FacilitiesQuantityInYear> getYearQuantityOfFacilitiesWithTime(int startYear, int endYear);
+
+    public void updateQuantityOfAnimal(AnimalsQuantity animalsQuantity);
 }

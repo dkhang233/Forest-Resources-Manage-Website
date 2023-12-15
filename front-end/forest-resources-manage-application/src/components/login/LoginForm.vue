@@ -57,12 +57,15 @@ export default {
     },
     methods: {
         login() {
+            this.$emit('onLoadingStatus')
             userApi.login(this.form)
                 .then((res) => {
+                    this.$emit('offLoadingStatus')
                     $cookies.set('username', res.data)
                     this.$router.push({ path: '/main' })
                 })
                 .catch((err) => {
+                    this.$emit('offLoadingStatus')
                     this.$message({
                         message: 'Username hoặc mật khẩu không chính xác',
                         type: 'error',

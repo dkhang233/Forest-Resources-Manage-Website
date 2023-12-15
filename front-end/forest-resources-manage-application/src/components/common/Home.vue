@@ -1,5 +1,5 @@
 <template>
-Đây là home page
+    <img class="container" src="@/assets/logo/logo.png" alt="">
 </template>
 
 <script>

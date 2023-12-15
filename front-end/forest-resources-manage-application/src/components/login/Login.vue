@@ -1,11 +1,11 @@
 <template>
-    <div class="flex items-center justify-center min-h-screen bg-[#FFF] bg-[url('@/assets/image/login-image-3.jpg')]  bg-cover bg-center ">
+    <div v-loading="loadingStatus" class="flex items-center justify-center min-h-screen bg-[#FFF] bg-[url('@/assets/image/login-image-3.jpg')]  bg-cover bg-center ">
         <!-- Card Container -->
         <div class="relative flex flex-col m-6 space-y-10 bg-white bg-opacity-60 shadow-2xl rounded-2xl md:flex-row md:space-y-0 md:m-0" style="backdrop-filter: blur(20px);" >
             <!-- Left Side -->
             <div class="p-6 md:p-20">
                 <!-- Top Content -->
-                <router-view></router-view>
+                <router-view @on-loading-status="loadingStatus = true" @off-loading-status = "loadingStatus = false"></router-view>
                 <!-- Border -->
                 <div class=" mt-10 border-b border-b-gray-300"></div>
             </div>
@@ -31,6 +31,7 @@
 export default {
     data(){
         return{
+            loadingStatus : false
         }
     }
 }

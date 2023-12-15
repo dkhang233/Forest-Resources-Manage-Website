@@ -11,7 +11,6 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -486,7 +485,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                         + asf.getName() + " không tồn tại");
             }
             long quantity = sum / i;
-            FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getCode(), quantity);
+            FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getName(), quantity);
 
             list.add(facilitiesQuantity);
             startDate = dateTmp;
@@ -575,7 +574,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                         "Dữ liệu trong năm " + year + " của " + asf.getName() + " không tồn tại");
             }
             long quantity = sum / i;
-            FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getCode(), quantity);
+            FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf.getName(), quantity);
             list.add(facilitiesQuantity);
             startDate = dateTmp;
         }
@@ -631,15 +630,25 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         beginDate = this.caculateDate(beginDate);
         endDate = this.caculateDate(endDate);
         if (endDate.isAfter(LocalDate.now())) {
-            throw new DataNotFoundException("Dữ liệu trong tháng " + endDate.getMonthValue() + " năm "
-                    + endDate.getYear() + " chưa tồn tại");
-        }
-        while (beginDate.isBefore(endDate.plusDays(1))) {
-            List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(beginDate);
-            FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(beginDate).data(data).build();
+            endDate = LocalDate.now();
+            while (beginDate.isBefore(endDate.plusDays(1))) {
+                List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(beginDate);
+                FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(beginDate).data(data).build();
+                allData.add(tmp);
+                beginDate = beginDate.plusMonths(1);
+                beginDate = this.caculateDate(beginDate);
+            }
+            List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(endDate);
+            FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(endDate).data(data).build();
             allData.add(tmp);
-            beginDate = beginDate.plusMonths(1);
-            beginDate = this.caculateDate(beginDate);
+        } else {
+            while (beginDate.isBefore(endDate.plusDays(1))) {
+                List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(beginDate);
+                FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(beginDate).data(data).build();
+                allData.add(tmp);
+                beginDate = beginDate.plusMonths(1);
+                beginDate = this.caculateDate(beginDate);
+            }
         }
         return allData;
     }
@@ -663,6 +672,26 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         });
         List<AnimalsQuantityInFacility> animalsQuantityInFacilities;
         return animalsQuantitiesMap;
+    }
+
+    @Override
+    public void updateQuantityOfAnimal(AnimalsQuantity animalsQuantity) {
+        if (animalsQuantity.getQuantity() < 0) {
+            throw new InvalidDataException("Số lượng động vật không hợp lệ");
+        }
+        AnimalStorageFacilities animalStorageFacilities = this.animalStorageFacilitiesRepository
+                .findByName(animalsQuantity.getFacilitiesName())
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy cơ sở lưu trữ"));
+        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(animalsQuantity.getAnimalName());
+        AnimalsQuantity animalsQuantity2 = this.asfAsRelationshipRepository
+                .selecAnimalsQuantity(animalStorageFacilities, animalSpecies, Date.valueOf(LocalDate.now()))
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy cơ sở lưu trữ hoặc động vật"));
+        long quantity = animalsQuantity.getQuantity() - animalsQuantity2.getQuantity();
+        if (quantity != 0) {
+            AsfAsRelationship asfAsRelationship = new AsfAsRelationship(1, animalStorageFacilities, animalSpecies,
+                    quantity, Date.valueOf(LocalDate.now()));
+            this.asfAsRelationshipRepository.save(asfAsRelationship);
+        }
     }
 
     private LocalDate caculateDate(LocalDate date) {

@@ -45,7 +45,7 @@
             <el-row v-loading="loadingStatus">
                 <el-col :span="17" :offset="5">
                     <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
-                        <el-table :data="filterTableData" class="h-[530px] w-[93rem]" fit>
+                        <el-table :data="filterFacilitiesTable" class="h-[530px] w-[93rem]" fit>
                             <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                                 :prop="item.value">
                             </el-table-column>
@@ -62,9 +62,10 @@
                     <el-dialog class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
-                    dark:bg-neutral-700" top="8vh" v-model="dialogFormVisible" :title="formTitle">
-                        <el-form class="grid grid-cols-10 gap-10" ref="ruleFormRef" :model="form" status-icon :rules="rules"
-                            size="default" label-position="top">
+                    dark:bg-neutral-700" top="8vh" v-model="dialogFormVisible" :title="formTitle"
+                        :before-close="handleCancel">
+                        <el-form class="grid grid-cols-10 gap-10" ref="facilitiesForm" :model="form" status-icon
+                            :rules="rules" size="default" label-position="top">
                             <div class="col-start-1 col-span-4">
                                 <el-form-item label="Tên cơ sở" prop="name">
                                     <el-input v-model="form.name" />
@@ -82,19 +83,62 @@
                             </div>
                             <div class="col-start-5 col-span-6">
                                 <span class="text-[16px]">Số lượng động vật hiện tại của cơ sở</span>
-                                <el-table class="mt-2" :data="tableData" height="300" border>
-                                    <el-table-column prop="name" label="Tên động vật" />
-                                    <el-table-column prop="capacity" label="Số lượng" />
-                                    <el-table-column :min-width="80">
+                                <el-table class="mt-2" :data="animalQuantityTable" height="300" border>
+                                    <el-table-column prop="animalName" label="Tên động vật" />
+                                    <el-table-column prop="quantity" label="Số lượng" />
+                                    <el-table-column :min-width="90">
                                         <template #header>
+                                            <div class="grid grid-cols-6">
+                                                <button class=" px-3 py-2 col-span-6 col-start-1 font-sans font-bold text-sm
+                        text-white rounded-lg shadow-lg bg-blue-500 
+                        shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150"
+                                                    @click="handleAddAnimalQuantity">
+                                                    <font-awesome-icon class="pr-1" :icon="['fas', 'plus']" />
+                                                    Thêm mới
+                                                </button>
+                                            </div>
                                         </template>
                                         <template #default="scope">
-                                            <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
+                                            <div class="grid grid-cols-6">
+                                                <button
+                                                    class="border-2 px-2 py-1 col-span-4 col-start-2 hover:text-blue-400 hover:border-blue-400"
+                                                    @click="handleEditAnimalQuantity(scope.$index, scope.row)">Chi
+                                                    tiết</button>
+                                            </div>
                                         </template>
-                                        </el-table-column>
+                                    </el-table-column>
                                 </el-table>
                             </div>
                         </el-form>
+                        <el-dialog class="w-[25rem] rounded-lg
+                    bg-white p-6 
+                    shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
+                    dark:bg-neutral-700" v-model="dialogAnimalFormVisible" title="Số lượng động vật"
+                            :before-close="handleCancelInAnimalTable">
+                            <el-form class="grid grid-cols-10 gap-10" ref="animalQuantityForm" :model="animalForm"
+                                status-icon :rules="rules" size="default" label-position="top">
+                                <div class="col-start-1 col-span-9">
+                                    <el-form-item label="Tên động vật" prop="animalName">
+                                        <el-input v-model="animalForm.animalName" />
+                                    </el-form-item>
+                                    <el-form-item label="Số lượng" prop="quantity">
+                                        <el-input v-model="animalForm.quantity" />
+                                    </el-form-item>
+                                </div>
+                            </el-form>
+                            <template #footer>
+                                <span class="grid grid-cols-16 gap-4">
+                                    <button class=" p-2 col-start-12  font-sans font-bold text-sm
+                        text-white rounded-lg shadow-lg px-5 bg-blue-500 
+                        shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150"
+                                        @click="handleUpdateInAnimalTable(this.$refs.animalQuantityForm)">
+                                        Cập nhập
+                                    </button>
+                                </span>
+                            </template>
+                        </el-dialog>
                         <template #footer>
                             <span class="grid grid-cols-16 gap-4">
                                 <button class="p-2 mr-3  font-sans font-bold text-sm
@@ -105,25 +149,18 @@
                                     v-if="formType == 'update'">
                                     Xóa
                                 </button>
-                                <button class="p-2 mr-3 col-start-11  font-sans font-bold text-sm 
-                        text-white rounded-lg shadow-lg 
-                        px-5 bg-[#839192] shadow-blue-100 
-                        hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="handleCancel">
-                                    Quay lại
-                                </button>
                                 <button class=" p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                                    @click="handleUpdate(this.$refs.ruleFormRef)" v-if="formType == 'update'">
+                                    @click="handleUpdate(this.$refs.facilitiesForm)" v-if="formType == 'update'">
                                     Cập nhập
                                 </button>
                                 <button class=" p-2 col-start-12 font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                                    @click="handleCreate(this.$refs.ruleFormRef)" v-if="formType == 'create'">
+                                    @click="handleCreate(this.$refs.facilitiesForm)" v-if="formType == 'create'">
                                     Tạo mới
                                 </button>
                             </span>
@@ -215,9 +252,11 @@ export default {
                     value: 'administration[name]'
                 },
             ],
-            tableData: [],
-            filterTableData: [],
+            facilitiesTable: [],
+            filterFacilitiesTable: [],
+            animalQuantityData: null,
             dialogFormVisible: false,
+            dialogAnimalFormVisible: false,
             form: {
                 name: '',
                 date: '',
@@ -225,6 +264,11 @@ export default {
                 administrationName: ''
             },
             formBackUp: null,
+            animalForm: {
+                animalName: '',
+                quantity: ''
+            },
+            animalFormBackUp: null,
             formType: 'update',
             rules: {
                 // name: [{ validator: this.checkUsername, trigger: 'blur' }],
@@ -266,6 +310,11 @@ export default {
         },
         formTitle() {
             return "Cập nhập"
+        },
+        animalQuantityTable() {
+            if (this.animalQuantityData != null) {
+                return this.animalQuantityData.get("1")
+            }
         }
 
     },
@@ -473,18 +522,30 @@ export default {
             this.loadingStatus = true
             animalApi.retrieveAllAnimalFacilities()
                 .then((res) => {
-                    this.tableData = res.data
-                    this.filterTableData = this.tableData
+                    this.facilitiesTable = res.data
+                    this.filterFacilitiesTable = this.facilitiesTable
                     this.loadingStatus = false
                 })
                 .catch((err) => {
                     console.log(err)
                 })
         },
+        setupAnimalQuantity() {
+            this.loadingStatus = true
+            animalApi.retrieveAnimalQuantityNow()
+                .then((res) => {
+                    this.animalQuantityData = new Map(Object.entries(res.data))
+                    console.log(this.animalQuantityTable)
+                    this.loadingStatus = false
+                })
+                .catch((err) => {
+
+                })
+        },
         //Hàm xử lí khi ấn vào nút "Chi tiết"
         handleEdit(index, row) {
-            if (this.$refs.ruleFormRef != null) {
-                this.$refs.ruleFormRef.clearValidate()
+            if (this.$refs.facilitiesForm != null) {
+                this.$refs.facilitiesForm.clearValidate()
             }
             this.formType = 'update'
             this.form = row
@@ -497,8 +558,78 @@ export default {
             }
             this.dialogFormVisible = true
         },
+        handleEditAnimalQuantity(index, row) {
+            if (this.$refs.animalQuantityForm != null) {
+                this.$refs.animalQuantityForm.clearValidate()
+            }
+            this.animalForm = row
+            this.animalFormBackUp = {
+                animalName: this.animalForm.animalName,
+                quantity: this.animalForm.quantity,
+            }
+            this.dialogAnimalFormVisible = true
+        },
+        handleUpdate() {
+
+        },
+        handleUpdateInAnimalTable(form) {
+            if (!form) return
+            form.validate((valid) => {
+                if (valid) {
+                    this.$confirm(
+                        'Cập nhập thông tin này. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
+
+                        }
+                    )
+                        .then(() => {
+                            this.loadingStatus = true
+                            let animalQuantity = {
+                                facilitiesName: this.form.name,
+                                animalName: this.animalForm.animalName,
+                                quantity: this.animalForm.quantity
+                            }
+                            animalApi.updateAnimalQuantity(animalQuantity)
+                                .then((res) => {
+                                    this.loadingStatus = false
+                                    this.$notify({
+                                        title: 'Thành công',
+                                        message: 'Cập nhập thành công',
+                                        type: 'success'
+                                    })
+                                    this.setupAnimalQuantity()
+                                }).catch((err) => {
+                                    this.loadingStatus = false
+                                    try {
+                                        this.$notify({
+                                            title: 'Đã xảy ra lỗi',
+                                            message: err.response.data.messages,
+                                            type: 'error',
+                                        })
+                                        console.log(err.message)
+                                    } catch (error) {
+                                        console.log(error)
+                                    }
+                                })
+                            this.dialogAnimalFormVisible = false
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+                } else {
+                    return false
+                }
+            })
+        },
         handleCancel() {
-            if (this.form == this.formBackUp) {
+            if (this.form.name == this.formBackUp.name
+                && this.form.date == this.formBackUp.date
+                && this.form.capacity == this.formBackUp.capacity
+                && this.form.administrationName == this.formBackUp.administrationName) {
                 this.dialogFormVisible = false
             }
             else {
@@ -525,10 +656,39 @@ export default {
             }
 
         },
+        handleCancelInAnimalTable() {
+            if (this.animalForm.animalName == this.animalFormBackUp.animalName
+                && this.animalForm.quantity == this.animalFormBackUp.quantity) {
+                this.dialogAnimalFormVisible = false
+            }
+            else {
+                this.$confirm(
+                    'Hủy bỏ thay đổi. Tiếp tục?',
+                    'Xác nhận',
+                    {
+                        confirmButtonText: 'OK',
+                        cancelButtonText: 'Hủy',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        if (this.animalFormBackUp != null) {
+                            this.animalForm.animalName = this.animalFormBackUp.animalName
+                            this.animalForm.quantity = this.animalFormBackUp.quantity
+                        }
+                        this.dialogAnimalFormVisible = false
+                    })
+                    .catch(() => {
+                    })
+            }
+        },
+        handleAddAnimalQuantity(){
+        }
     },
     created() {
         this.setupAnimalQuantityDataByMonth(this.formatBeginMonth, this.formatEndMonth)
         this.setupAnimalFacilities()
+        this.setupAnimalQuantity()
     }
 }
 </script>

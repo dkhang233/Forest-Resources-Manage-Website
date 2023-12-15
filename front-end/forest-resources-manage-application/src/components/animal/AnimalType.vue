@@ -8,7 +8,7 @@
         </el-col>
     </el-row>
     <div class="grid grid-cols-20 pl-[100px] pr-[90px]" v-loading="loadingStatus">
-        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/dog.jpg" alt="" v-if="animalImage == ''" />
+        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/default-animal.jpg" alt="" v-if="animalImage == ''" />
         <img class="h-[550px] rounded-s-3xl" :src="animalImage" alt="" v-if="animalImage != ''" />
         <div class="col-start-11">
             <el-card class="h-[550px] w-[50rem] rounded-e-3xl" shadow="always">
@@ -30,7 +30,8 @@
             <el-dialog class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
-                    dark:bg-neutral-700" top="2vh" v-model="dialogFormVisible" :title="formTitle">
+                    dark:bg-neutral-700" top="4vh" v-model="dialogFormVisible" :title="formTitle"
+                :before-close="handleCancel">
                 <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
                     label-position="top">
                     <div class="col-span-3">
@@ -83,13 +84,6 @@
                         border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false"
                             v-if="formType == 'update'">
                             Xóa
-                        </button>
-                        <button class="p-2 mr-3 col-start-11  font-sans font-bold text-sm 
-                        text-white rounded-lg shadow-lg 
-                        px-5 bg-[#839192] shadow-blue-100 
-                        hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="handleCancel">
-                            Quay lại
                         </button>
                         <button class=" p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
@@ -372,7 +366,13 @@ export default {
 
         // Hàm xử lí khi ấn vào nút "Quay lại"
         handleCancel() {
-            if (this.form == this.formBackUp) {
+            if (this.form.name == this.formBackUp.name
+                && this.form.image == this.formBackUp.image
+                && this.form.animalType == this.formBackUp.animalType
+                && this.form.mainFood == this.formBackUp.mainFood
+                && this.form.mainDisease == this.formBackUp.mainDisease
+                && this.form.longevity == this.formBackUp.longevity
+                && this.form.fluctuationName == this.formBackUp.fluctuationName) {
                 this.dialogFormVisible = false
             }
             else {

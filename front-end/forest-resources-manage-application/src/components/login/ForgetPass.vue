@@ -40,11 +40,14 @@ export default {
     },
     methods: {
         send() {
+            this.$emit('onLoadingStatus')
             userApi.resetPassword(this.form)
                 .then((res) => {
+                    this.$emit('offLoadingStatus')
                     this.$router.push({ path: "/authenticate-code" })
                 })
                 .catch((err) => {
+                    this.$emit('offLoadingStatus')
                     let message = ""
                     try {
                         message = err.response.data.messages

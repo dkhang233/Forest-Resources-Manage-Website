@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Date;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -33,7 +32,6 @@ import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.Fluctuation;
 import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalsQuantityInFacility;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
@@ -264,6 +262,12 @@ public class AnimalController {
         HashMap<String, List<AnimalsQuantity>> animalsQuantities = this.animalStorageFacilitiesService
                 .getQuantityOfAllAnimalBeforeTime(LocalDate.now());
         return ResponseEntity.ok(animalsQuantities);
+    }
+
+    @PutMapping("/species/facility-quantity/update")
+    public ResponseEntity<?> updateQuantityOfAnimal(@RequestBody AnimalsQuantity animalsQuantity) {
+        this.animalStorageFacilitiesService.updateQuantityOfAnimal(animalsQuantity);
+        return ResponseEntity.ok("");
     }
 
     // lấy tổng số lượng của các cơ sở động vật trước 1 khoảng thời gian nào đó
