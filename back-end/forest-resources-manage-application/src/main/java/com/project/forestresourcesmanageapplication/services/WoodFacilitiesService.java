@@ -1,0 +1,69 @@
+package com.project.forestresourcesmanageapplication.services;
+
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.project.forestresourcesmanageapplication.dtos.OperationFormDTO;
+import com.project.forestresourcesmanageapplication.dtos.ProductionTypeDTO;
+import com.project.forestresourcesmanageapplication.dtos.WfPtRelationshipDTO;
+import com.project.forestresourcesmanageapplication.dtos.WoodFacilitiesDTO;
+import com.project.forestresourcesmanageapplication.models.OperationForm;
+import com.project.forestresourcesmanageapplication.models.ProductionType;
+import com.project.forestresourcesmanageapplication.models.WfPtRelationship;
+import com.project.forestresourcesmanageapplication.models.WoodFacilities;
+
+public interface WoodFacilitiesService {
+    //WoodFacilities
+    public List<WoodFacilities> getAllWoodFacilities();
+
+    public WoodFacilities updateWoodFacilities(String code,
+            WoodFacilitiesDTO woodFacilitiesDTO);
+
+    public WoodFacilities getWoodFacilitiesByCode(String code);
+
+    public WoodFacilities addWoodFacilities(WoodFacilitiesDTO woodFacilitiesDTO,
+            String code);
+
+    public void deleteWoodFacilitiesByCode(String code);
+
+    //ProductionType - Loại hình sản xuất
+    public List<ProductionType> getAllProductionType();
+
+    public ProductionType updateProductionType(ProductionTypeDTO productionTypeDTO, MultipartFile imageFile);
+
+    public ProductionType getProductionTypeByWoodName(String woodType);
+
+    public ProductionType addProductionType(ProductionTypeDTO productionTypeDTO, MultipartFile imageFile);
+
+    public void deleteProductionTypeByWoodName(String name);
+
+    public List<ProductionType> getAllProductionTypeByFacilitiesCode(String code);
+
+    //OperationForm
+    public List<OperationForm> getAllOperationForm();
+
+    public OperationForm updateOperationForm(String name,
+            OperationFormDTO operationFormDTO);
+
+    public OperationForm getOperationFormByName(String name);
+
+    public OperationForm addOperationForm(OperationFormDTO operationFormDTO,
+            String name);
+
+    public void deleteOperationFormByName(String name);
+
+    //WfPtRelationship
+    public List<WfPtRelationship> getAllWfPtRelationship();
+
+    public WfPtRelationship updateWfPtRelationship(int id, WfPtRelationshipDTO wfPtRelationshipDTO);
+
+    public WfPtRelationship getWfPtRelationshipById(int id);
+
+    public WfPtRelationship addWfPtRelationship(WfPtRelationshipDTO wfPtRelationshipDTO);
+
+    public void deleteWfPtRelationshipById(int id);
+
+    //Thống kê
+
+}
