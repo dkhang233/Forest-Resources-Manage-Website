@@ -127,7 +127,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         // kiểm tra đơn vị hành chính
         try {
             Administration administration = this.adminstrationService
-                    .retrieveAdministrationByCode(animalStorageFacilitiesDTO.getAdminstrationCode());
+                    .retrieveAdministrationByName(animalStorageFacilitiesDTO.getAdminstrationCode());
             animalStorageFacilities.setAdministration(administration);
         } catch (Exception exception) {
             throw new DataNotFoundException(
