@@ -67,6 +67,9 @@
                         <el-form class="grid grid-cols-10 gap-10" ref="facilitiesForm" :model="form" status-icon
                             :rules="rules" size="default" label-position="top">
                             <div class="col-start-1 col-span-4">
+                                <el-form-item label="Mã" prop="code">
+                                    <el-input v-model="form.code" />
+                                </el-form-item>
                                 <el-form-item label="Tên cơ sở" prop="name">
                                     <el-input v-model="form.name" />
                                 </el-form-item>
@@ -93,7 +96,7 @@
                         text-white rounded-lg shadow-lg bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                                                    @click="handleAddAnimalQuantity">
+                                                    @click="handleClickCreateAnimalQuantity">
                                                     <font-awesome-icon class="pr-1" :icon="['fas', 'plus']" />
                                                     Thêm mới
                                                 </button>
@@ -133,8 +136,17 @@
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                                        @click="handleUpdateInAnimalTable(this.$refs.animalQuantityForm)">
+                                        @click="handleUpdateInAnimalTable(this.$refs.animalQuantityForm)"
+                                        v-if="animalFormType == 'update'">
                                         Cập nhập
+                                    </button>
+                                    <button class=" p-2 col-start-12  font-sans font-bold text-sm
+                        text-white rounded-lg shadow-lg px-5 bg-blue-500 
+                        shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
+                        border transition hover:-translate-y-0.5 duration-150"
+                                        @click="handleCreateAnimalQuantity(this.$refs.animalQuantityForm)"
+                                        v-if="animalFormType == 'create'">
+                                        Tạo mới
                                     </button>
                                 </span>
                             </template>
@@ -160,7 +172,8 @@
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                                    @click="handleCreate(this.$refs.facilitiesForm)" v-if="formType == 'create'">
+                                    @click="handleCreateAnimalFacility(this.$refs.facilitiesForm)"
+                                    v-if="formType == 'create'">
                                     Tạo mới
                                 </button>
                             </span>
@@ -175,7 +188,8 @@
                         text-white rounded-[10px] shadow-lg 
                         px-9 bg-blue-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="createNewUser">
+                        border transition hover:-translate-y-0.5 duration-150"
+                        @click="handleClickCreateAnimalFacility">
                         <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
                         <span>Tạo mới</span>
                     </button>
@@ -258,18 +272,20 @@ export default {
             dialogFormVisible: false,
             dialogAnimalFormVisible: false,
             form: {
+                code: '',
                 name: '',
                 date: '',
                 capacity: '',
                 administrationName: ''
             },
             formBackUp: null,
+            formType: 'update',
             animalForm: {
                 animalName: '',
                 quantity: ''
             },
             animalFormBackUp: null,
-            formType: 'update',
+            animalFormType: "update",
             rules: {
                 // name: [{ validator: this.checkUsername, trigger: 'blur' }],
                 // date: [{ validator: this.checkPassword, trigger: 'blur' }],
@@ -309,11 +325,11 @@ export default {
             }
         },
         formTitle() {
-            return "Cập nhập"
+            return this.formType == 'update' ? 'Cập nhập' : 'Tạo mới'
         },
         animalQuantityTable() {
-            if (this.animalQuantityData != null) {
-                return this.animalQuantityData.get("1")
+            if (this.animalQuantityData != null && this.form.code != '') {
+                return this.animalQuantityData.get(this.form.code)
             }
         }
 
@@ -551,6 +567,7 @@ export default {
             this.form = row
             this.form.administrationName = row.administration.name
             this.formBackUp = {
+                code: this.form.code,
                 name: this.form.name,
                 date: this.form.date,
                 capacity: this.form.capacity,
@@ -626,63 +643,199 @@ export default {
             })
         },
         handleCancel() {
-            if (this.form.name == this.formBackUp.name
-                && this.form.date == this.formBackUp.date
-                && this.form.capacity == this.formBackUp.capacity
-                && this.form.administrationName == this.formBackUp.administrationName) {
-                this.dialogFormVisible = false
-            }
-            else {
-                this.$confirm(
-                    'Hủy bỏ thay đổi. Tiếp tục?',
-                    'Xác nhận',
-                    {
-                        confirmButtonText: 'OK',
-                        cancelButtonText: 'Hủy',
-                        type: 'warning',
-                    }
-                )
-                    .then(() => {
-                        if (this.formBackUp != null) {
-                            this.form.name = this.formBackUp.name
-                            this.form.date = this.formBackUp.date
-                            this.form.capacity = this.formBackUp.capacity
-                            this.form.administrationName = this.formBackUp.administrationName
+            if (this.form != null && this.formBackUp != null) {
+                if (this.form.code == this.formBackUp.code
+                    && this.form.name == this.formBackUp.name
+                    && this.form.date == this.formBackUp.date
+                    && this.form.capacity == this.formBackUp.capacity
+                    && this.form.administrationName == this.formBackUp.administrationName) {
+                    this.dialogFormVisible = false
+                }
+                else {
+                    this.$confirm(
+                        'Hủy bỏ thay đổi. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
                         }
-                        this.dialogFormVisible = false
-                    })
-                    .catch(() => {
-                    })
+                    )
+                        .then(() => {
+                            if (this.formBackUp != null) {
+                                this.form.code = this.formBackUp.code
+                                this.form.name = this.formBackUp.name
+                                this.form.date = this.formBackUp.date
+                                this.form.capacity = this.formBackUp.capacity
+                                this.form.administrationName = this.formBackUp.administrationName
+                            }
+                            this.dialogFormVisible = false
+                        })
+                        .catch(() => {
+                        })
+                }
             }
-
+            this.dialogFormVisible = false
         },
         handleCancelInAnimalTable() {
-            if (this.animalForm.animalName == this.animalFormBackUp.animalName
-                && this.animalForm.quantity == this.animalFormBackUp.quantity) {
-                this.dialogAnimalFormVisible = false
-            }
-            else {
-                this.$confirm(
-                    'Hủy bỏ thay đổi. Tiếp tục?',
-                    'Xác nhận',
-                    {
-                        confirmButtonText: 'OK',
-                        cancelButtonText: 'Hủy',
-                        type: 'warning',
-                    }
-                )
-                    .then(() => {
-                        if (this.animalFormBackUp != null) {
-                            this.animalForm.animalName = this.animalFormBackUp.animalName
-                            this.animalForm.quantity = this.animalFormBackUp.quantity
+            if (this.animalFormBackUp != null && this.animalForm != null) {
+                if (this.animalForm.animalName == this.animalFormBackUp.animalName
+                    && this.animalForm.quantity == this.animalFormBackUp.quantity) {
+                    this.dialogAnimalFormVisible = false
+                }
+                else {
+                    this.$confirm(
+                        'Hủy bỏ thay đổi. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
                         }
-                        this.dialogAnimalFormVisible = false
-                    })
-                    .catch(() => {
-                    })
+                    )
+                        .then(() => {
+                            if (this.animalFormBackUp != null) {
+                                this.animalForm.animalName = this.animalFormBackUp.animalName
+                                this.animalForm.quantity = this.animalFormBackUp.quantity
+                            }
+                            this.dialogAnimalFormVisible = false
+                        })
+                        .catch(() => {
+                        })
+                }
             }
+            this.dialogAnimalFormVisible = false
         },
-        handleAddAnimalQuantity(){
+        handleClickCreateAnimalFacility() {
+            this.formType = 'create'
+            this.resetFormData()
+            this.formBackUp = this.forthí
+            this.dialogFormVisible = true
+        },
+        handleCreateAnimalFacility(form) {
+            if (!form) return
+            form.validate((valid) => {
+                if (valid) {
+                    this.$confirm(
+                        'Cập nhập thông tin này. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
+
+                        }
+                    )
+                        .then(() => {
+                            this.loadingStatus = true
+                            let animalFacility = {
+                                code: this.form.code,
+                                name: this.form.name,
+                                date: Date.now(),
+                                capacity: this.form.capacity,
+                                adminstrationCode: this.form.administrationName,
+                                detail: ""
+                            }
+                            animalApi.addAnimalFacility(animalFacility)
+                                .then((res) => {
+                                    this.dialogFormVisible = false
+                                    this.$notify({
+                                        title: "Thành công",
+                                        type: "success",
+                                        message: "Tạo mới thành công"
+                                    })
+                                    this.setupAnimalFacilities()
+                                })
+                                .catch((err) => {
+                                    this.loadingStatus = false
+                                    try {
+                                        let message = ""
+                                        message = err.response.data.messages
+                                        this.$notify({
+                                            title: "Đã xảy ra lỗi",
+                                            type: "error",
+                                            message: message
+                                        })
+                                    } catch (error) {
+
+                                    }
+                                })
+                        })
+                        .catch(() => {
+
+                        })
+                }
+                else {
+
+                }
+            })
+        }
+        ,
+        handleClickCreateAnimalQuantity() {
+            this.animalFormType = 'create'
+            this.resetAnimalFormData()
+            this.formBackUp = this.form
+            this.dialogAnimalFormVisible = true;
+        },
+        handleCreateAnimalQuantity(form) {
+            if (!form) return
+            form.validate((valid) => {
+                if (valid) {
+                    this.$confirm(
+                        'Cập nhập thông tin này. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
+
+                        }
+                    )
+                        .then(() => {
+                            this.loadingStatus = true
+                            let animalQuantity = {
+                                codeASF: this.form.code,
+                                nameAS: this.animalForm.animalName,
+                                quantity: this.animalForm.quantity,
+                                date: Date.now()
+                            }
+                            animalApi.addAnimalQuantity(animalQuantity)
+                                .then((res) => {
+                                    this.setupAnimalQuantity()
+                                })
+                                .catch((err) => {
+                                    this.loadingStatus = false
+                                    let errorMessage = ''
+                                    try {
+                                        errorMessage = err.response.data.messages
+                                    } catch (err) {
+                                        console.log(err)
+                                    }
+                                    this.$notify({
+                                        title: 'Đã xảy ra lỗi',
+                                        message: errorMessage,
+                                        type: 'error',
+                                    })
+                                })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+                } else {
+                    return false
+                }
+            })
+        },
+        resetFormData() {
+            this.form.administrationName = ""
+            this.form.capacity = 0
+            this.form.code = ""
+            this.form.date = ""
+            this.form.name = ""
+        },
+        resetAnimalFormData() {
+            this.animalForm.animalName = ""
+            this.animalForm.quantity = 1
         }
     },
     created() {

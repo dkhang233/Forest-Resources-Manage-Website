@@ -243,7 +243,7 @@ export default {
             form.validate((valid) => {
                 if (valid) {
                     this.$confirm(
-                        'Tạo mới tài khoản. Tiếp tục?',
+                        'Tạo mới loài động vật. Tiếp tục?',
                         'Xác nhận',
                         {
                             confirmButtonText: 'OK',

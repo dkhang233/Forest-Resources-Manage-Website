@@ -9,3 +9,5 @@ export const retrieveAnimalQuantityInQuarter = (beginQuarter, endQuarter) => api
 export const retrieveAnimalQuantityInYear = (beginYear, endYear) => apiClient.get(`animal-storage-facilities/species/facilities/year/${beginYear}/${endYear}`)
 export const retrieveAnimalQuantityNow = () => apiClient.get('animal-storage-facilities/species/facility-quantity/now')
 export const updateAnimalQuantity = (animalQuantity) => apiClient.put('animal-storage-facilities/species/facility-quantity/update',animalQuantity)
+export const addAnimalQuantity = (animalQuantity) => apiClient.post('animal-storage-facilities/species/facility-quantity/add',animalQuantity)
+export const addAnimalFacility = (animalFacility) => apiClient.post(`animal-storage-facilities/${animalFacility.code}`,animalFacility)
