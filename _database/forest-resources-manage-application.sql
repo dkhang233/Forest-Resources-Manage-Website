@@ -283,6 +283,7 @@ CREATE TABLE `operation_form`(
 DROP TABLE IF EXISTS `production_type`;
 CREATE TABLE `production_type`(
     `wood_type` VARCHAR(100) NOT NULL COMMENT 'loại gỗ',
+	`image` VARCHAR(150) NULL COMMENT 'ảnh',
     `capacity` LONG NULL COMMENT 'khả năng sản xuất',
     PRIMARY KEY (`wood_type`)
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='loại hình sản xuất';

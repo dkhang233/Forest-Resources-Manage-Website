@@ -25,6 +25,9 @@ public class ProductionType {
     @Column(name="wood_type",length = 100)
     private String woodType;
 
+    @Column(name="image", length = 150)
+    private String image;
+
     @Column(name="capacity")
     private long capacity;
 }
