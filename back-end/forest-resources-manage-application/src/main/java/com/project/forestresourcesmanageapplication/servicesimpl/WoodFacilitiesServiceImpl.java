@@ -258,7 +258,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
     public OperationForm updateOperationForm(String name, OperationFormDTO operationFormDTO) {
         OperationForm operationForm = this.getOperationFormByName(operationFormDTO.getName());
 
-        operationForm.setDecription(operationFormDTO.getDecription());
+        operationForm.setDescription(operationFormDTO.getDescription());
 
         return operationFormRepository.save(operationForm);
     }
@@ -280,7 +280,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
 
         OperationForm operationForm = OperationForm.builder()
                 .name(operationFormDTO.getName())
-                .decription(operationFormDTO.getDecription())
+                .description(operationFormDTO.getDescription())
                 .build();
 
         return operationFormRepository.save(operationForm);

@@ -44,6 +44,7 @@ import { useUserStore } from '@/stores/user-store'
 import * as userApi from '@/api/user'
 
 export default {
+    emits: ['onLoadingStatus', 'offLoadingStatus'],
     data() {
         return {
             form: {

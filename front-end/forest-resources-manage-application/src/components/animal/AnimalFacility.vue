@@ -47,9 +47,9 @@
                     <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
                         <el-table :data="filterFacilitiesTable" class="h-[530px] w-[93rem]" fit>
                             <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
-                                :prop="item.value">
+                                :prop="item.value" align="center">
                             </el-table-column>
-                            <el-table-column :min-width="120">
+                            <el-table-column :min-width="120" align="center">
                                 <template #header>
                                     <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
                                 </template>
@@ -87,9 +87,9 @@
                             <div class="col-start-5 col-span-6">
                                 <span class="text-[16px]">Số lượng động vật hiện tại của cơ sở</span>
                                 <el-table class="mt-2" :data="animalQuantityTable" height="300" border>
-                                    <el-table-column prop="animalName" label="Tên động vật" />
-                                    <el-table-column prop="quantity" label="Số lượng" />
-                                    <el-table-column :min-width="90">
+                                    <el-table-column prop="animalName" label="Tên động vật"  align="center"/>
+                                    <el-table-column prop="quantity" label="Số lượng" align="center"/>
+                                    <el-table-column :min-width="90" align="center">
                                         <template #header>
                                             <div class="grid grid-cols-6">
                                                 <button class=" px-3 py-2 col-span-6 col-start-1 font-sans font-bold text-sm

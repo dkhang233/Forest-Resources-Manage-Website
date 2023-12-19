@@ -125,7 +125,6 @@ export default {
         ...mapStores(useAppStore, useUserStore),
         avatar() {
             let avatar = this.userStore.avatar
-            console.log(avatar)
             if (avatar == '') {
                 return ''
             } else {

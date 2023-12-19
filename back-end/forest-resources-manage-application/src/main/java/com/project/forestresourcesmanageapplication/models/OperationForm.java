@@ -1,7 +1,5 @@
 package com.project.forestresourcesmanageapplication.models;
 
-import org.hibernate.validator.constraints.CodePointLength;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -29,6 +27,6 @@ public class OperationForm {
     private String name;
 
     //mô tả
-    @Column(name="decription",length = 256)
-    private String decription;
+    @Column(name="description",length = 256)
+    private String description;
 }

@@ -35,7 +35,11 @@ export const constantRoutes = [
       },
       {
         path: 'woodtype',
-        component: () => import('../components/wood/WoodType')
+        component: () => import('@/components/wood/WoodType') 
+      },
+      {
+        path : 'operation-form',
+        component: () => import('@/components/wood/WoodOperationForm')
       },
       {
         path: 'woodfacility',

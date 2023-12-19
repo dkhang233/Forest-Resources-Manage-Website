@@ -11,15 +11,15 @@
         <el-col :span="20" :offset="2">
             <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
                 <el-table :data="filterTableData" class="h-[530px] w-[93rem]" fit>
-                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
+                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title" align="center"
                         :prop="item.value">
                     </el-table-column>
-                    <el-table-column :min-width="120">
+                    <el-table-column :min-width="120" align="center">
                         <template #header>
                             <el-input v-model="search" size="large" placeholder="Tìm kiếm theo username" />
                         </template>
                         <template #default="scope">
-                            <el-switch class="ml-20" v-model="scope.row.isActive"
+                            <el-switch v-model="scope.row.isActive"
                                 @change="changeUserStatus(index, scope.row)" :loading="scope.row.loading"
                                 style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
                             <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>

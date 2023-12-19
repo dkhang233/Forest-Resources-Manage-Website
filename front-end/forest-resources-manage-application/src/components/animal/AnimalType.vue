@@ -15,7 +15,7 @@
                 <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
                     style="--el-table-row-hover-bg-color: #D0D3D4;" fit @row-click="changeAnimalImage">
                     <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
-                        :prop="item.value">
+                        :prop="item.value" align="center">
                     </el-table-column>
                     <el-table-column :min-width="120" align="center">
                         <template #header>
@@ -180,7 +180,6 @@ export default {
     computed: {
         animalImage() {
             if (this.form.image == null || this.form.image == '') {
-                console.log(this.form.image)
                 return ''
             }
             else if (this.form.image.includes("http://")) {
@@ -261,9 +260,11 @@ export default {
                                 type: 'application/json'
                             });
                             animal.append('body', formData)
-                            animalApi.createAmimal(animal)
+                            console.log(`animal: ${formData}`)
+                            animalApi.createAmimal(this.form.name,animal)
                                 .then((res) => {
                                     this.loadingStatus = false
+                                    this.dialogFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
                                         message: 'Thêm loại động vật thành công',
@@ -272,14 +273,18 @@ export default {
                                     this.retrieveData()
                                 }).catch((err) => {
                                     this.loadingStatus = false
+                                    let message = ''
+                                    try {
+                                        message = err.response.data.messages
+                                    } catch (error) {
+                                        console.log(err)
+                                    }
                                     this.$notify({
                                         title: 'Đã xảy ra lỗi',
-                                        message: '',  //response.data.messages
+                                        message: message,  //response.data.messages
                                         type: 'error',
                                     })
-                                    console.log(err.message)
                                 })
-                            this.dialogFormVisible = false
                         })
                         .catch((err) => {
                             console.log(err)

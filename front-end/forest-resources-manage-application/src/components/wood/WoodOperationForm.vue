@@ -1,6 +1,6 @@
 <template>
-    <p class="container bg-[url('@/assets/image/wood-type-bg.jpg')] " v-loading="loadingStatus">
-    <div class="grid grid-cols-20 px-[9rem] pt-[3rem]" >
+    <p class="container bg-[url('@/assets/image/operation-form-bg.jpg')] bg-cover " v-loading="loadingStatus">
+    <div class="grid grid-cols-20 px-[9rem] pt-[3rem]">
         <div class="col-start-3">
             <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always">
                 <el-table :data="filterTableData" class="h-[520px]" style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
@@ -9,7 +9,7 @@
                     </el-table-column>
                     <el-table-column :min-width="120" align="center">
                         <template #header>
-                            <el-input v-model="search" size="large" placeholder="Tìm kiếm theo loại gỗ" />
+                            <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
                         </template>
                         <template #default="scope">
                             <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
@@ -24,25 +24,12 @@
                 :before-close="handleCancel">
                 <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
                     label-position="top">
-                    <div class="col-span-3">
-                        <el-form-item class="" prop="avatar">
-                            <img @click="openFileInput" class="rounded-full shadow-lg hover:cursor-pointer hover:opacity-60"
-                                src="@/assets/image/no-image.png" v-if="form.image == ''" />
-                            <img @click="openFileInput" class="rounded-full shadow-lg " :src="productionTypeImage"
-                                v-if="form.image != ''" />
-                            <font-awesome-icon
-                                class="shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] p-2 hover:cursor-pointer hover:opacity-60 hover:text-red-600"
-                                v-if="form.image != ''" @click="resertImage" :icon="['fas', 'trash-can']" size="lg" />
-                            <input class="mt-[50px]" ref="uploadInput" @change="handleFileChange" type="file"
-                                v-show="false" />
+                    <div class="col-start-1 col-span-10">
+                        <el-form-item label="Tên" prop="name">
+                            <el-input v-model="form.name" :disabled="formType == 'update'" />
                         </el-form-item>
-                    </div>
-                    <div class="col-start-5 col-span-10">
-                        <el-form-item label="Loại gỗ" prop="woodType">
-                            <el-input v-model="form.woodType" :disabled="formType == 'update'" />
-                        </el-form-item>
-                        <el-form-item label="Khả năng sản xuất" prop="capacity">
-                            <el-input v-model="form.capacity" />
+                        <el-form-item label="Mô tả" prop="description">
+                            <el-input v-model="form.description" :rows="2" type="textarea" />
                         </el-form-item>
                     </div>
                 </el-form>
@@ -52,7 +39,7 @@
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="handleDeleteProductionType"
+                        border transition hover:-translate-y-0.5 duration-150" @click="handleDeleteOperationForm"
                             v-if="formType == 'update'">
                             Xóa
                         </button>
@@ -67,7 +54,7 @@
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                            @click="handleCreateProductionType(this.$refs.ruleFormRef)" v-if="formType == 'create'">
+                            @click="handleCreateOperationForm(this.$refs.ruleFormRef)" v-if="formType == 'create'">
                             Tạo mới
                         </button>
                     </span>
@@ -82,8 +69,7 @@
                         text-white rounded-lg shadow-lg 
                         px-9 bg-blue-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150"
-                @click="handleClickCreateProductionType">
+                        border transition hover:-translate-y-0.5 duration-150" @click="handleClickCreateOperationType">
                 <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
                 <span>Tạo mới</span>
             </button>
@@ -99,48 +85,32 @@ export default {
         return {
             loadingStatus: false,
             search: '',
-            image: '',
             tableColumns: [
                 {
-                    title: 'Loại gỗ',
-                    value: 'woodType'
+                    title: 'Tên',
+                    value: 'name'
                 },
                 {
-                    title: 'Khả năng sản xuất',
-                    value: 'capacity'
+                    title: 'Mô tả',
+                    value: 'description'
                 },
             ],
             tableData: [],
             filterTableData: [],
             dialogFormVisible: false,
             form: {
-                woodType: '',
-                capacity: '',
-                image: '',
+                name: '',
+                description: '',
             },
             formBackUp: null,
-            imageFile: null,
             formType: 'update',
             rules: {
-                woodType: [{ validator: this.checkWoodType, trigger: 'blur' }],
-                capacity: [{ validator: this.checkCapacity, trigger: 'blur' }]
+                name: [{ validator: this.checkNameAndDescription, trigger: 'blur' }],
+                description: [{ validator: this.checkNameAndDescription, trigger: 'blur' }]
             },
         }
     },
     computed: {
-        productionTypeImage() {
-            if (this.form.image == null || this.form.image == '') {
-                return ''
-            }
-            else if (this.form.image.includes("http://")) {
-                console.log(this.form.image)
-                return this.form.image
-            }
-            else {
-                console.log(this.form.image)
-                return "http://localhost:8088/api/v1/wood-facilities/production-type/images/" + this.form.image
-            }
-        },
         formTitle() {
             return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo loại hình sản xuất mới'
         }
@@ -150,7 +120,7 @@ export default {
             this.filterTableData = this.tableData.filter(
                 (data) =>
                     !search ||
-                    data.woodType.toLowerCase().includes(search.toLowerCase())
+                    data.name.toLowerCase().includes(search.toLowerCase())
             )
         }
     },
@@ -158,28 +128,27 @@ export default {
         // Lấy dữ liệu ban đầu từ server
         retrieveData() {
             this.loadingStatus = true
-            woodApi.retrieveAllWoodType().then((res) => {
+            woodApi.retrieveAllOperationForm().then((res) => {
                 this.tableData = res.data
                 this.filterTableData = this.tableData
                 this.loadingStatus = false
             }).catch(err => console.log(err))
         },
         // Xử lý khi ấn vào nút "Tạo mới"
-        handleClickCreateProductionType() {
+        handleClickCreateOperationType() {
             this.formType = 'create'
             this.resetFormData()
             if (this.$refs.ruleFormRef != null) {
                 this.$refs.ruleFormRef.clearValidate()
             }
             this.formBackUp = {
-                woodType: this.form.woodType,
-                capacity: this.form.capacity,
-                image: this.form.image
+                name: this.form.name,
+                description: this.form.description
             }
             this.dialogFormVisible = true
         },
         // Xử lý yêu cầu "Tạo mới"
-        handleCreateProductionType(form) {
+        handleCreateOperationForm(form) {
             if (!form) return
             form.validate((valid) => {
                 if (valid) {
@@ -195,14 +164,7 @@ export default {
                     )
                         .then(() => {
                             this.loadingStatus = true
-                            let productionType = new FormData()
-                            productionType.append('file-image', this.imageFile)
-                            let formJson = JSON.stringify(this.form)
-                            const formData = new Blob([formJson], {
-                                type: 'application/json'
-                            });
-                            productionType.append('body', formData)
-                            woodApi.createProductionType(productionType)
+                            woodApi.createOperationForm(this.form)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.dialogFormVisible = false
@@ -243,48 +205,16 @@ export default {
             this.formType = 'update'
             this.form = row
             this.formBackUp = {
-                woodType: this.form.woodType,
-                capacity: this.form.capacity,
-                image: this.form.image
+                name: this.form.name,
+                description: this.form.description
             }
             this.dialogFormVisible = true
         },
 
 
         // --------------Xử lí trong dialog "Thông tin chi tiết" -------------------------
-
-
-        //Xử lí upload avatar
-
-        // Xứ lí khi ấn vào avatar
-        openFileInput() {
-            this.$refs.uploadInput.click()
-            this.$refs.uploadInput.value = null
-        },
-        // XỬ lí khi người dùng chọn file
-        handleFileChange(event) {
-            let file = event.target.files[0]
-            if (file != null) {
-                if (!file.type.startsWith('image')) {
-                    this.$message.error('Vui lòng chọn file ảnh!')
-                } else if (file.size / 1024 / 1024 > 10) {
-                    this.$message.error('Vui lòng chọn file ảnh có kích thước nhỏ hơn 10MB!')
-                } else {
-                    this.imageFile = file
-                    let image = URL.createObjectURL(file);
-                    this.form.image = image
-                }
-            }
-        },
-
-        // Xóa avatar
-        resertImage() {
-            this.form.image = ''
-            this.imageFile = null
-        },
-
         // Hàm xử lí khi ấn vào nút "Xóa"
-        handleDeleteProductionType(index, row) {
+        handleDeleteOperationForm(index, row) {
             this.$confirm(
                 'Xóa thông tin này. Tiếp tục?',
                 'Xác nhận',
@@ -296,7 +226,7 @@ export default {
             )
                 .then(() => {
                     this.loadingStatus = true
-                    woodApi.deleteProductionType(this.form.woodType)
+                    woodApi.deleteOperationForm(this.form.name)
                         .then((res) => {
                             this.loadingStatus = false
                             this.dialogFormVisible = false
@@ -308,9 +238,17 @@ export default {
                             this.retrieveData()
                         })
                         .catch((err) => {
-
+                            try {
+                                this.$notify({
+                                    title: 'Đã xảy ra lỗi',
+                                    message: err.response.data.messages,
+                                    type: 'error',
+                                })
+                                console.log(err.message)
+                            } catch (error) {
+                                console.log(error)
+                            }
                         })
-                    this.dialogFormVisible = false
                 })
                 .catch(() => {
                 })
@@ -318,9 +256,8 @@ export default {
 
         // Hàm xử lí khi ấn vào nút "Quay lại"
         handleCancel() {
-            if (this.form.woodType == this.formBackUp.woodType
-                && this.form.capacity == this.formBackUp.capacity
-                && this.form.image == this.formBackUp.image
+            if (this.form.name == this.formBackUp.name
+                && this.form.description == this.formBackUp.description
             ) {
                 this.dialogFormVisible = false
             }
@@ -336,11 +273,9 @@ export default {
                 )
                     .then(() => {
                         if (this.formBackUp != null) {
-                            this.form.woodType = this.formBackUp.woodType
-                            this.form.capacity = this.formBackUp.capacity
-                            this.form.image = this.formBackUp.image
+                            this.form.name = this.formBackUp.name
+                            this.form.description = this.formBackUp.description
                         }
-                        this.imageFile = null
                         this.dialogFormVisible = false
                     })
                     .catch(() => {
@@ -366,14 +301,7 @@ export default {
                     )
                         .then(() => {
                             this.loadingStatus = true
-                            let productionType = new FormData()
-                            productionType.append('file-image', this.imageFile)
-                            let formJson = JSON.stringify(this.form)
-                            const formData = new Blob([formJson], {
-                                type: 'application/json'
-                            });
-                            productionType.append('body', formData)
-                            woodApi.updateProductionType(productionType)
+                            woodApi.updateOperationForm(this.form)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -383,6 +311,8 @@ export default {
                                     })
                                     this.retrieveData()
                                 }).catch((err) => {
+                                    this.form.name = this.formBackUp.name
+                                    this.form.description = this.formBackUp.description
                                     this.loadingStatus = false
                                     try {
                                         this.$notify({
@@ -398,18 +328,7 @@ export default {
                             this.dialogFormVisible = false
                         })
                         .catch((err) => {
-                            this.loadingStatus = false
-                            let message = ''
-                            try {
-                                message = err.response.data.messages
-                            } catch (error) {
-                                console.log(err)
-                            }
-                            this.$notify({
-                                title: 'Đã xảy ra lỗi',
-                                message: message,  //response.data.messages
-                                type: 'error',
-                            })
+                            console.log(err)
                         })
                 } else {
                     return false
@@ -419,24 +338,14 @@ export default {
         // Reset dữ liệu của form 
         resetFormData() {
             this.form = {
-                woodType: '',
-                capacity: 1,
-                image: ''
+                name: '',
+                description: ''
             }
         },
-        checkWoodType(rule, value, callback) {
+        checkNameAndDescription(rule, value, callback) {
             let pattern = /^\s*$/
             if (value == null || pattern.test(value)) {
-                callback(new Error('Vui lòng nhập loại gỗ'))
-            }
-            return callback()
-        },
-        checkCapacity(rule, value, callback) {
-            if (value == '' || value == null) {
-                callback(new Error('Vui lòng nhập khả năng sản xuất'))
-            }
-            if (value <= 0) {
-                callback(new Error('Khả năng sản xuất phải lớn hơn hoặc bằng 1'))
+                callback(new Error('Vui lòng nhập thông tin này'))
             }
             return callback()
         },

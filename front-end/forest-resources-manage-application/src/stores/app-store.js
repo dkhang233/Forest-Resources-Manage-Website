@@ -15,13 +15,13 @@ export const useAppStore = defineStore('app', {
                 index: '2',
                 title: 'Giống cây trồng', // 
                 icon: 'fa-seedling',
-                content: [{ item: 'Loại', path: '/main/seedtype' }, { item: 'Cơ sở', path: '/main/seedfacility' }],
+                content: [{ item: 'Loại', path: '/main/seedtype' },{ item: 'Cơ sở', path: '/main/seedfacility' }],
             },
             {
                 index: '3',
                 title: 'Gỗ', //
                 icon: 'fa-tree',
-                content: [{ item: 'Loại', path: '/main/woodtype' }, { item: 'Cơ sở', path: '/main/woodfacility' }],
+                content: [{ item: 'Loại hình sản xuất', path: '/main/woodtype' },{item: 'Hình thức hoạt động',path: '/main/operation-form'}, { item: 'Cơ sở', path: '/main/woodfacility' }],
             },
             {
                 index: '4',
