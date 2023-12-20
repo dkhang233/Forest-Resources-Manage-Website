@@ -20,7 +20,13 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-sub-menu>
-                <el-sub-menu :index="''" v-if="userStore.role ==='admin'">
+                <el-menu-item :index="`/main/map`">
+                    <font-awesome-icon :icon="['fas', 'map-location-dot']" />
+                    <template #title>
+                        <span class="title">Bản đồ</span>
+                    </template>
+                </el-menu-item>
+                <el-sub-menu :index="''" v-if="userStore.role === 'admin'">
                     <template #title>
                         <i class="icon"><font-awesome-icon class="iconfont" icon="fa-gauge-high"
                                 style="color: #494965;" /></i>

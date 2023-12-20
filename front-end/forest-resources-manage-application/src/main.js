@@ -39,7 +39,6 @@ const app = createApp(App)
 
 app.use(VueCookies)
 
-// app.prototype.$echarts = echarts
 
 //pinia
 const pinia = createPinia()
@@ -53,11 +52,11 @@ app.use(ElementPlus)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-//echarts
+
 // add icons to the library
 library.add(fas, fab , far)
 
-//add component\
+//add component
 app.component("l-map", LMap);
 app.component("l-tile-layer", LTileLayer);
 app.component("l-marker", LMarker);
