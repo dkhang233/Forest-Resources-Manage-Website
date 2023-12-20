@@ -3,8 +3,8 @@
     <div class="grid grid-cols-20 px-[9rem] pt-[3rem]">
         <div class="col-start-3">
             <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always">
-                <el-table :data="filterTableData" class="h-[520px]" style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
-                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
+                <el-table :data="filterTableData" class="h-[520px] break-normal" style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
+                    <el-table-column  v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                         :prop="item.value" align="center">
                     </el-table-column>
                     <el-table-column :min-width="120" align="center">
@@ -355,6 +355,11 @@ export default {
     }
 }
 </script>
+<style>
+.el-table .cell {
+    word-break: normal;
+}
+</style>
 
 
 

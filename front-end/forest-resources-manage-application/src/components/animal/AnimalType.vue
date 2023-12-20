@@ -1,122 +1,131 @@
 <template>
-    <el-row>
-        <el-col :offset="2">
-            <h1 class=" text-[#2C3E50] text-[25px] font-bold m-3">
-                <font-awesome-icon class="mr-3" :icon="['fas', 'paw']" size="2xl" />
-                Quản lí động vật
-            </h1>
-        </el-col>
-    </el-row>
-    <div class="grid grid-cols-20 pl-[100px] pr-[90px]" v-loading="loadingStatus">
-        <img class="h-[550px] rounded-s-3xl" src="@/assets/image/default-animal.jpg" alt="" v-if="animalImage == ''" />
-        <img class="h-[550px] rounded-s-3xl" :src="animalImage" alt="" v-if="animalImage != ''" />
-        <div class="col-start-11">
-            <el-card class="h-[550px] w-[50rem] rounded-e-3xl" shadow="always">
-                <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
-                    style="--el-table-row-hover-bg-color: #D0D3D4;" fit @row-click="changeAnimalImage">
-                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
-                        :prop="item.value" align="center">
-                    </el-table-column>
-                    <el-table-column :min-width="120" align="center">
-                        <template #header>
-                            <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
-                        </template>
-                        <template #default="scope">
-                            <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-card>
-            <el-dialog class=" block rounded-lg
+    <div >
+        <el-row class="">
+            <el-col :offset="2">
+                <h1 class=" text-[#2C3E50] text-[25px] font-bold m-3">
+                    <font-awesome-icon class="mr-3" :icon="['fas', 'paw']" size="2xl" />
+                    Quản lí động vật
+                </h1>
+            </el-col>
+        </el-row>
+        <div class="absolute top-0 w-[45%] h-full bg-center bg-cover bg-[url('@/assets/image/default-animal.jpg')]"
+            v-if="animalImage == ''">
+        </div>
+        <div class="absolute top-0 w-1/2 h-full bg-center bg-cover" :style="`background-image: url('${animalImage}');`"
+            v-if="animalImage != ''">
+        </div>
+        <div class="relative grid grid-cols-20 pl-[100px] pr-[90px]" v-loading="loadingStatus">
+            <!-- <img class="h-[550px] rounded-s-3xl" src="@/assets/image/default-animal.jpg" alt="" v-if="animalImage == ''" /> -->
+            <!-- <img class="h-[550px] rounded-s-3xl" :src="animalImage" alt="" v-if="animalImage != ''" /> -->
+            <div class="col-start-11">
+                <el-card class=" h-[550px] w-[50rem] rounded-[20px]" shadow="always">
+                    <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
+                        style="--el-table-row-hover-bg-color: #D0D3D4;" fit @row-click="changeAnimalImage">
+                        <el-table-column v-for="( item, index ) in  tableColumns " :key="index" :label="item.title"
+                            :prop="item.value" align="center">
+                        </el-table-column>
+                        <el-table-column :min-width="120" align="center">
+                            <template #header>
+                                <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
+                            </template>
+                            <template #default="scope">
+                                <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-card>
+                <el-dialog class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="4vh" v-model="dialogFormVisible" :title="formTitle"
-                :before-close="handleCancel">
-                <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
-                    label-position="top">
-                    <div class="col-span-3">
-                        <el-form-item class="" prop="avatar">
-                            <img @click="openFileInput" class="rounded-full shadow-lg hover:cursor-pointer hover:opacity-60"
-                                src="@/assets/image/no-image.png" v-if="form.image == ''" />
-                            <img @click="openFileInput" class="rounded-full shadow-lg " :src="animalImage"
-                                v-if="form.image != ''" />
-                            <font-awesome-icon
-                                class="shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] p-2 hover:cursor-pointer hover:opacity-60 hover:text-red-600"
-                                v-if="form.image != ''" @click="resertImage" :icon="['fas', 'trash-can']" size="lg" />
-                            <input class="mt-[50px]" ref="uploadInput" @change="handleFileChange" type="file"
-                                v-show="false" />
-                        </el-form-item>
-                    </div>
-                    <div class="col-start-5 col-span-10">
-                        <el-form-item label="Tên" prop="name">
-                            <el-input v-model="form.name" :disabled="formType == 'update'" />
-                        </el-form-item>
-                        <div class="grid grid-cols-2 gap-5">
-                            <el-form-item label="Loại" prop="animalType">
-                                <el-input v-model="form.animalType" />
-                            </el-form-item>
-                            <el-form-item label="Thức ăn chính" prop="mainFood">
-                                <el-input v-model="form.mainFood" />
+                    :before-close="handleCancel">
+                    <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules"
+                        size="default" label-position="top">
+                        <div class="col-span-3">
+                            <el-form-item class="" prop="avatar">
+                                <img @click="openFileInput"
+                                    class="rounded-full shadow-lg hover:cursor-pointer hover:opacity-60"
+                                    src="@/assets/image/no-image.png" v-if="form.image == ''" />
+                                <img @click="openFileInput" class="rounded-full shadow-lg " :src="animalImage"
+                                    v-if="form.image != ''" />
+                                <font-awesome-icon
+                                    class="shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] p-2 hover:cursor-pointer hover:opacity-60 hover:text-red-600"
+                                    v-if="form.image != ''" @click="resertImage" :icon="['fas', 'trash-can']" size="lg" />
+                                <input class="mt-[50px]" ref="uploadInput" @change="handleFileChange" type="file"
+                                    v-show="false" />
                             </el-form-item>
                         </div>
-                        <el-form-item label="Bệnh chính" prop="mainDisease">
-                            <el-input v-model="form.mainDisease" />
-                        </el-form-item>
-                        <div class="grid grid-cols-2 gap-5">
-                            <el-form-item label="Tuổi thọ" prop="longevity">
-                                <el-input v-model="form.longevity" size="default" />
+                        <div class="col-start-5 col-span-10">
+                            <el-form-item label="Tên" prop="name">
+                                <el-input v-model="form.name" :disabled="formType == 'update'" />
                             </el-form-item>
-                            <el-form-item label="Loại biến động" prop="fluctuationName">
-                                <el-select v-model="form.fluctuationName" class="m-2" placeholder="Select">
-                                    <el-option key="1" label="Theo chu kỳ" value="Theo chu kỳ" />
-                                    <el-option key="2" label="Không theo chu kỳ" value="Không theo chu kỳ" />
-                                </el-select>
+                            <div class="grid grid-cols-2 gap-5">
+                                <el-form-item label="Loại" prop="animalType">
+                                    <el-input v-model="form.animalType" />
+                                </el-form-item>
+                                <el-form-item label="Thức ăn chính" prop="mainFood">
+                                    <el-input v-model="form.mainFood" />
+                                </el-form-item>
+                            </div>
+                            <el-form-item label="Bệnh chính" prop="mainDisease">
+                                <el-input v-model="form.mainDisease" />
                             </el-form-item>
+                            <div class="grid grid-cols-2 gap-5">
+                                <el-form-item label="Tuổi thọ" prop="longevity">
+                                    <el-input v-model="form.longevity" size="default" />
+                                </el-form-item>
+                                <el-form-item label="Loại biến động" prop="fluctuationName">
+                                    <el-select v-model="form.fluctuationName" class="m-2" placeholder="Select">
+                                        <el-option key="1" label="Theo chu kỳ" value="Theo chu kỳ" />
+                                        <el-option key="2" label="Không theo chu kỳ" value="Không theo chu kỳ" />
+                                    </el-select>
+                                </el-form-item>
+                            </div>
                         </div>
-                    </div>
-                </el-form>
-                <template #footer>
-                    <span class="grid grid-cols-16 gap-4">
-                        <button class="p-2 mr-3  font-sans font-bold text-sm
+                    </el-form>
+                    <template #footer>
+                        <span class="grid grid-cols-16 gap-4">
+                            <button class="p-2 mr-3  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false"
-                            v-if="formType == 'update'">
-                            Xóa
-                        </button>
-                        <button class=" p-2 col-start-12  font-sans font-bold text-sm
+                                v-if="formType == 'update'">
+                                Xóa
+                            </button>
+                            <button class=" p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                            @click="handleUpdate(this.$refs.ruleFormRef)" v-if="formType == 'update'">
-                            Cập nhập
-                        </button>
-                        <button class=" p-2 col-start-12 font-sans font-bold text-sm
+                                @click="handleUpdate(this.$refs.ruleFormRef)" v-if="formType == 'update'">
+                                Cập nhập
+                            </button>
+                            <button class=" p-2 col-start-12 font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                            @click="handleCreate(this.$refs.ruleFormRef)" v-if="formType == 'create'">
-                            Tạo mới
-                        </button>
-                    </span>
-                </template>
-            </el-dialog>
+                                @click="handleCreate(this.$refs.ruleFormRef)" v-if="formType == 'create'">
+                                Tạo mới
+                            </button>
+                        </span>
+                    </template>
+                </el-dialog>
+            </div>
         </div>
-    </div>
-    <el-row>
-        <el-col :offset="2">
-            <button class="w-full md:w-auto flex justify-center 
+        <el-row>
+            <el-col :offset="10">
+                <button class="w-full md:w-auto flex justify-center 
                         items-center p-3 mt-3 space-x-4 font-sans font-bold
                         text-white rounded-lg shadow-lg 
                         px-9 bg-blue-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="createNewAnimal">
-                <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
-                <span>Tạo mới</span>
-            </button>
-        </el-col>
-    </el-row>
+                    <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
+                    <span>Tạo mới</span>
+                </button>
+            </el-col>
+        </el-row>
+    </div>
 </template>
 
 <script>
@@ -188,7 +197,7 @@ export default {
             }
             else {
                 console.log(this.form.image)
-                return "http://localhost:8088/api/v1/animal-storage-facilities/species/images/" + this.form.image
+                return 'http://localhost:8088/api/v1/animal-storage-facilities/species/images/' + this.form.image
             }
         },
         formTitle() {
@@ -261,7 +270,7 @@ export default {
                             });
                             animal.append('body', formData)
                             console.log(`animal: ${formData}`)
-                            animalApi.createAmimal(this.form.name,animal)
+                            animalApi.createAmimal(this.form.name, animal)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.dialogFormVisible = false

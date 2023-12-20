@@ -18,6 +18,8 @@ public interface UserService {
 
 	UserDTO retrieveUserByUsernameOrEmail(String usernameOrEmail);
 
+	UserDTO updateUserByAdmin(String username, UserDTO userDTO, MultipartFile avatarFile);
+
 	UserDTO updateUser(String username, UserDTO userDTO, MultipartFile avatarFile);
 
 	String login(LoginDTO loginDTO);
@@ -26,6 +28,6 @@ public interface UserService {
 
 	String verifyOtp(verifyOtpDTO verifyOtpDTO);
 
-    void changePassword(ChangePasswordDTO changePasswordDTO);
+	void changePassword(ChangePasswordDTO changePasswordDTO);
 
 }

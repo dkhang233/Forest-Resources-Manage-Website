@@ -19,10 +19,10 @@
                             <el-input v-model="search" size="large" placeholder="Tìm kiếm theo username" />
                         </template>
                         <template #default="scope">
-                            <el-switch v-model="scope.row.isActive"
-                                @change="changeUserStatus(index, scope.row)" :loading="scope.row.loading"
+                            <el-switch v-model="scope.row.isActive" @change="changeUserStatus(index, scope.row)"
+                                :loading="scope.row.loading"
                                 style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949" />
-                            <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
+                            <el-button @click="handleClickEdit(scope.$index, scope.row)">Chi tiết</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import { retrieveAllUsers, updateUser, createUser } from '@/api/user'
+import * as userApi from '@/api/user'
 import { retrieveAdministrationByName } from '@/api/administration'
 import { useUserStore } from "@/stores/user-store"
 import { mapStores } from 'pinia'
@@ -214,7 +214,7 @@ export default {
         // Lấy dữ liệu từ serve 
         retrieveData() {
             this.loadingStatus = true
-            retrieveAllUsers().then((res) => {
+            userApi.retrieveAllUsers().then((res) => {
                 this.tableData = res.data
                 this.filterTableData = this.tableData
                 this.loadingStatus = false
@@ -266,7 +266,7 @@ export default {
                                 type: 'application/json'
                             });
                             user.append('body', formData)
-                            createUser(user)
+                            userApi.createUser(user)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -298,7 +298,7 @@ export default {
         // Cập nhập thông tin tài khoản người dùng
 
         //Hàm xử lí khi ấn vào nút "Chi tiết"
-        handleEdit(index, row) {
+        handleClickEdit(index, row) {
             if (this.$refs.ruleFormRef != null) {
                 this.$refs.ruleFormRef.clearValidate()
             }
@@ -442,7 +442,7 @@ export default {
                                 type: 'application/json'
                             });
                             user.append('body', formData)
-                            updateUser(this.form.username, user)
+                            userApi.updateUserByAdmin(this.form.username, user)
                                 .then((res) => {
                                     this.loadingStatus = false
                                     this.$notify({
@@ -451,13 +451,18 @@ export default {
                                         type: 'success'
                                     })
                                 }).catch((err) => {
+                                    let message = ''
+                                    try {
+                                        message = err.response.data.messages
+                                    } catch (error) {
+                                        console.log(err)
+                                    }
                                     this.loadingStatus = false
                                     this.$notify({
                                         title: 'Đã xảy ra lỗi',
-                                        message: err.response.data.messages,
+                                        message: message,
                                         type: 'error',
                                     })
-                                    console.log(err.message)
                                 })
                             this.dialogFormVisible = false
                         })
@@ -492,12 +497,17 @@ export default {
                 }).catch((err) => {
                     row.loading = false
                     row.isActive = !row.isActive
+                    let message = ''
+                    try {
+                        message = err.response.data.messages
+                    } catch (error) {
+                        console.log(err)
+                    }
                     this.$notify({
                         title: 'Đã xảy ra lỗi',
-                        message: err.response.data.messages,
+                        message: message,
                         type: 'error',
                     })
-                    console.log(err.message)
                     return false
                 })
         },

@@ -30,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
@@ -51,8 +50,17 @@ public class UserController {
 	}
 
 	@GetMapping("/{usernameOrEmail}")
-	public ResponseEntity<UserDTO> retrieveUserByUsername(@PathVariable(name = "usernameOrEmail") String usernameOrEmail) {
+	public ResponseEntity<UserDTO> retrieveUserByUsername(
+			@PathVariable(name = "usernameOrEmail") String usernameOrEmail) {
 		UserDTO userDTO = this.userService.retrieveUserByUsernameOrEmail(usernameOrEmail);
+		return ResponseEntity.ok(userDTO);
+	}
+
+	@PostMapping("admin/{username}")
+	public ResponseEntity<UserDTO> updateUserByAdmin(@PathVariable String username,
+			@RequestPart(name = "body") UserDTO userDTO,
+			@RequestParam(name = "avatar-file", required = false) MultipartFile avatarFile) {
+		userDTO = this.userService.updateUserByAdmin(username, userDTO, avatarFile);
 		return ResponseEntity.ok(userDTO);
 	}
 
@@ -76,7 +84,7 @@ public class UserController {
 		String username = this.userService.login(loginDTO);
 		return ResponseEntity.ok(username);
 	}
-	
+
 	@PostMapping("/reset-password")
 	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO resetPasswordDTO) {
 		this.userService.resetPassword(resetPasswordDTO);
@@ -88,7 +96,7 @@ public class UserController {
 		this.userService.changePassword(changePasswordDTO);
 		return ResponseEntity.ok("Mật khẩu đã được thay đổi");
 	}
-	
+
 	@PostMapping("/verify-otp")
 	public ResponseEntity<?> verifyOtp(@RequestBody verifyOtpDTO verifyOtpDTO) {
 		String otp = this.userService.verifyOtp(verifyOtpDTO);

@@ -8,6 +8,12 @@ export const retrieveAllUsers = () => apiClient.get("users");
 
 export const retrieveUserByUserName = (username) => apiClient.get(`users/${username}`);
 
+export const updateUserByAdmin = (username,user) => apiClient.post(`users/admin/${username}`, user, {
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+});
+
 export const updateUser = (username,user) => apiClient.post(`users/${username}`, user, {
     headers: {
         'Content-Type': 'multipart/form-data'

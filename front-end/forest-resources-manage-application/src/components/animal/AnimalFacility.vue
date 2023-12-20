@@ -1,6 +1,8 @@
 <template>
-    <div v-loading="loadingStatus">
-        <div class="grid grid-cols-10 ">
+    <div class="grid grid-cols-10 container bg-[url('@/assets/image/animal-facilities-bg.jpg')] bg-cover "
+        v-loading="loadingStatus">
+        <div
+            class="col-start-2 col-span-8 grid grid-cols-10 rounded-[25px] bg-white mt-4 p-5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]">
             <span class="col-start-3 col-span-7 font-bold text-lg">Biểu đồ thống kê tổng số lượng động vật lưu trữ tại các
                 cơ
                 sở</span>
@@ -41,9 +43,9 @@
             </div>
         </div>
 
-        <div class="pt-[100px] pb-[50px]">
+        <div class="col-start-2 col-span-8 pt-[8rem] pb-[4rem] ">
             <el-row v-loading="loadingStatus">
-                <el-col :span="17" :offset="5">
+                <el-col :span="24" :offset="0">
                     <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
                         <el-table :data="filterFacilitiesTable" class="h-[530px] w-[93rem]" fit>
                             <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
@@ -87,8 +89,8 @@
                             <div class="col-start-5 col-span-6">
                                 <span class="text-[16px]">Số lượng động vật hiện tại của cơ sở</span>
                                 <el-table class="mt-2" :data="animalQuantityTable" height="300" border>
-                                    <el-table-column prop="animalName" label="Tên động vật"  align="center"/>
-                                    <el-table-column prop="quantity" label="Số lượng" align="center"/>
+                                    <el-table-column prop="animalName" label="Tên động vật" align="center" />
+                                    <el-table-column prop="quantity" label="Số lượng" align="center" />
                                     <el-table-column :min-width="90" align="center">
                                         <template #header>
                                             <div class="grid grid-cols-6">
@@ -182,7 +184,7 @@
                 </el-col>
             </el-row>
             <el-row>
-                <el-col :offset="6">
+                <el-col :offset="2">
                     <button class="w-full md:w-auto flex justify-center 
                         items-center p-3 mt-3 ml-4 space-x-4 font-sans font-bold
                         text-white rounded-[10px] shadow-lg 

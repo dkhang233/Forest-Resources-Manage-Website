@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDTO updateUser(String username, UserDTO userDTO, MultipartFile avatarFile) {
+	public UserDTO updateUserByAdmin(String username, UserDTO userDTO, MultipartFile avatarFile) {
 		User user = this.userRepository.findById(username)
 				.orElseThrow(() -> new DataNotFoundException(
 						"Username không tồn tại"));
@@ -96,6 +96,28 @@ public class UserServiceImpl implements UserService {
 				.setActive(userDTO.isActive())
 				.setRole(userDTO.getRole())
 				.setAdministration(administration);
+		user = this.userRepository.save(user);
+		userDTO = this.mapUserToUserDTO(user);
+		return userDTO;
+	}
+
+	@Override
+	public UserDTO updateUser(String username, UserDTO userDTO, MultipartFile avatarFile) {
+		User user = this.userRepository.findById(username)
+				.orElseThrow(() -> new DataNotFoundException(
+						"Username không tồn tại"));
+		// Kiểm tra avatar đã thay đổi chưa, nếu đã thay đổi -> gọi hàm để lưu file
+		// avatar và thay đổi avatar
+		if (!user.getAvatar().equals(userDTO.getAvatar())) {
+			String avatar = this.saveImage(avatarFile);
+			user.setAvatar(avatar);
+		}
+
+		user.setFirstName(userDTO.getFirstName())
+				.setLastName(userDTO.getLastName())
+				.setEmail(userDTO.getEmail())
+				.setAddress(userDTO.getAddress())
+				.setBirthDate(userDTO.getBirthDate());
 		user = this.userRepository.save(user);
 		userDTO = this.mapUserToUserDTO(user);
 		return userDTO;
@@ -178,7 +200,7 @@ public class UserServiceImpl implements UserService {
 	public void changePassword(ChangePasswordDTO changePasswordDTO) {
 		User user = this.userRepository.findByOtp(changePasswordDTO.getOtp())
 				.orElseThrow(() -> new DataNotFoundException("Mã otp không chính xác"));
-		user.setPassword(changePasswordDTO.getPassword());	
+		user.setPassword(changePasswordDTO.getPassword());
 		this.userRepository.save(user);
 	}
 
@@ -218,7 +240,7 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
-	public User mapNewUserDTOToUser(NewUserDTO newUserDTO){
+	public User mapNewUserDTOToUser(NewUserDTO newUserDTO) {
 		Administration administration = this.administrationRepository.findByName(newUserDTO.getAdministrationName())
 				.orElseThrow(() -> new DataNotFoundException("Đơn vị hành chính trực thuộc không tồn tại"));
 		User user = User.builder()
