@@ -52,6 +52,10 @@ export const constantRoutes = [
       {
         path: 'animalfacility',
         component: () => import('@/components/animal/AnimalFacility')
+      },
+      {
+        path : 'map',
+        component : () => import('@/components/map/Map')
       }
     ]
   },

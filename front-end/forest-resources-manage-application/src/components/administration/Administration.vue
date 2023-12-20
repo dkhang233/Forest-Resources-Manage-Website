@@ -84,7 +84,7 @@
 import { retrieveSubAdministrationsWithHierarchy, updateAdministration } from "../../api/administration"
 import { mapStores } from 'pinia'
 import { useUserStore } from "../../stores/user-store"
-import MapView from "../common/MapView.vue";
+import MapView from "@/components/map/MapView";
 export default {
     components: {
         MapView

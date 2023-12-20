@@ -6,3 +6,10 @@ export const apiClient = axios.create(
         timeout : 6000
     }
 );
+
+export const apiMap = axios.create(
+    {
+        baseURL: 'https://api.openstreetmap.org/api/0.6',
+        timeout : 0
+    }
+);
