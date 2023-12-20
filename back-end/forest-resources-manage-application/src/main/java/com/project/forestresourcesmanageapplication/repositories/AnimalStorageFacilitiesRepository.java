@@ -18,6 +18,6 @@ public interface AnimalStorageFacilitiesRepository extends JpaRepository<AnimalS
     @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.name = :name")
     Optional<AnimalStorageFacilities> findByName(String name);
 
-    @Query("SELECT a FROM AnimalStorageFacilities a WHERE a.date <= :date ORDER BY a.name")
-    List<AnimalStorageFacilities> findAllBeforeTime(Date date);
+    @Query("SELECT a.name FROM AnimalStorageFacilities a WHERE a.date <= :date ORDER BY a.name")
+    List<String> findAllFacilitiesNameBeforeTime(Date date);
 } 

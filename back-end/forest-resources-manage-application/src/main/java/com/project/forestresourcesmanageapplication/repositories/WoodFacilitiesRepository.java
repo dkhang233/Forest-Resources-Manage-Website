@@ -1,5 +1,6 @@
 package com.project.forestresourcesmanageapplication.repositories;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +17,7 @@ public interface WoodFacilitiesRepository extends JpaRepository<WoodFacilities,S
 
     @Query("SELECT w FROM WoodFacilities w WHERE w.name = :name")
     Optional<WoodFacilities> findByName(String name);
+
+    @Query("SELECT w.name FROM WoodFacilities w WHERE w.date <= :date ORDER BY w.name")
+    List<String> findAllFacilitiesNameBeforeTime(Date date);
 }

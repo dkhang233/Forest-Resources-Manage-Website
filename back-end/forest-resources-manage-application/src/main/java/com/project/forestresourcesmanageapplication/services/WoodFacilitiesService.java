@@ -1,5 +1,6 @@
 package com.project.forestresourcesmanageapplication.services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -12,6 +13,10 @@ import com.project.forestresourcesmanageapplication.models.OperationForm;
 import com.project.forestresourcesmanageapplication.models.ProductionType;
 import com.project.forestresourcesmanageapplication.models.WfPtRelationship;
 import com.project.forestresourcesmanageapplication.models.WoodFacilities;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
 
 public interface WoodFacilitiesService {
     //WoodFacilities
@@ -65,5 +70,10 @@ public interface WoodFacilitiesService {
     public void deleteWfPtRelationshipById(int id);
 
     //Thống kê
+    public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date);
+    public List<FacilitiesQuantityInMoth> getMonthQuantityFacilitiesWithTime(LocalDate beginDate, LocalDate endDate);
+    public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate, LocalDate endDate);
+    public List<FacilitiesQuantityInYear> getYearQuantityOfFacilitiesWithTime(int startYear, int endYear);
+    //test
 
 }
