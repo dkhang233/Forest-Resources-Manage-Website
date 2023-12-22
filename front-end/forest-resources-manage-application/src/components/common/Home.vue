@@ -1,9 +1,13 @@
 <template>
-    <img class="container" src="@/assets/logo/logo.png" alt="">
+    <!-- <img class="container" src="@/assets/logo/logo.png" alt=""> -->
+    <Map/>
 </template>
 
 <script>
-export default{
-    
+import Map from "@/components/map/Map.vue"
+export default {
+    components: {
+        Map
+    }
 }
 </script>

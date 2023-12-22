@@ -195,7 +195,7 @@ export default {
             if (this.form.avatar.includes("http://")) {
                 return this.form.avatar
             }
-            return "http://localhost:8088/api/v1/users/avatar/" + this.form.avatar
+            return userApi.IMAGE_URL + this.form.avatar
         },
         formTitle() {
             return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'

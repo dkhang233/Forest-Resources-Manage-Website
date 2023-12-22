@@ -8,7 +8,7 @@
 import { use } from 'echarts/core';
 import {
     TitleComponent,
-    ToolboxComponent,
+    // ToolboxComponent,
     TooltipComponent,
     GridComponent,
     LegendComponent

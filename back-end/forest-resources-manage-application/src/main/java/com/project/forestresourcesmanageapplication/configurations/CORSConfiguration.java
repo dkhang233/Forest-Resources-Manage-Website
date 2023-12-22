@@ -12,7 +12,7 @@ public class CORSConfiguration {
 	public WebMvcConfigurer corsConfiguration() {
 		return new WebMvcConfigurer() {
 			public void addCorsMappings(CorsRegistry corsRegistry) {
-				corsRegistry.addMapping("/**").allowedMethods("*").allowedOrigins("http://localhost:8080");
+				corsRegistry.addMapping("/**").allowedMethods("*").allowedOrigins("http://localhost:8080","https://dkhang233.github.io");
 			}
 		};
 	}

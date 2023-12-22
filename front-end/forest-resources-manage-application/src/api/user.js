@@ -25,3 +25,6 @@ export const createUser = (user) => apiClient.post(`users`, user, {
         'Content-Type': 'multipart/form-data'
     }
 });
+
+// export const IMAGE_URL = "http://localhost:8088/api/v1/users/avatar/"
+export const IMAGE_URL = "https://suitably-welcomed-tick.ngrok-free.app/api/v1/users/avatar/"

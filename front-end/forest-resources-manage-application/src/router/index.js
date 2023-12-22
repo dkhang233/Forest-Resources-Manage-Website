@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory  } from 'vue-router'
 import { useUserStore } from '@/stores/user-store';
 
 export const constantRoutes = [
@@ -55,7 +55,7 @@ export const constantRoutes = [
       },
       {
         path : 'map',
-        component : () => import('@/components/map/Map')
+        component : () => import('@/components/map/MapView')
       }
     ]
   },

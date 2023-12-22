@@ -131,7 +131,6 @@
 <script>
 import * as animalApi from '@/api/animal'
 import * as administrationApi from '@/api/administration'
-import { ro } from 'date-fns/locale'
 export default {
     data() {
         return {
@@ -197,7 +196,7 @@ export default {
             }
             else {
                 console.log(this.form.image)
-                return 'http://localhost:8088/api/v1/animal-storage-facilities/species/images/' + this.form.image
+                return animalApi.IMAGE_URL + this.form.image
             }
         },
         formTitle() {

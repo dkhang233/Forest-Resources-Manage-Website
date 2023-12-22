@@ -21,6 +21,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 
+//import mapbox css
+import "mapbox-gl/dist/mapbox-gl.css"
 
 //import vue-leaflet css and component 
 import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";

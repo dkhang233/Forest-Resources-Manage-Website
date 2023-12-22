@@ -86,7 +86,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                 .equals(animalStorageFacilitiesDTO.getAdminstrationCode())) {
             try {
                 Administration administration = this.adminstrationService
-                        .retrieveAdministrationByCode(animalStorageFacilitiesDTO.getAdminstrationCode());
+                        .retrieveAdministrationByName(animalStorageFacilitiesDTO.getAdminstrationCode());
                 animalStorageFacilitiesExisting.setAdministration(administration);
             } catch (Exception exception) {
                 throw new DataNotFoundException("Không tìm thấy cơ sở hành chính với code = "

@@ -25,10 +25,12 @@
                             <span>Map</span>
                         </div>
                     </template>
-                    <map-view class="map"></map-view>
+                    <!-- <map-view class="h-[31rem]"></map-view> -->
+                    <Map class="h-[31rem]"></Map>
                 </el-card>
             </el-col>
         </el-row>
+        <map></map>
 
         <el-dialog v-model="dialogFormVisible" title="Thông tin đơn vị hành chính">
             <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
@@ -84,10 +86,10 @@
 import { retrieveSubAdministrationsWithHierarchy, updateAdministration } from "../../api/administration"
 import { mapStores } from 'pinia'
 import { useUserStore } from "../../stores/user-store"
-import MapView from "@/components/map/MapView";
+import Map from "@/components/map/Map";
 export default {
     components: {
-        MapView
+        Map
     },
     data() {
         return {
@@ -264,12 +266,6 @@ export default {
 
 .administrations {
     height: 600px;
-}
-
-
-
-.map {
-    height: 500px;
 }
 
 </style>

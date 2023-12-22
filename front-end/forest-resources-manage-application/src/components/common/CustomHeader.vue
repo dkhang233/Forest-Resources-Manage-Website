@@ -105,6 +105,7 @@
 import { mapStores } from 'pinia'
 import { useAppStore } from "../../stores/app-store"
 import { useUserStore } from '@/stores/user-store'
+import * as userApi from '@/api/user'
 
 export default {
     name: "customHeader",
@@ -124,7 +125,7 @@ export default {
             if (avatar == '') {
                 return ''
             } else {
-                return "http://localhost:8088/api/v1/users/avatar/" + avatar
+                return userApi.IMAGE_URL + avatar
             }
         }
     },

@@ -11,3 +11,7 @@ export const retrieveAnimalQuantityNow = () => apiClient.get('animal-storage-fac
 export const updateAnimalQuantity = (animalQuantity) => apiClient.put('animal-storage-facilities/species/facility-quantity/update',animalQuantity)
 export const addAnimalQuantity = (animalQuantity) => apiClient.post('animal-storage-facilities/species/facility-quantity/add',animalQuantity)
 export const addAnimalFacility = (animalFacility) => apiClient.post(`animal-storage-facilities/${animalFacility.code}`,animalFacility)
+export const updateAnimalFacility = (animalFacility) => apiClient.put(`animal-storage-facilities/${animalFacility.code}`,animalFacility)
+
+// export const IMAGE_URL = 'http://localhost:8088/api/v1/animal-storage-facilities/species/images/'
+export const IMAGE_URL = 'https://suitably-welcomed-tick.ngrok-free.app/api/v1/animal-storage-facilities/species/images/'

@@ -80,7 +80,7 @@
                                 </el-form-item>
                                 <el-form-item label="Ngày thành lập" prop="date">
                                     <el-date-picker v-model="form.date" type="date" placeholder="Chọn ngày thành lập"
-                                        size="default" />
+                                        size="default" :disabled-date="disabledDate" />
                                 </el-form-item>
                                 <el-form-item label="Trực thuộc" prop="administrationName">
                                     <el-input v-model="form.administrationName" />
@@ -289,10 +289,13 @@ export default {
             animalFormBackUp: null,
             animalFormType: "update",
             rules: {
-                // name: [{ validator: this.checkUsername, trigger: 'blur' }],
-                // date: [{ validator: this.checkPassword, trigger: 'blur' }],
-                // capacity: [{ validator: this.checkEmail, trigger: 'blur' }],
-                // administrationName: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
+                code: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                name: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                date: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                capacity: [{ validator: this.checkCapacity, trigger: 'blur' }],
+                administrationName: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                animalName: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                quantity: [{ validator: this.checkCapacity, trigger: 'blur' }],
             },
         }
         //--------------------------------------------
@@ -553,7 +556,6 @@ export default {
             animalApi.retrieveAnimalQuantityNow()
                 .then((res) => {
                     this.animalQuantityData = new Map(Object.entries(res.data))
-                    console.log(this.animalQuantityTable)
                     this.loadingStatus = false
                 })
                 .catch((err) => {
@@ -586,10 +588,64 @@ export default {
                 animalName: this.animalForm.animalName,
                 quantity: this.animalForm.quantity,
             }
+            this.animalFormType = 'update'
             this.dialogAnimalFormVisible = true
         },
-        handleUpdate() {
+        handleUpdate(form) {
+            if (!form) return
+            form.validate((valid) => {
+                if (valid) {
+                    this.$confirm(
+                        'Cập nhập thông tin này. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
 
+                        }
+                    )
+                        .then(() => {
+                            this.loadingStatus = true
+                            let animalFacility = {
+                                code: this.form.code,
+                                name: this.form.name,
+                                date: this.form.date,
+                                capacity: this.form.capacity,
+                                adminstrationCode: this.form.administrationName,
+                                detail: ""
+                            }
+                            animalApi.updateAnimalFacility(animalFacility)
+                                .then((res) => {
+                                    this.loadingStatus = false
+                                    this.$notify({
+                                        title: 'Thành công',
+                                        message: 'Cập nhập thành công',
+                                        type: 'success'
+                                    })
+                                    this.dialogFormVisible = false
+                                    this.setupAnimalFacilities()
+                                }).catch((err) => {
+                                    this.loadingStatus = false
+                                    try {
+                                        this.$notify({
+                                            title: 'Đã xảy ra lỗi',
+                                            message: err.response.data.messages,
+                                            type: 'error',
+                                        })
+                                        console.log(err.message)
+                                    } catch (error) {
+                                        console.log(error)
+                                    }
+                                })
+                        })
+                        .catch((err) => {
+                            // console.log(err)
+                        })
+                } else {
+                    return false
+                }
+            })
         },
         handleUpdateInAnimalTable(form) {
             if (!form) return
@@ -615,6 +671,7 @@ export default {
                             animalApi.updateAnimalQuantity(animalQuantity)
                                 .then((res) => {
                                     this.loadingStatus = false
+                                    this.dialogAnimalFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
                                         message: 'Cập nhập thành công',
@@ -740,6 +797,7 @@ export default {
                             }
                             animalApi.addAnimalFacility(animalFacility)
                                 .then((res) => {
+                                    this.loadingStatus = false
                                     this.dialogFormVisible = false
                                     this.$notify({
                                         title: "Thành công",
@@ -775,6 +833,9 @@ export default {
         ,
         handleClickCreateAnimalQuantity() {
             this.animalFormType = 'create'
+            if (this.$refs.animalQuantityForm != null) {
+                this.$refs.animalQuantityForm.clearValidate()
+            }
             this.resetAnimalFormData()
             this.formBackUp = this.form
             this.dialogAnimalFormVisible = true;
@@ -803,6 +864,13 @@ export default {
                             }
                             animalApi.addAnimalQuantity(animalQuantity)
                                 .then((res) => {
+                                    this.loadingStatus = false
+                                    this.dialogAnimalFormVisible = false
+                                    this.$notify({
+                                        title: 'Thành công',
+                                        message: 'Cập nhập thành công',
+                                        type: 'success'
+                                    })
                                     this.setupAnimalQuantity()
                                 })
                                 .catch((err) => {
@@ -830,7 +898,7 @@ export default {
         },
         resetFormData() {
             this.form.administrationName = ""
-            this.form.capacity = 0
+            this.form.capacity = 1
             this.form.code = ""
             this.form.date = ""
             this.form.name = ""
@@ -838,6 +906,21 @@ export default {
         resetAnimalFormData() {
             this.animalForm.animalName = ""
             this.animalForm.quantity = 1
+        },
+        checkEmptyField(rule, value, callback) {
+            if (/^\s*$/.test(value)) {
+                return callback(new Error('Vui lòng nhập trường này'))
+            }
+            return callback()
+        },
+        checkCapacity(rule, value, callback) {
+            if (isNaN(value) || value < 0) {
+                return callback(new Error('Giá trị của trường này phải lớn hơn hoặc bằng 0'))
+            }
+            return callback()
+        },
+        disabledDate(date) {
+            return date > Date.now() ? true : false
         }
     },
     created() {

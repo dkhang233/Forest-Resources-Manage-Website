@@ -40,25 +40,36 @@ export default {
     },
     methods: {
         send() {
-            this.$emit('onLoadingStatus')
-            userApi.resetPassword(this.form)
-                .then((res) => {
-                    this.$emit('offLoadingStatus')
-                    this.$router.push({ path: "/authenticate-code" })
-                })
-                .catch((err) => {
-                    this.$emit('offLoadingStatus')
-                    let message = ""
-                    try {
-                        message = err.response.data.messages
-                    } catch (error) {
-                        console.log(error)
-                    }
-                    this.$message({
-                        message: message,
-                        type: 'error'
+            if (this.checkEmail(this.email)) {
+                this.$emit('onLoadingStatus')
+                userApi.resetPassword(this.form)
+                    .then((res) => {
+                        this.$emit('offLoadingStatus')
+                        this.$router.push({ path: "/authenticate-code" })
                     })
+                    .catch((err) => {
+                        this.$emit('offLoadingStatus')
+                        let message = ""
+                        try {
+                            message = err.response.data.messages
+                        } catch (error) {
+                            console.log(error)
+                        }
+                        this.$message({
+                            message: message,
+                            type: 'error'
+                        })
+                    })
+            } else {
+                this.$message({
+                    message: "Địa chỉ email không chính xác",
+                    type: 'error'
                 })
+            }
+
+        },
+        checkEmail(email){
+            return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
         }
     }
 }

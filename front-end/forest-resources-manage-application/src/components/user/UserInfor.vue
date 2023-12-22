@@ -194,14 +194,14 @@ export default {
       if (avatar == '') {
         return ''
       } else {
-        return "http://localhost:8088/api/v1/users/avatar/" + avatar
+        return userApi.IMAGE_URL + avatar
       }
     },
     avatarInForm() {
       if (this.form.avatar.includes("http://")) {
         return this.form.avatar
       }
-      return "http://localhost:8088/api/v1/users/avatar/" + this.form.avatar
+      return userApi.IMAGE_URL + this.form.avatar
     }
   },
   methods: {
