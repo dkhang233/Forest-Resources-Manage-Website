@@ -326,5 +326,53 @@ CREATE TABLE `wf_pt_relationship`(
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='bảng quan hệ cơ sở gỗ - loại hình sản xuất';
 
 
+-- -----------------------------------------------------
+-- Table Plant Seed
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `plant_seed`;
+CREATE TABLE `plant_seed`(
+    `name` VARCHAR(100) NOT NULL,
+    `type` VARCHAR(100) NULL COMMENT 'loại',
+	`image` VARCHAR(150) NULL COMMENT 'ảnh',
+    `soil_type` VARCHAR(100) NULL COMMENT 'loại đất',
+    `main_pest` VARCHAR(100) NULL COMMENT 'sâu bệnh chính',
+    `harvesting_period` INT NULL COMMENT 'thời gian thu hoạch',
+    `plant_season` VARCHAR(100) NULL COMMENT 'mùa vụ',
+    PRIMARY KEY (`name`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='giống cây trồng';
+
+-- -----------------------------------------------------
+-- Table Plant Facilities
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `plant_facilities`;
+CREATE TABLE `plant_facilities`(
+    `code` VARCHAR(20) NOT NULL,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `date` DATE NULL,
+	`capacity` long NOT NULL COMMENT 'sức chứa',
+    `adminstration_code` VARCHAR(20) NULL COMMENT 'id hành chính',
+    PRIMARY KEY (`code`),
+    FOREIGN KEY (`adminstration_code`)
+        REFERENCES `administrations`(`code`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='cơ sở sản xuất giống cây trồng';
+
+-- -----------------------------------------------------
+-- Table PF-PS Relationship
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `pf_ps_relationship`;
+CREATE TABLE `pf_ps_relationship`(
+    `id` INT NOT NULL,
+    `plant_facilities_code` VARCHAR(20) NOT NULL COMMENT 'code cơ sở lưu sản xuất giống cây trồng',
+    `plant_seed_name` VARCHAR(100) NOT NULL COMMENT 'tên giống cây trồng',
+    `quantity` LONG NULL COMMENT 'số lượng',
+    `date` DATE NULL COMMENT 'ngày',
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`plant_facilities_code`)
+        REFERENCES `plant_facilities`(`code`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (`plant_seed_name`)
+        REFERENCES `plant_seed`(`name`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='bảng quan hệ cơ sở giống cây trồng - giống cây trồng';
 
 
