@@ -7,22 +7,21 @@ USE forest_resources_manage_application;
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `administrative_levels`;
 CREATE TABLE `administrative_levels` (
-  `id` INT NOT NULL,
-  `name` VARCHAR(100) NOT NULL UNIQUE COMMENT 'tên các cấp độ hành chính',
-  PRIMARY KEY (`id`)
-)
-ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = 'cấp độ hành chính' ROW_FORMAT = Dynamic;
-
--- ----------------------------
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL UNIQUE COMMENT 'tên các cấp độ hành chính',
+    level INT NOT NULL COMMENT 'cấp',
+    PRIMARY KEY (id)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='cấp độ hành chính' ROW_FORMAT=DYNAMIC;
+----------------
 -- Records of `administrative_levels`
 -- ----------------------------
 INSERT INTO `administrative_levels`(`id`,`name`)
-VALUES (1,'tỉnh'),
-(2,'thành phố'),
-(3,'huyện'),
-(4,'phường'),
-(5,'thị trấn'),
-(6,'xã');
+VALUES (1,'tỉnh',1),
+(2,'thành phố',2),
+(3,'huyện',2),
+(4,'phường',3),
+(5,'thị trấn',3),
+(6,'xã',4);
 
 
 -- -----------------------------------------------------
@@ -176,6 +175,8 @@ CREATE TABLE `users` (
     `address` VARCHAR(100) NOT NULL,
     `is_active` INT NOT NULL DEFAULT 1 COMMENT 'Trạng thái tài khoản : hoạt động = 1 , không hoạt động = 0 ',
     `role` VARCHAR(50) NOT NULL COMMENT 'Vai trò : admin , user',
+    `otp` VARCHAR(20) COMMENT 'mã otp',
+    `otp_generated_time` DATETIME COMMENT 'thời gian tạo mã otp',
     `administration_code` VARCHAR(20) NOT NULL,
     PRIMARY KEY (`username`),
     FOREIGN KEY (`administration_code`)
@@ -220,6 +221,17 @@ CREATE TABLE `animal_storage_facilities`(
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Cơ sở lưu trữ động vật';
 
 -- -----------------------------------------------------
+-- Records of Animal Storage Facilities 
+-- -----------------------------------------------------
+INSERT INTO `animal_storage_facilities`(`code`,`name`,`date`,`capacity`,`adminstration_code`,`detail`)
+VALUES ( 'AS001', 'Trung tâm chăm sóc và bảo tồn động vật Phù Vân' , '2021-1-1' , 1000 , '13306' , '(là cơ sở được cấp phép, hoạt động bằng nguồn vốn xã hội)' ),
+( 'AS002', 'Viện nghiên cứu và bảo tồn động vật hoang dã Yên Bắc','2021-1-1' , 1000 , '13348' , '(là cơ sở cấp phép, bằng nguồn vốn cá nhân)' ),
+('AS003', 'Trung tâm chăm sóc và bảo tồn động vật Nhân Khang', '2021-1-1', 1200, '13606', '(là cơ sở được cấp phép, hoạt động bằng nguồn vốn từ ngành công nghiệp)'),
+('AS004', 'Trung tâm chăm sóc và bảo tồn động vật Bắc Lý', '2021-1-1', 800, '13588', '(là cơ sở cấp phép, sử dụng nguồn vốn từ quỹ phát triển khu vực)'),
+('AS004', 'Khu chăm sóc và bảo tồn động vật Xuân Khê', '2021-1-1', 800, '13624', '(là cơ sở cấp phép, sử dụng nguồn vốn từ quỹ phát triển khu vực)'),
+( 'AS005', 'Trung tâm chăm sóc và bảo tồn động vật Bình Mỹ' , '2021-1-1' , 1000 , '13501' , '(là cơ sở được cấp phép, hoạt động bằng nguồn vốn xã hội)' );
+
+-- -----------------------------------------------------
 -- Table fluctuation
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `fluctuation`;
@@ -230,6 +242,14 @@ CREATE TABLE `fluctuation`(
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='Loại biến động';
 
+-- -----------------------------------------------------
+-- Records of fluctuation
+-- -----------------------------------------------------
+INSERT INTO `fluctuation`(`id`,`name`,`detail`)
+VALUES (1, 'Theo chu kì' , 'biến động xảy ra do những thay đổi có tính chu kì của môi trường như chu kì ngày, đêm, chu kì mùa hay chu kì thủy triều,…') ,
+(2, 'Không theo chu kì' , 'biến động mà số lượng cá thể của quần thể tăng hoặc giảm
+một cách đột ngột do những thay đổi bất thường của môi trường tự nhiên hay do hoạt
+động khai thác tài nguyên quá mức của con người');
 
 -- -----------------------------------------------------
 -- Table Animal Species

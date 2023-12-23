@@ -1,8 +1,8 @@
 <template>
-    <p class="container bg-[url('@/assets/image/wood-type-bg.jpg')] " v-loading="loadingStatus">
-    <div class="grid grid-cols-20 px-[9rem] pt-[3rem]" >
+    <p class="container bg-[url('@/assets/image/wood-type-bg.jpg')] " >
+    <div class="grid grid-cols-20 px-[9rem] pt-[3rem]">
         <div class="col-start-3">
-            <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always">
+            <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always" v-loading="loadingStatus">
                 <el-table :data="filterTableData" class="h-[520px]" style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
                     <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                         :prop="item.value" align="center">
@@ -17,7 +17,7 @@
                     </el-table-column>
                 </el-table>
             </el-card>
-            <el-dialog class=" block rounded-lg
+            <el-dialog id="dialog" class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="4vh" v-model="dialogFormVisible" :title="formTitle"
@@ -194,7 +194,9 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#dialog')
+                            })
                             let productionType = new FormData()
                             productionType.append('file-image', this.imageFile)
                             let formJson = JSON.stringify(this.form)
@@ -204,7 +206,7 @@ export default {
                             productionType.append('body', formData)
                             woodApi.createProductionType(productionType)
                                 .then((res) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     this.dialogFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
@@ -213,7 +215,7 @@ export default {
                                     })
                                     this.retrieveData()
                                 }).catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     let message = ''
                                     try {
                                         message = err.response.data.messages
@@ -267,8 +269,8 @@ export default {
             if (file != null) {
                 if (!file.type.startsWith('image')) {
                     this.$message.error('Vui lòng chọn file ảnh!')
-                } else if (file.size / 1024 / 1024 > 10) {
-                    this.$message.error('Vui lòng chọn file ảnh có kích thước nhỏ hơn 10MB!')
+                } else if (file.size / 1024 / 1024 > 1) {
+                    this.$message.error('Vui lòng chọn file ảnh có kích thước nhỏ hơn 1MB!')
                 } else {
                     this.imageFile = file
                     let image = URL.createObjectURL(file);
@@ -365,7 +367,9 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#dialog')
+                            })
                             let productionType = new FormData()
                             productionType.append('file-image', this.imageFile)
                             let formJson = JSON.stringify(this.form)
@@ -375,7 +379,8 @@ export default {
                             productionType.append('body', formData)
                             woodApi.updateProductionType(productionType)
                                 .then((res) => {
-                                    this.loadingStatus = false
+                                    loading.close()
+                                    this.dialogFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
                                         message: 'Cập nhập thành công',
@@ -383,7 +388,7 @@ export default {
                                     })
                                     this.retrieveData()
                                 }).catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     try {
                                         this.$notify({
                                             title: 'Đã xảy ra lỗi',
@@ -395,21 +400,8 @@ export default {
                                         console.log(error)
                                     }
                                 })
-                            this.dialogFormVisible = false
                         })
                         .catch((err) => {
-                            this.loadingStatus = false
-                            let message = ''
-                            try {
-                                message = err.response.data.messages
-                            } catch (error) {
-                                console.log(err)
-                            }
-                            this.$notify({
-                                title: 'Đã xảy ra lỗi',
-                                message: message,  //response.data.messages
-                                type: 'error',
-                            })
                         })
                 } else {
                     return false
@@ -427,16 +419,14 @@ export default {
         checkWoodType(rule, value, callback) {
             let pattern = /^\s*$/
             if (value == null || pattern.test(value)) {
-                callback(new Error('Vui lòng nhập loại gỗ'))
+                callback(new Error('Vui lòng nhập thông tin này'))
             }
             return callback()
         },
         checkCapacity(rule, value, callback) {
-            if (value == '' || value == null) {
-                callback(new Error('Vui lòng nhập khả năng sản xuất'))
-            }
-            if (value <= 0) {
-                callback(new Error('Khả năng sản xuất phải lớn hơn hoặc bằng 1'))
+            let pattern = /^\s*$/
+            if (pattern.test(value) || isNaN(value) || value < 0) {
+                return callback(new Error('Giá trị của thông tin này phải là số nguyên lớn hơn hoặc bằng 0'))
             }
             return callback()
         },

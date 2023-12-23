@@ -21,12 +21,11 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AdminstrationServiceImpl implements AdminstrationService{
+public class AdminstrationServiceImpl implements AdminstrationService {
 	private final AdministrationRepository administrationRepository;
 	private final AdministrativeLevelRepository administrativeLevelRepository;
-	
 
-	//---------------------Administration------------------------
+	// ---------------------Administration------------------------
 
 	// Truy suất toàn bộ đơn vị hành chính
 	@Override
@@ -71,45 +70,63 @@ public class AdminstrationServiceImpl implements AdminstrationService{
 	// Cập nhập đơn vị hành chính
 	@Override
 	public Administration updateAdministration(String code, AdministrationDTO administrationDTO) {
-
 		Administration administration = this.administrationRepository
 				.findById(code)
 				.orElseThrow(() -> new DataNotFoundException(
-						"Can not found administration with code = " + code));
+						"Không tìm thấy đơn vị hành chính với mã : " + code));
 
-		// Kiểm tra tên đơn vị hành chính
-		if (!administration.getName().equals(administrationDTO.getName())) {
-			Optional<Administration> tmp = this.administrationRepository
-					.findByName(administrationDTO.getName());
-			if (tmp.isPresent()) {
-				throw new DataAlreadyExistsException(
-						"Administration already exists with name = " + administrationDTO.getName());
-			}
-			administration.setName(administrationDTO.getName());
-		}
-
-		// Kiểm tra trực thuộc
-		if (!administration.getSubordinate().getName().equals(administrationDTO.getSubordinateName())) {
-			Administration subrbodinate = this.administrationRepository
-					.findByName(administrationDTO.getSubordinateName())
-					.orElseThrow(() -> new DataNotFoundException(
-							"Can not found administration with name = " + administrationDTO.getSubordinateName()));
-			administration.setSubordinate(subrbodinate);
-		}
-
-		// Kiểm tra cáp hành chính
-		if (!administration.getAdministrativeLevel().getName().equals(administrationDTO.getAdministrativeLevelName())) {
+		// Kiểm tra cấp hành chính
+		String administrativeLevelName = administrationDTO.getAdministrativeLevelName();
+		if (!administration.getAdministrativeLevel().getName().equals(administrativeLevelName)) {
 			AdministrativeLevel administrativeLevel = this.administrativeLevelRepository
 					.findByName(administrationDTO.getAdministrativeLevelName())
 					.orElseThrow(() -> new DataNotFoundException(
-							"Không thể tìm thấy cấp hành chính với tên = "
+							"Không thể tìm thấy cấp hành chính: "
 									+ administrationDTO.getAdministrativeLevelName()));
-			if (!administrationRepository.findChildren(administration.getCode()).isEmpty()) {
-				throw new InvalidDataException("Cấp hành chính không hợp lệ");
+			if (administration.getAdministrativeLevel().getLevel() == 1
+					&& administration.getAdministrativeLevel().getLevel() != administrativeLevel.getLevel()) {
+				throw new InvalidDataException("Đơn vị hành chính cấp Tỉnh không thể đổi cấp");
+			}
+			if (administration.getAdministrativeLevel().getLevel() == 2
+					&& administration.getAdministrativeLevel().getLevel() != administrativeLevel.getLevel()) {
+				throw new InvalidDataException(
+						"Đơn vị hành chính cấp Thành phố, Huyện chỉ có thể đổi cho nhau");
+			}
+			if (administration.getAdministrativeLevel().getLevel() == 3
+					&& administration.getAdministrativeLevel().getLevel() != administrativeLevel.getLevel()) {
+				throw new InvalidDataException(
+						"Đơn vị hành chính cấp Phường, Thị trấn, Xã chỉ có thể đổi cho nhau");
 			}
 			administration.setAdministrativeLevel(administrativeLevel);
 		}
 
+		// Kiểm tra trực thuộc
+		String subordinate = administrationDTO.getSubordinateCode() == null ? "" : administrationDTO.getSubordinateCode();
+		if (administration.getSubordinate() != null && !administration.getSubordinate().getCode().equals(subordinate)) {
+			if (administration.getAdministrativeLevel().getLevel() == 1) {
+				throw new InvalidDataException(
+						"Đơn vị hành chính cấp Tỉnh không thể trực thuộc đơn vị hành chính khác");
+			}
+			Administration subordinateAdministration = this.administrationRepository
+					.findById(subordinate)
+					.orElseThrow(() -> new DataNotFoundException(
+							"Không tìm thấy đơn vị hành chính với mã : " + subordinate));
+			if (administration.getAdministrativeLevel().getLevel() == 2) {
+				if (subordinateAdministration.getAdministrativeLevel().getLevel() != 1) {
+					throw new InvalidDataException(
+							"Đơn vị hành chính cấp Thành phố, Huyện chỉ có thể trực thuộc đơn vị hành chính cấp tỉnh");
+				}
+				administration.setSubordinate(subordinateAdministration);
+			}
+			if (administration.getAdministrativeLevel().getLevel() == 3) {
+				if (subordinateAdministration.getAdministrativeLevel().getLevel() != 3) {
+					throw new InvalidDataException(
+							"Đơn vị hành chính cấp Phường, Thị trấn, Xã chỉ có thể trực thuộc đơn vị hành chính cấp thành phố, huyện");
+				}
+				administration.setSubordinate(subordinateAdministration);
+			}
+		}
+		administration.setName(administrationDTO.getName());
 		administration = administrationRepository.save(administration);
 		return administration;
 	}
@@ -123,13 +140,12 @@ public class AdminstrationServiceImpl implements AdminstrationService{
 	// Tìm kiếm đơn vị hành chính theo tên
 	@Override
 	public Administration retrieveAdministrationByName(String name) {
-		Administration administration =  this.administrationRepository.findByName(name)
+		Administration administration = this.administrationRepository.findByName(name)
 				.orElseThrow(() -> new DataNotFoundException("Not found administration with name: " + name));
 		return administration;
 	}
 
-
-	//----------------------Administrative_Level-------------------------
+	// ----------------------Administrative_Level-------------------------
 	@Override
 	public List<AdministrativeLevel> retrieveAllAdministrativeLevels() {
 		return administrativeLevelRepository.findAll();

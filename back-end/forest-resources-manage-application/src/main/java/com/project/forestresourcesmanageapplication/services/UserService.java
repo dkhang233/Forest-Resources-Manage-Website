@@ -30,4 +30,6 @@ public interface UserService {
 
 	void changePassword(ChangePasswordDTO changePasswordDTO);
 
+	void changePasswordWithCurrentPassword(String username, ChangePasswordDTO changePasswordDTO);
+
 }

@@ -10,7 +10,7 @@ public class AdministrationDTO {
 	private String name;
 
 	@NotBlank
-    private String subordinateName;
+    private String subordinateCode;
 
 	@NotBlank
 	private String administrativeLevelName;

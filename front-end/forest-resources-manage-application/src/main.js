@@ -4,8 +4,6 @@ import { VueCookies } from 'vue-cookies'
 
 import { createPinia } from 'pinia'
 import router from './router'
-
-
 //import element-plus
 import 'element-plus/dist/index.css'
 import ElementPlus from 'element-plus'
@@ -20,9 +18,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
-
-//import mapbox css
-import "mapbox-gl/dist/mapbox-gl.css"
 
 //import vue-leaflet css and component 
 import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
@@ -64,6 +59,5 @@ app.component("l-tile-layer", LTileLayer);
 app.component("l-marker", LMarker);
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.component('VueDatePicker', VueDatePicker);
-
 //mount 
 app.mount('#app')

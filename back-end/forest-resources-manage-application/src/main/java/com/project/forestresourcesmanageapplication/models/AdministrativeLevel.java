@@ -30,4 +30,7 @@ public class AdministrativeLevel {
 
 	@Column(name = "name",nullable = false,length = 100)
 	private String name;
+
+	@Column(name = "level")
+	private int level;
 }

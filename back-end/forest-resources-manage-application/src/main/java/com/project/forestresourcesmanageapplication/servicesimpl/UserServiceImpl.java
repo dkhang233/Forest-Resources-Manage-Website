@@ -76,8 +76,8 @@ public class UserServiceImpl implements UserService {
 		User user = this.userRepository.findById(username)
 				.orElseThrow(() -> new DataNotFoundException(
 						"Username không tồn tại"));
-		String administrationName = userDTO.getAdministrationName();
-		Administration administration = this.administrationRepository.findByName(administrationName)
+		String administrationCode = userDTO.getAdministrationCode();
+		Administration administration = this.administrationRepository.findById(administrationCode)
 				.orElseThrow(() -> new DataNotFoundException(
 						"Đơn vị hành chính trực thuộc không tồn tại"));
 
@@ -186,11 +186,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public String verifyOtp(verifyOtpDTO verifyOtpDTO) {
-		User user = this.userRepository.findByOtp(verifyOtpDTO.getOtp())
-				.orElseThrow(() -> new DataNotFoundException("Mã OTP không chính xác"));
+		User user = this.userRepository.findByEmail(verifyOtpDTO.getEmail())
+				.orElseThrow(() -> new DataNotFoundException("Mã xác thực không chính xác"));
 		String otp = user.getOtp();
 		if (otp.equals(verifyOtpDTO.getOtp())
-				&& Duration.between(LocalDateTime.now(), user.getOtpGeneratedTime()).toSeconds() < (5 * 60)) {
+				&& Duration.between(LocalDateTime.now(), user.getOtpGeneratedTime()).toSeconds() < (15 * 60)) {
 			return verifyOtpDTO.getOtp();
 		}
 		throw new InvalidDataException("Mã xác thực không chính xác");
@@ -199,9 +199,21 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void changePassword(ChangePasswordDTO changePasswordDTO) {
 		User user = this.userRepository.findByOtp(changePasswordDTO.getOtp())
-				.orElseThrow(() -> new DataNotFoundException("Mã otp không chính xác"));
-		user.setPassword(changePasswordDTO.getPassword());
+				.orElseThrow(() -> new DataNotFoundException("Mã xác thực không chính xác"));
+		user.setPassword(changePasswordDTO.getNewPassword());
 		this.userRepository.save(user);
+	}
+
+	@Override
+	public void changePasswordWithCurrentPassword(String username, ChangePasswordDTO changePasswordDTO) {
+		User user = this.userRepository.findById(username)
+				.orElseThrow(() -> new DataNotFoundException("Tài khoản chưa tồn tại"));
+		if (user.getPassword().equals(changePasswordDTO.getPassword())) {
+			user.setPassword(changePasswordDTO.getNewPassword());
+			this.userRepository.save(user);
+			return;
+		}
+		throw new InvalidDataException("Mật khẩu hiện tại chưa chính xác");
 	}
 
 	// Chuyển từ user sang userDTO
@@ -216,14 +228,14 @@ public class UserServiceImpl implements UserService {
 				.birthDate(user.getBirthDate())
 				.isActive(user.isActive())
 				.role(user.getRole())
-				.administrationName(user.getAdministration().getName())
+				.administrationCode(user.getAdministration().getCode())
 				.build();
 		return userDTO;
 	}
 
 	// Chuyển từ userDTO sang user
 	public User mapUserDTOToUser(UserDTO userDTO) {
-		Administration administration = this.administrationRepository.findByName(userDTO.getAdministrationName())
+		Administration administration = this.administrationRepository.findById(userDTO.getAdministrationCode())
 				.orElseThrow(() -> new DataNotFoundException("Đơn vị hành chính trực thuộc không tồn tại"));
 		User user = User.builder()
 				.username(userDTO.getUsername())
@@ -241,7 +253,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public User mapNewUserDTOToUser(NewUserDTO newUserDTO) {
-		Administration administration = this.administrationRepository.findByName(newUserDTO.getAdministrationName())
+		Administration administration = this.administrationRepository.findById(newUserDTO.getAdministrationCode())
 				.orElseThrow(() -> new DataNotFoundException("Đơn vị hành chính trực thuộc không tồn tại"));
 		User user = User.builder()
 				.username(newUserDTO.getUsername())
@@ -258,4 +270,5 @@ public class UserServiceImpl implements UserService {
 				.build();
 		return user;
 	}
+
 }

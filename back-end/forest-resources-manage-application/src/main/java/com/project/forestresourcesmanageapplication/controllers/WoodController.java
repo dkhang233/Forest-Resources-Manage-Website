@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -26,13 +28,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.project.forestresourcesmanageapplication.dtos.OperationFormDTO;
 import com.project.forestresourcesmanageapplication.dtos.ProductionTypeDTO;
+import com.project.forestresourcesmanageapplication.dtos.WfPtRelationshipDTO;
 import com.project.forestresourcesmanageapplication.dtos.WoodFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.models.OperationForm;
 import com.project.forestresourcesmanageapplication.models.ProductionType;
+import com.project.forestresourcesmanageapplication.models.WfPtRelationship;
 import com.project.forestresourcesmanageapplication.models.WoodFacilities;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
+import com.project.forestresourcesmanageapplication.responses.FacilityQuantity;
 import com.project.forestresourcesmanageapplication.services.WoodFacilitiesService;
 
 import lombok.RequiredArgsConstructor;
@@ -162,6 +168,22 @@ public class WoodController {
     }
     // --------------------------THỐNG KÊ DỮ LIỆU VỀ SỐ LƯỢNG----------------------
 
+    // Thay đổi số lượng
+    @PutMapping("/production-type/facilities/add")
+    public ResponseEntity<?> addWfPtRelationship(@RequestBody WfPtRelationshipDTO wfPtRelationshipDTO) {
+        WfPtRelationship wfPtRelationship = this.woodFacilitiesService.addWfPtRelationship(wfPtRelationshipDTO);
+        return ResponseEntity.ok(wfPtRelationship);
+    }
+
+    // ------Thống kê số lượng theo tháng trong tất cả cơ sở-------
+
+    @GetMapping("/production-type/facilities/now")
+    public ResponseEntity<?> getFacilityQuantityNow() {
+        HashMap<String, List<FacilityQuantity>> facilitiesQuantities = this.woodFacilitiesService
+                .getAllQuantityOfAnimal(Date.valueOf(LocalDate.now()));
+        return ResponseEntity.ok(facilitiesQuantities);
+    }
+
     // ------Thống kê số lượng theo tháng trong tất cả cơ sở-------
     @GetMapping("/production-type/facilities/month/{beginMonth}/{endMonth}")
     public ResponseEntity<List<FacilitiesQuantityInMoth>> getMonthQuantityOfFacilitiesWithTime(
@@ -192,6 +214,6 @@ public class WoodController {
         return ResponseEntity.ok(facilitiesQuantityInYears);
     }
 
-//test
+    // test
 
 }

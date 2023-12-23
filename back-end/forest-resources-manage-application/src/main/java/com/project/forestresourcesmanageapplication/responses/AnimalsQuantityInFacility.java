@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AnimalsQuantityInFacility {
     private String facilityName;
-    private List<AnimalsQuantity> data;
+    private List<FacilityQuantity> data;
 }

@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
         <el-row class="">
             <el-col :offset="2">
                 <h1 class=" text-[#2C3E50] text-[25px] font-bold m-3">
@@ -14,11 +14,11 @@
         <div class="absolute top-0 w-1/2 h-full bg-center bg-cover" :style="`background-image: url('${animalImage}');`"
             v-if="animalImage != ''">
         </div>
-        <div class="relative grid grid-cols-20 pl-[100px] pr-[90px]" v-loading="loadingStatus">
+        <div class="relative grid grid-cols-20 pl-[100px] pr-[90px]">
             <!-- <img class="h-[550px] rounded-s-3xl" src="@/assets/image/default-animal.jpg" alt="" v-if="animalImage == ''" /> -->
             <!-- <img class="h-[550px] rounded-s-3xl" :src="animalImage" alt="" v-if="animalImage != ''" /> -->
             <div class="col-start-11">
-                <el-card class=" h-[550px] w-[50rem] rounded-[20px]" shadow="always">
+                <el-card class=" h-[550px] w-[50rem] rounded-[20px]" shadow="always"  v-loading="loadingStatus">
                     <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
                         style="--el-table-row-hover-bg-color: #D0D3D4;" fit @row-click="changeAnimalImage">
                         <el-table-column v-for="( item, index ) in  tableColumns " :key="index" :label="item.title"
@@ -119,7 +119,7 @@
                         text-white rounded-lg shadow-lg 
                         px-9 bg-blue-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="createNewAnimal">
+                        border transition hover:-translate-y-0.5 duration-150" @click="handleClickCreate">
                     <font-awesome-icon :icon="['fas', 'plus']" size="lg" />
                     <span>Tạo mới</span>
                 </button>
@@ -179,9 +179,12 @@ export default {
             imageFile: null,
             formType: 'update',
             rules: {
-                // username: [{ validator: this.checkUsername, trigger: 'blur' }],
-                // email: [{ validator: this.checkEmail, trigger: 'blur' }],
-                // administration_name: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
+                name: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                animalType: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                mainFood: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                mainDisease: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                longevity: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                fluctuationName: [{ validator: this.checkEmptyField, trigger: 'blur' }],
             },
         }
     },
@@ -200,7 +203,7 @@ export default {
             }
         },
         formTitle() {
-            return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo người dùng mới'
+            return this.formType == 'update' ? 'Thông tin chi tiết' : 'Tạo mới'
         }
     },
     watch: {
@@ -227,7 +230,7 @@ export default {
             this.form.image = row.image
         },
         // Tạo tài khoản mới
-        createNewAnimal() {
+        handleClickCreate() {
             this.formType = 'create'
             this.resetFormData()
             if (this.$refs.ruleFormRef != null) {
@@ -341,9 +344,9 @@ export default {
             let file = event.target.files[0]
             if (file != null) {
                 if (!file.type.startsWith('image')) {
-                    this.$message.error('Ảnh động vật phải là file ảnh!')
-                } else if (file.size / 1024 / 1024 > 10) {
-                    this.$message.error('Ảnh  động vật  phải có kích thước nhỏ hơn 10MB!')
+                    this.$message.error('Vui lòng chọn file ảnh')
+                } else if (file.size / 1024 / 1024 > 1) {
+                    this.$message.error('Vui lòng chọn file ảnh có kích thước nhỏ hơn 1MB')
                 } else {
                     this.imageFile = file
                     let image = URL.createObjectURL(file);
@@ -490,33 +493,12 @@ export default {
             }
         },
 
-        checkUsername(rule, value, callback) {
-            if (value == '') {
-                callback(new Error('Vui lòng nhập username'))
+        checkEmptyField(rule, value, callback) {
+            if (value == null || /^\s*$/.test(value)) {
+                return callback(new Error('Vui lòng nhập thông tin này'))
             }
             return callback()
         },
-        //Kiểm tra dữ liệu người dùng nhập vào
-        checkEmail(rule, value, callback) {
-            if (value === '') {
-                callback(new Error('Vui lòng nhập email'))
-            } else {
-                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
-                    callback()
-                }
-                callback(new Error('Vui lòng nhập đúng địa chỉ email'))
-            }
-        },
-        checkAdministrationName(rule, value, callback) {
-            if (value === '') {
-                callback(new Error('Vui lòng nhập tên đơn vị hành chính trực thuộc'))
-            } else {
-                administrationApi.retrieveAdministrationByName(value)
-                    .then(res => callback())
-                    .catch(err => callback(new Error('Đơn vị hành chính không tồn tại')))
-            }
-        },
-
     },
     created() {
         this.retrieveData()

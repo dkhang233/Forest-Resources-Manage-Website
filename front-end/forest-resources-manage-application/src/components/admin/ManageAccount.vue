@@ -11,9 +11,11 @@
         <el-col :span="20" :offset="2">
             <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
                 <el-table :data="filterTableData" class="h-[530px] w-[93rem]" fit>
-                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title" align="center"
-                        :prop="item.value">
-                    </el-table-column>
+                    <el-table-column label="Họ" prop="firstName" align="center" ></el-table-column>
+                    <el-table-column label="Tên" prop="lastName" align="center" ></el-table-column>
+                    <el-table-column label="Username" prop="username" align="center" ></el-table-column>
+                    <el-table-column label="Vai trò" prop="username" align="center" ></el-table-column>
+                    <el-table-column label="Trực thuộc (mã)" prop="administrationCode" align="center" ></el-table-column>
                     <el-table-column :min-width="120" align="center">
                         <template #header>
                             <el-input v-model="search" size="large" placeholder="Tìm kiếm theo username" />
@@ -80,8 +82,8 @@
                                     <el-option label="Admin" value="admin" />
                                 </el-select>
                             </el-form-item>
-                            <el-form-item label="Trực thuộc" prop="administrationName">
-                                <el-input v-model="form.administrationName" />
+                            <el-form-item label="Trực thuộc (mã)" prop="administrationCode">
+                                <el-input v-model="form.administrationCode" />
                             </el-form-item>
                         </div>
                     </div>
@@ -132,7 +134,6 @@
 
 <script>
 import * as userApi from '@/api/user'
-import { retrieveAdministrationByName } from '@/api/administration'
 import { useUserStore } from "@/stores/user-store"
 import { mapStores } from 'pinia'
 export default {
@@ -140,28 +141,6 @@ export default {
         return {
             loadingStatus: false,
             search: '',
-            tableColumns: [
-                {
-                    title: 'Họ',
-                    value: 'firstName'
-                },
-                {
-                    title: 'Tên',
-                    value: 'lastName'
-                },
-                {
-                    title: 'Username',
-                    value: 'username'
-                },
-                {
-                    title: 'Vai trò',
-                    value: 'role'
-                },
-                {
-                    title: 'Trực thuộc',
-                    value: 'administrationName'
-                },
-            ],
             tableData: [],
             filterTableData: [],
             dialogFormVisible: false,
@@ -176,16 +155,17 @@ export default {
                 birthDate: '',
                 role: '',
                 isActive: true,
-                administrationName: ''
+                administrationCode: ''
             },
             formBackUp: null,
             avatarFile: null,
             formType: 'update',
             rules: {
-                username: [{ validator: this.checkUsername, trigger: 'blur' }],
-                password: [{ validator: this.checkPassword, trigger: 'blur' }],
+                username: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                password: [{ validator: this.checkEmptyField, trigger: 'blur' }],
                 email: [{ validator: this.checkEmail, trigger: 'blur' }],
-                administrationName: [{ validator: this.checkAdministrationName, trigger: 'blur' }]
+                role: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                administrationCode: [{ validator: this.checkEmptyField, trigger: 'blur' }]
             },
         }
     },
@@ -238,7 +218,7 @@ export default {
                 birthDate: this.form.birthDate,
                 role: this.form.role,
                 isActive: this.form.isActive,
-                administrationName: this.form.administrationName
+                administrationCode: this.form.administrationCode
             }
             this.dialogFormVisible = true
         },
@@ -314,7 +294,7 @@ export default {
                 birthDate: this.form.birthDate,
                 role: this.form.role,
                 isActive: this.form.isActive,
-                administrationName: this.form.administrationName
+                administrationCode: this.form.administrationCode
             }
             this.dialogFormVisible = true
         },
@@ -334,9 +314,9 @@ export default {
         handleFileChange(event) {
             let file = event.target.files[0]
             if (!file.type.startsWith('image')) {
-                this.$message.error('Ảnh đại diện phải là ảnh!')
-            } else if (file.size / 1024 / 1024 > 10) {
-                this.$message.error('Ảnh đại diện phải có kích thước nhỏ hơn 10MB!')
+                this.$message.error('Vui lòng chọn file ảnh')
+            } else if (file.size / 1024 / 1024 > 1) {
+                this.$message.error('Vui lòng chọn file ảnh có kích thước nhỏ hơn 1MB')
             } else {
                 this.avatarFile = file
                 if (file != null) {
@@ -384,7 +364,7 @@ export default {
                 && this.form.birthDate == this.formBackUp.birthDate
                 && this.form.role == this.formBackUp.role
                 && this.form.isActive == this.formBackUp.isActive
-                && this.form.administrationName == this.formBackUp.administrationName) {
+                && this.form.administrationCode == this.formBackUp.administrationCode) {
                 this.dialogFormVisible = false
             }
             else {
@@ -408,7 +388,7 @@ export default {
                             this.form.birthDate = this.formBackUp.birthDate
                             this.form.role = this.formBackUp.role
                             this.form.isActive = this.formBackUp.isActive
-                            this.form.administrationName = this.formBackUp.administrationName
+                            this.form.administrationCode = this.formBackUp.administrationCode
                         }
                         this.dialogFormVisible = false
                     })
@@ -526,19 +506,13 @@ export default {
                 birthDate: '',
                 role: '',
                 isActive: true,
-                administrationName: ''
+                administrationCode: ''
             }
         },
 
-        checkUsername(rule, value, callback) {
-            if (value == '') {
-                callback(new Error('Vui lòng nhập username'))
-            }
-            return callback()
-        },
-        checkPassword(rule, value, callback) {
-            if (value == '') {
-                callback(new Error('Vui lòng nhập mật khẩu'))
+        checkEmptyField(rule, value, callback) {
+            if (value == null || /^\s*$/.test(value)) {
+                return callback(new Error('Vui lòng nhập thông tin này'))
             }
             return callback()
         },
@@ -553,16 +527,6 @@ export default {
                 callback(new Error('Vui lòng nhập đúng địa chỉ email'))
             }
         },
-        checkAdministrationName(rule, value, callback) {
-            if (value === '') {
-                callback(new Error('Vui lòng nhập tên đơn vị hành chính trực thuộc'))
-            } else {
-                retrieveAdministrationByName(value)
-                    .then(res => callback())
-                    .catch(err => callback(new Error('Đơn vị hành chính không tồn tại')))
-            }
-        },
-
     },
     created() {
         this.retrieveData()

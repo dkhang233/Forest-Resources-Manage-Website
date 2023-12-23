@@ -6,12 +6,6 @@ export const useAppStore = defineStore('app', {
         currentIndex: 1,
         menu: [
             {
-                index: '1',
-                title: 'Hành chính', // 
-                icon: 'fa-city',
-                content: [{ item: 'Danh sách', path: '/main/administration' }],
-            },
-            {
                 index: '2',
                 title: 'Giống cây trồng', // 
                 icon: 'fa-seedling',

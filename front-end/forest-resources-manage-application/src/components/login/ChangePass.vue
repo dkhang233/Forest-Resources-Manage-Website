@@ -64,16 +64,14 @@ export default {
         send() {
             this.checkForm()
             if (this.checkFormStatus) {
-                console.log("a")
                 let newPassword = {
-                    password: this.form.password,
+                    newPassword: this.form.password,
                     otp: $cookies.get('otp')
                 }
-                console.log("b")
                 userApi.changePassword(newPassword)
                     .then((res) => {
-                        console.log("dsdsd" + res.data)
                         this.$router.push({ path: '/' })
+                        $cookies.remove('otp')
                     })
                     .catch((err) => {
                         let message = ""

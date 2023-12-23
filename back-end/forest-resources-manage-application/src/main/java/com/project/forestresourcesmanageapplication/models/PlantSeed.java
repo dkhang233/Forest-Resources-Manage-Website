@@ -43,7 +43,7 @@ public class PlantSeed {
 
     //thời gian thu hoạch
     @Column(name="harvesting_period")
-    private int harvestingPeriod;
+    private String harvestingPeriod;
 
     //mùa vụ
     @Column(name="plant_season",length = 100)

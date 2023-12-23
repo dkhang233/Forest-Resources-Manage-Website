@@ -5,13 +5,14 @@
                 <el-card class="administrations">
                     <template #header>
                         <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
-                        <el-input :offset="2" v-model="filterText" placeholder="Filter keyword" class="form" />
+                        <el-input :offset="2" v-model="filterText" placeholder="Tìm kiếm đơn vị hành chính theo tên hoặc mã"
+                            class="form" />
                     </template>
                     <el-tree-v2 default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps"
                         :item-size="50" :expand-on-click-node="false" :filter-method="filterNode" :height="500">
                         <template #default="{ node, data }">
                             <span class="custom-tree-node">
-                                <span>{{ node.label }}</span>
+                                <span>{{ `${node.label} (${data.code})` }}</span>
                                 <a class="text-blue-500 ml-[100px] hover:text-blue-300" @click="showNode(data)">Chi tiết</a>
                             </span>
                         </template>
@@ -50,7 +51,7 @@
                     <el-input v-model="form.name" placeholder="" />
                 </el-form-item>
                 <el-form-item label="Trực thuộc" prop="sub">
-                    <el-input v-model="form.subName" autocomplete="off" />
+                    <el-input v-model="form.subCode" autocomplete="off" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -105,7 +106,7 @@ export default {
                 code: "",
                 level: "",
                 name: "",
-                subName: "",
+                subCode: "",
             },
             rules: {
                 name: [{ validator: this.checkAdministrationName, trigger: 'change' }, { validator: this.checkAdministrationSub, trigger: 'change' }]
@@ -123,14 +124,15 @@ export default {
     },
     methods: {
         filterNode(value, dataa) {
+            console.log(dataa)
             if (!value) return true
-            return dataa.fullName.includes(value)
+            return dataa.fullName.includes(value) || dataa.code.includes(value)
         },
         showNode(node) {
             this.form.code = node.code
             this.form.name = node.name
             this.form.level = node.levelName
-            this.form.subName = node.subordinateName
+            this.form.subCode = node.subordinateCode
             this.dialogFormVisible = true
         },
         checkAdministrationName(rule, value, callback) {
@@ -196,7 +198,7 @@ export default {
                 })
         },
         retrieveAdministrations() {
-            // this.loadingStatus = true
+            this.loadingStatus = true
             retrieveSubAdministrationsWithHierarchy(35)
                 .then((res) => {
                     this.treeData = res.data
@@ -208,7 +210,7 @@ export default {
             this.loadingStatus = true
             updateAdministration(this.form.code, {
                 name: this.form.name,
-                subordinateName: this.form.subName,
+                subordinateCode: this.form.subCode,
                 administrativeLevelName: this.form.level
             })
                 .then(
@@ -225,16 +227,17 @@ export default {
                 .catch(
                     (err) => {
                         this.loadingStatus = false
-                        this.$notify({
-                            title: 'Thất bại',
-                            message: 'Cập nhập thất bại',
-                            type: 'error',
-                        })
-                        this.$notify({
-                            title: 'Đã xảy ra lỗi',
-                            message: err.response.data.messages,
-                            type: 'error',
-                        })
+                        let message = ''
+                        try {
+                            message = err.response.data.messages
+                            this.$notify({
+                                title: 'Đã xảy ra lỗi',
+                                message: message,
+                                type: 'error',
+                            })
+                        } catch (error) {
+
+                        }
                         console.log(err)
                     }
                 )
@@ -267,5 +270,4 @@ export default {
 .administrations {
     height: 600px;
 }
-
 </style>

@@ -14,7 +14,7 @@ public class PlantSeedDTO {
 
     private String mainPest;
 
-    private int harvestingPeriod;
+    private String harvestingPeriod;
 
     private String plantSeason;
 }

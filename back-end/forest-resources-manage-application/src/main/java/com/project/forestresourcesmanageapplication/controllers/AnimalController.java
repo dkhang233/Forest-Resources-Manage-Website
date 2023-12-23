@@ -29,16 +29,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
-import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
-import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
 import com.project.forestresourcesmanageapplication.models.Fluctuation;
-import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
+import com.project.forestresourcesmanageapplication.responses.FacilityQuantity;
 import com.project.forestresourcesmanageapplication.services.AnimalStorageFacilitiesService;
 
 import lombok.RequiredArgsConstructor;
@@ -263,23 +261,14 @@ public class AnimalController {
     // thời điểm
     // hiện tại-------------------
     @GetMapping("/species/facility-quantity/now")
-    public ResponseEntity<HashMap<String, List<AnimalsQuantity>>> getQuantityOfAllAnimalNow() {
-        HashMap<String, List<AnimalsQuantity>> animalsQuantities = this.animalStorageFacilitiesService
+    public ResponseEntity<HashMap<String, List<FacilityQuantity>>> getQuantityOfAllAnimalNow() {
+        HashMap<String, List<FacilityQuantity>> animalsQuantities = this.animalStorageFacilitiesService
                 .getQuantityOfAllAnimalBeforeTime(LocalDate.now());
         return ResponseEntity.ok(animalsQuantities);
     }
 
-    @PutMapping("/species/facility-quantity/update")
-    public ResponseEntity<?> updateQuantityOfAnimal(@RequestBody AnimalsQuantity animalsQuantity) {
-        this.animalStorageFacilitiesService.updateQuantityOfAnimal(animalsQuantity);
-        return ResponseEntity.ok("");
-    }
-
     @PostMapping("/species/facility-quantity/add")
     public ResponseEntity<?> addQuantityOfAnimal(@RequestBody AsfAsRelationshipDTO asfAsRelationshipDTO) {
-        if (asfAsRelationshipDTO.getQuantity() <= 0) {
-            throw new InvalidDataException("Số lượng động vật lớn hơn hoặc bằng 1");
-        }
         AsfAsRelationship asfAsRelationship = this.animalStorageFacilitiesService
                 .addAsfAsRelationship(asfAsRelationshipDTO);
         return ResponseEntity.ok(asfAsRelationship);

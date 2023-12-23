@@ -37,5 +37,5 @@ public class UserDTO {
 
     private Role role;
 
-    private String administrationName;
+    private String administrationCode;
 }
