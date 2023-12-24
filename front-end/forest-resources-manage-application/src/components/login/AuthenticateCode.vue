@@ -40,7 +40,11 @@ export default {
     },
     methods: {
         send() {
-            userApi.verifyOtp(this.form)
+            let verifyOtp = {
+                email : $cookies.get('email'),
+                otp : this.form.otp
+            }
+            userApi.verifyOtp(verifyOtp)
                 .then((res) => {
                     $cookies.set("otp", res.data)
                     this.$router.push({ path: "/change-pass" })

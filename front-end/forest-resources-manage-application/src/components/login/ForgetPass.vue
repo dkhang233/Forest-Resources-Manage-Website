@@ -40,11 +40,12 @@ export default {
     },
     methods: {
         send() {
-            if (this.checkEmail(this.email)) {
+            if (this.checkEmail(this.form.email)) {
                 this.$emit('onLoadingStatus')
                 userApi.resetPassword(this.form)
                     .then((res) => {
                         this.$emit('offLoadingStatus')
+                        $cookies.set('email',this.form.email)
                         this.$router.push({ path: "/authenticate-code" })
                     })
                     .catch((err) => {
@@ -68,7 +69,7 @@ export default {
             }
 
         },
-        checkEmail(email){
+        checkEmail(email) {
             return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
         }
     }

@@ -35,7 +35,7 @@ export const useUserStore = defineStore('user', {
                     this.address = res.data.address
                     this.birthDate = res.data.birthDate
                     this.role = res.data.role
-                    this.administration = res.data.administrationName
+                    this.administration = res.data.administrationCode
                     this.active = res.data.active
 
                     $cookies.set("role",this.role)

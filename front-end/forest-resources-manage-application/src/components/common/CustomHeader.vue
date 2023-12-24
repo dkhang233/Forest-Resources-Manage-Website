@@ -23,15 +23,10 @@
                 <!-- Logo -->
                 <a class="mb-4 ml-2 mr-5 mt-3 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400 lg:mb-0 lg:mt-0"
                     href="#">
-                    <img src="@/assets/logo/logo.png" class="w-[55px] h-[55px]" alt="TE Logo" loading="lazy" />
+                    <img src="@/assets/logo/logo.png" class="w-[60px] h-[55px]" alt="TE Logo" loading="lazy" />
                 </a>
                 <!-- Left navigation links -->
                 <ul class="list-style-none mr-auto flex flex-col pl-0 lg:flex-row" data-te-navbar-nav-ref>
-                    <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                        <!-- Dashboard link -->
-                        <a class="text-[#2C3E50] transition duration-200 hover:text-neutral-400 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-zinc-400"
-                            href="#" data-te-nav-link-ref>Dashboard</a>
-                    </li>
                     <!-- Team link -->
                     <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                         <a class="text-[#2C3E50] transition duration-200 hover:text-neutral-400 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
@@ -75,8 +70,10 @@
                         @click="showSetting" id="dropdownMenuButton2" role="button" data-te-dropdown-toggle-ref
                         aria-expanded="false">
                         <!-- User avatar -->
-                        <img :src="avatar" class="rounded-full" style="height: 50px; width: 50px" alt="" loading="lazy"  v-if="avatar != ''"/>
-                        <img src="@/assets/image/default-avatar.png" class="rounded-full" style="height: 50px; width: 50px" alt="" loading="lazy" v-if="avatar == ''" />
+                        <img :src="avatar" class="rounded-full" style="height: 50px; width: 50px" alt="" loading="lazy"
+                            v-if="avatar != ''" />
+                        <img src="@/assets/image/default-avatar.png" class="rounded-full" style="height: 50px; width: 50px"
+                            alt="" loading="lazy" v-if="avatar == ''" />
                     </span>
                     <!-- Second dropdown menu -->
                     <ul class="absolute z-[1000] right-1  min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-neutral-700 [&[data-te-dropdown-show]]:block"
@@ -141,8 +138,9 @@ export default {
             this.userStore.getInfor()
         },
         logout() {
-            this.$router.push({ path: "/" })
             $cookies.remove("username")
+            $cookies.remove("role")
+            this.$router.push({ path: "/" })
         }
     },
     created() {

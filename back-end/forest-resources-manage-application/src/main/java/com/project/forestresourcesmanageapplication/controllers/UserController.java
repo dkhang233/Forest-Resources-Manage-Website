@@ -97,6 +97,12 @@ public class UserController {
 		return ResponseEntity.ok("Mật khẩu đã được thay đổi");
 	}
 
+	@PostMapping("/change-password/{username}")
+	public ResponseEntity<?> changePasswordWithCurrentPassword(@PathVariable String username,@RequestBody ChangePasswordDTO changePasswordDTO) {
+		this.userService.changePasswordWithCurrentPassword(username,changePasswordDTO);
+		return ResponseEntity.ok("Mật khẩu đã được thay đổi");
+	}
+
 	@PostMapping("/verify-otp")
 	public ResponseEntity<?> verifyOtp(@RequestBody verifyOtpDTO verifyOtpDTO) {
 		String otp = this.userService.verifyOtp(verifyOtpDTO);

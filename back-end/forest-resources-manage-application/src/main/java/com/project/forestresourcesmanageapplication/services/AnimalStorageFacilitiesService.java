@@ -18,11 +18,11 @@ import com.project.forestresourcesmanageapplication.models.Fluctuation;
 
 import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
+import com.project.forestresourcesmanageapplication.responses.FacilityQuantity;
 
 public interface AnimalStorageFacilitiesService {
 
@@ -77,12 +77,11 @@ public interface AnimalStorageFacilitiesService {
     // public List<AnimalQuantity> getQuantityOfAllAnimalByFacilitiesCode(String code);
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date);
     public List<FacilitiesQuantityInMoth> getQuantityOfFacilitiesWithTime(LocalDate beginDate,LocalDate endDate);
-    public HashMap<String, List<AnimalsQuantity>> getQuantityOfAllAnimalBeforeTime(LocalDate date);
+    public HashMap<String, List<FacilityQuantity>> getQuantityOfAllAnimalBeforeTime(LocalDate date);
     public List<AnimalMonthQuantity> getMonthQuantityOfFacilities(int year);
     public List<AnimalQuarterQuantity> getQuarterQuantityOfFacilities(int year);
 
     public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate, LocalDate endDate);
     public List<FacilitiesQuantityInYear> getYearQuantityOfFacilitiesWithTime(int startYear, int endYear);
 
-    public void updateQuantityOfAnimal(AnimalsQuantity animalsQuantity);
 }

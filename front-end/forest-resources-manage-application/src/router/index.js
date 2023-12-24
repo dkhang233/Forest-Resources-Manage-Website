@@ -4,11 +4,11 @@ import { useUserStore } from '@/stores/user-store';
 export const constantRoutes = [
   {
     path: '/main',
-    component: () => import('../components/main/Main'),
+    component: () => import('../components/common/Main'),
     children: [
       {
-        path: '',
-        component: () => import('@/components/common/Home')
+        path: 'home',
+        component: () => import('@/components/home/Home')
       },
       {
         path: 'profile',

@@ -12,7 +12,7 @@ import com.project.forestresourcesmanageapplication.models.WoodFacilities;
 
 @Repository
 public interface WoodFacilitiesRepository extends JpaRepository<WoodFacilities,String>{
-    @Query("SELECT w FROM WoodFacilities w ORDER BY w.code DESC")
+    @Query("SELECT w FROM WoodFacilities w ORDER BY w.code")
     List<WoodFacilities> findAll();
 
     @Query("SELECT w FROM WoodFacilities w WHERE w.name = :name")

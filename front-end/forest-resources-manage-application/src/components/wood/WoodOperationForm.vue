@@ -1,10 +1,11 @@
 <template>
-    <p class="container bg-[url('@/assets/image/operation-form-bg.jpg')] bg-cover " v-loading="loadingStatus">
+    <p class="container bg-[url('@/assets/image/operation-form-bg.jpg')] bg-cover ">
     <div class="grid grid-cols-20 px-[9rem] pt-[3rem]">
         <div class="col-start-3">
-            <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always">
-                <el-table :data="filterTableData" class="h-[520px] break-normal" style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
-                    <el-table-column  v-for="(item, index) in tableColumns" :key="index" :label="item.title"
+            <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always" v-loading="loadingStatus"> 
+                <el-table :data="filterTableData" class="h-[520px] break-normal"
+                    style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
+                    <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                         :prop="item.value" align="center">
                     </el-table-column>
                     <el-table-column :min-width="120" align="center">
@@ -12,12 +13,12 @@
                             <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
                         </template>
                         <template #default="scope">
-                            <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
+                            <el-button @click="handleClickUpdate(scope.$index, scope.row)">Chi tiết</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
             </el-card>
-            <el-dialog class=" block rounded-lg
+            <el-dialog id="dialog" class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="4vh" v-model="dialogFormVisible" :title="formTitle"
@@ -163,10 +164,12 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#dialog')
+                            })
                             woodApi.createOperationForm(this.form)
                                 .then((res) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     this.dialogFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
@@ -175,7 +178,7 @@ export default {
                                     })
                                     this.retrieveData()
                                 }).catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     let message = ''
                                     try {
                                         message = err.response.data.messages
@@ -190,7 +193,7 @@ export default {
                                 })
                         })
                         .catch((err) => {
-                            console.log(err)
+                            // console.log(err)
                         })
                 } else {
                     return false
@@ -198,7 +201,7 @@ export default {
             })
         },
         //Hàm xử lí khi ấn vào nút "Chi tiết"
-        handleEdit(index, row) {
+        handleClickUpdate(index, row) {
             if (this.$refs.ruleFormRef != null) {
                 this.$refs.ruleFormRef.clearValidate()
             }
@@ -210,7 +213,57 @@ export default {
             }
             this.dialogFormVisible = true
         },
+        // Hàm xử lí khi ấn vào nút "Cập nhập"
+        handleUpdateProductionType(form) {
+            if (!form) return
+            form.validate((valid) => {
+                if (valid) {
+                    this.$confirm(
+                        'Cập nhập thông tin này. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
 
+                        }
+                    )
+                        .then(() => {
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#dialog')
+                            })
+                            woodApi.updateOperationForm(this.form)
+                                .then((res) => {
+                                    loading.close()
+                                    this.dialogFormVisible = false
+                                    this.$notify({
+                                        title: 'Thành công',
+                                        message: 'Cập nhập thành công',
+                                        type: 'success'
+                                    })
+                                    this.retrieveData()
+                                }).catch((err) => {
+                                    loading.close()
+                                    try {
+                                        this.$notify({
+                                            title: 'Đã xảy ra lỗi',
+                                            message: err.response.data.messages,
+                                            type: 'error',
+                                        })
+                                        console.log(err.message)
+                                    } catch (error) {
+                                        console.log(error)
+                                    }
+                                })
+                        })
+                        .catch((err) => {
+                            // console.log(err)
+                        })
+                } else {
+                    return false
+                }
+            })
+        },
 
         // --------------Xử lí trong dialog "Thông tin chi tiết" -------------------------
         // Hàm xử lí khi ấn vào nút "Xóa"
@@ -284,57 +337,6 @@ export default {
 
         },
 
-        // Hàm xử lí khi ấn vào nút "Cập nhập"
-        handleUpdateProductionType(form) {
-            if (!form) return
-            form.validate((valid) => {
-                if (valid) {
-                    this.$confirm(
-                        'Cập nhập thông tin này. Tiếp tục?',
-                        'Xác nhận',
-                        {
-                            confirmButtonText: 'OK',
-                            cancelButtonText: 'Hủy',
-                            type: 'warning',
-
-                        }
-                    )
-                        .then(() => {
-                            this.loadingStatus = true
-                            woodApi.updateOperationForm(this.form)
-                                .then((res) => {
-                                    this.loadingStatus = false
-                                    this.$notify({
-                                        title: 'Thành công',
-                                        message: 'Cập nhập thành công',
-                                        type: 'success'
-                                    })
-                                    this.retrieveData()
-                                }).catch((err) => {
-                                    this.form.name = this.formBackUp.name
-                                    this.form.description = this.formBackUp.description
-                                    this.loadingStatus = false
-                                    try {
-                                        this.$notify({
-                                            title: 'Đã xảy ra lỗi',
-                                            message: err.response.data.messages,
-                                            type: 'error',
-                                        })
-                                        console.log(err.message)
-                                    } catch (error) {
-                                        console.log(error)
-                                    }
-                                })
-                            this.dialogFormVisible = false
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                } else {
-                    return false
-                }
-            })
-        },
         // Reset dữ liệu của form 
         resetFormData() {
             this.form = {

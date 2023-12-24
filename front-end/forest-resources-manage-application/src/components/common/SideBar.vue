@@ -3,10 +3,16 @@
         <el-scrollbar class="h-[89%] bg-[#FBFBFB]" always>
             <el-menu active-text-color="#dd5862" text-color="#fff" class="side-bar" @open="handleOpen" @close="handleClose"
                 :collapse="this.appStore.flag" background-color="#FBFBFB" menu-trigger="click" router>
-                <el-menu-item :index="`/main`">
-                    <i class="icon"><font-awesome-icon class="iconfont " icon="fa-house" style="color: #494965;" /></i>
+                <el-menu-item :index="`/main/home`">
+                    <font-awesome-icon icon="fa-house" />
                     <template #title>
-                        <span class="title">Trang chủ</span>
+                        <span class="text-lg font-[600] ml-[1rem]">Trang chủ</span>
+                    </template>
+                </el-menu-item>
+                <el-menu-item :index="`/main/administration`">
+                    <font-awesome-icon icon="fa-city" />
+                    <template #title>
+                        <span class="text-lg font-[600] ml-[1rem]">Hành chính</span>
                     </template>
                 </el-menu-item>
                 <el-sub-menu v-for="(item, index) in this.appStore.menu" :index='item.index' :key="index">
@@ -23,7 +29,7 @@
                 <el-menu-item :index="`/main/map`">
                     <font-awesome-icon :icon="['fas', 'map-location-dot']" />
                     <template #title>
-                        <span class="title">Bản đồ</span>
+                        <span class="text-lg font-bold ml-[1rem]">Bản đồ</span>
                     </template>
                 </el-menu-item>
                 <el-sub-menu :index="''" v-if="userStore.role === 'admin'">

@@ -48,20 +48,22 @@
                 <el-col :span="24" :offset="0">
                     <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
                         <el-table :data="filterFacilitiesTable" class="h-[530px] w-[93rem]" fit>
-                            <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
-                                :prop="item.value" align="center">
-                            </el-table-column>
+                            <el-table-column label="Mã" prop="code" align="center" />
+                            <el-table-column label="Tên cơ sở" prop="name" align="center" />
+                            <el-table-column label="Ngày thành lập" prop="date" align="center" />
+                            <el-table-column label="Sức chứa" prop="capacity" align="center" />
+                            <el-table-column label="Trực thuộc (mã)" prop="administration[code]" align="center" />
                             <el-table-column :min-width="120" align="center">
                                 <template #header>
                                     <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
                                 </template>
                                 <template #default="scope">
-                                    <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
+                                    <el-button @click="handleClickUpdate(scope.$index, scope.row)">Chi tiết</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
                     </el-card>
-                    <el-dialog class=" block rounded-lg
+                    <el-dialog id="animalFacilitiesDialog" class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="8vh" v-model="dialogFormVisible" :title="formTitle"
@@ -70,7 +72,7 @@
                             :rules="rules" size="default" label-position="top">
                             <div class="col-start-1 col-span-4">
                                 <el-form-item label="Mã" prop="code">
-                                    <el-input v-model="form.code" />
+                                    <el-input v-model="form.code" :disabled="formType == 'update'" />
                                 </el-form-item>
                                 <el-form-item label="Tên cơ sở" prop="name">
                                     <el-input v-model="form.name" />
@@ -80,39 +82,27 @@
                                 </el-form-item>
                                 <el-form-item label="Ngày thành lập" prop="date">
                                     <el-date-picker v-model="form.date" type="date" placeholder="Chọn ngày thành lập"
-                                        size="default" :disabled-date="disabledDate" />
+                                        locale="vi" size="default" :disabled-date="disabledDate" />
                                 </el-form-item>
-                                <el-form-item label="Trực thuộc" prop="administrationName">
-                                    <el-input v-model="form.administrationName" />
+                                <el-form-item label="Trực thuộc (mã)" prop="administrationCode">
+                                    <el-input v-model="form.administrationCode" />
                                 </el-form-item>
                             </div>
                             <div class="col-start-5 col-span-6">
-                                <span class="text-[16px]">Số lượng động vật hiện tại của cơ sở</span>
-                                <el-table class="mt-2" :data="animalQuantityTable" height="300" border>
-                                    <el-table-column prop="animalName" label="Tên động vật" align="center" />
-                                    <el-table-column prop="quantity" label="Số lượng" align="center" />
-                                    <el-table-column :min-width="90" align="center">
-                                        <template #header>
-                                            <div class="grid grid-cols-6">
-                                                <button class=" px-3 py-2 col-span-6 col-start-1 font-sans font-bold text-sm
+                                <div class="">
+                                    <span class="text-[16px]">Số lượng động vật hiện tại</span>
+                                    <button class="ml-[4rem] px-3 py-2 col-span-6 col-start-1 font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                                                    @click="handleClickCreateAnimalQuantity">
-                                                    <font-awesome-icon class="pr-1" :icon="['fas', 'plus']" />
-                                                    Thêm mới
-                                                </button>
-                                            </div>
-                                        </template>
-                                        <template #default="scope">
-                                            <div class="grid grid-cols-6">
-                                                <button
-                                                    class="border-2 px-2 py-1 col-span-4 col-start-2 hover:text-blue-400 hover:border-blue-400"
-                                                    @click="handleEditAnimalQuantity(scope.$index, scope.row)">Chi
-                                                    tiết</button>
-                                            </div>
-                                        </template>
-                                    </el-table-column>
+                                        @click="handleClickCreateAnimalQuantity">
+                                        <font-awesome-icon class="pr-1" :icon="['fas', 'plus']" />
+                                        Thêm bản ghi
+                                    </button>
+                                </div>
+                                <el-table class="mt-2" :data="animalQuantityTable" height="340" border>
+                                    <el-table-column prop="objName" label="Tên động vật" align="center" />
+                                    <el-table-column prop="quantity" label="Số lượng" align="center" />
                                 </el-table>
                             </div>
                         </el-form>
@@ -120,7 +110,7 @@
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" v-model="dialogAnimalFormVisible" title="Số lượng động vật"
-                            :before-close="handleCancelInAnimalTable">
+                            :before-close="handleCancelInAnimalTable" id="animalQuantityDialog">
                             <el-form class="grid grid-cols-10 gap-10" ref="animalQuantityForm" :model="animalForm"
                                 status-icon :rules="rules" size="default" label-position="top">
                                 <div class="col-start-1 col-span-9">
@@ -130,6 +120,10 @@
                                     <el-form-item label="Số lượng" prop="quantity">
                                         <el-input v-model="animalForm.quantity" />
                                     </el-form-item>
+                                    <el-form-item label="Ngày thống kê" prop="date">
+                                        <el-date-picker v-model="animalForm.date" type="date" locale="vi"
+                                            placeholder="Chọn ngày thống kê" size="default" :disabled-date="disabledDate" />
+                                    </el-form-item>
                                 </div>
                             </el-form>
                             <template #footer>
@@ -138,16 +132,7 @@
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
-                                        @click="handleUpdateInAnimalTable(this.$refs.animalQuantityForm)"
-                                        v-if="animalFormType == 'update'">
-                                        Cập nhập
-                                    </button>
-                                    <button class=" p-2 col-start-12  font-sans font-bold text-sm
-                        text-white rounded-lg shadow-lg px-5 bg-blue-500 
-                        shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150"
-                                        @click="handleCreateAnimalQuantity(this.$refs.animalQuantityForm)"
-                                        v-if="animalFormType == 'create'">
+                                        @click="handleCreateAnimalQuantity(this.$refs.animalQuantityForm)">
                                         Tạo mới
                                     </button>
                                 </span>
@@ -205,6 +190,7 @@
 import StackedAreaChart from '../chart/StackedAreaChart.vue';
 import *  as animalApi from '@/api/animal';
 import { format, startOfQuarter } from "date-fns"
+import { ElLoading } from 'element-plus'
 export default {
     name: "animalFacility",
     components: {
@@ -213,7 +199,6 @@ export default {
     data() {
         return {
             loadingStatus: false,
-
             // -------------------Phần biểu đồ--------------
             quarter: startOfQuarter(new Date()),
             beginMonth: {
@@ -250,24 +235,6 @@ export default {
 
             // -------------Phần bảng------------------
             search: '',
-            tableColumns: [
-                {
-                    title: 'Tên cơ sở',
-                    value: 'name'
-                },
-                {
-                    title: 'Ngày thành lập',
-                    value: 'date'
-                },
-                {
-                    title: 'Sức chứa',
-                    value: 'capacity'
-                },
-                {
-                    title: 'Trực thuộc',
-                    value: 'administration[name]'
-                },
-            ],
             facilitiesTable: [],
             filterFacilitiesTable: [],
             animalQuantityData: null,
@@ -278,24 +245,24 @@ export default {
                 name: '',
                 date: '',
                 capacity: '',
-                administrationName: ''
+                administrationCode: ''
             },
             formBackUp: null,
             formType: 'update',
             animalForm: {
                 animalName: '',
-                quantity: ''
+                quantity: '',
+                date: ''
             },
             animalFormBackUp: null,
-            animalFormType: "update",
             rules: {
                 code: [{ validator: this.checkEmptyField, trigger: 'blur' }],
                 name: [{ validator: this.checkEmptyField, trigger: 'blur' }],
                 date: [{ validator: this.checkEmptyField, trigger: 'blur' }],
                 capacity: [{ validator: this.checkCapacity, trigger: 'blur' }],
-                administrationName: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                administrationCode: [{ validator: this.checkEmptyField, trigger: 'blur' }],
                 animalName: [{ validator: this.checkEmptyField, trigger: 'blur' }],
-                quantity: [{ validator: this.checkCapacity, trigger: 'blur' }],
+                quantity: [{ validator: this.checkQuantity, trigger: 'blur' }],
             },
         }
         //--------------------------------------------
@@ -337,7 +304,6 @@ export default {
                 return this.animalQuantityData.get(this.form.code)
             }
         }
-
     },
     watch: {
         dataType(newValue) {
@@ -347,7 +313,7 @@ export default {
                     this.chartLabel = []
                     this.chartDataCopy = this.chartData
                     this.chartData.clear()
-                    this.setupAnimalQuantityDataByMonth(this.formatBeginMonth, this.formatEndMonth)
+                    this.setupQuantityDataByMonth(this.formatBeginMonth, this.formatEndMonth)
                 }
             }
             else if (newValue == 'quarter') {
@@ -356,7 +322,7 @@ export default {
                     this.chartLabel = []
                     this.chartDataCopy = this.chartData
                     this.chartData.clear()
-                    this.setupAnimalQuantityDataByQuarter(this.formatBeginQuarter, this.formatEndQuarter)
+                    this.setupQuantityDataByQuarter(this.formatBeginQuarter, this.formatEndQuarter)
                 }
             }
             else {
@@ -365,7 +331,7 @@ export default {
                     this.chartLabel = []
                     this.chartDataCopy = this.chartData
                     this.chartData.clear()
-                    this.setupAnimalQuantityDataByYear(this.beginYear, this.endYear)
+                    this.setupQuantityDataByYear(this.beginYear, this.endYear)
                 }
             }
         },
@@ -375,7 +341,7 @@ export default {
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityDataByMonth(newBeginMonth, this.formatEndMonth)
+                this.setupQuantityDataByMonth(newBeginMonth, this.formatEndMonth)
             }
         },
         formatEndMonth(newEndMoth) {
@@ -384,7 +350,7 @@ export default {
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityDataByMonth(this.formatBeginMonth, newEndMoth)
+                this.setupQuantityDataByMonth(this.formatBeginMonth, newEndMoth)
             }
         },
         formatBeginQuarter(newBeginQuarter) {
@@ -393,7 +359,7 @@ export default {
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityDataByQuarter(newBeginQuarter, this.formatEndQuarter)
+                this.setupQuantityDataByQuarter(newBeginQuarter, this.formatEndQuarter)
             }
         },
         formatEndQuarter(newEndQuarter) {
@@ -402,7 +368,7 @@ export default {
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityDataByQuarter(this.formatBeginQuarter, newEndQuarter)
+                this.setupQuantityDataByQuarter(this.formatBeginQuarter, newEndQuarter)
             }
         },
         beginYear(newBeginYear) {
@@ -411,7 +377,7 @@ export default {
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityDataByYear(newBeginYear, this.endYear)
+                this.setupQuantityDataByYear(newBeginYear, this.endYear)
             }
             console.log(newBeginYear)
         },
@@ -421,13 +387,21 @@ export default {
                 this.chartLabel = []
                 this.chartDataCopy = this.chartData
                 this.chartData.clear()
-                this.setupAnimalQuantityDataByYear(this.beginYear, newEndYear)
+                this.setupQuantityDataByYear(this.beginYear, newEndYear)
             }
             console.log(newEndYear)
+        },
+        search(search) {
+            this.filterFacilitiesTable = this.facilitiesTable.filter(
+                (data) =>
+                    !search ||
+                    data.name.toLowerCase().includes(search.toLowerCase())
+            )
         }
+
     },
     methods: {
-        setupAnimalQuantityDataByMonth(beginQuarter, endQuarter) {
+        setupQuantityDataByMonth(beginQuarter, endQuarter) {
             this.loadingStatus = true
             animalApi.retrieveAnimalQuantityInMoth(beginQuarter, endQuarter)
                 .then((res) => {
@@ -440,7 +414,12 @@ export default {
                                 tmp.push(res.data[i].data[j].quantity)
                                 this.chartData.set(res.data[i].data[j].facilitiesName, tmp)
                             } else {
-                                this.chartData.set(res.data[i].data[j].facilitiesName, [res.data[i].data[j].quantity])
+                                let tmp = []
+                                for (let k = 0; k < i; k++) {
+                                    tmp.push(0)
+                                }
+                                tmp.push(res.data[i].data[j].quantity)
+                                this.chartData.set(res.data[i].data[j].facilitiesName, tmp)
                             }
                         }
                     }
@@ -463,7 +442,7 @@ export default {
                     })
                 })
         },
-        setupAnimalQuantityDataByQuarter(beginQuarter, endQuarter) {
+        setupQuantityDataByQuarter(beginQuarter, endQuarter) {
             this.loadingStatus = true
             animalApi.retrieveAnimalQuantityInQuarter(beginQuarter, endQuarter)
                 .then((res) => {
@@ -499,7 +478,7 @@ export default {
                     })
                 })
         },
-        setupAnimalQuantityDataByYear(beginYear, endYear) {
+        setupQuantityDataByYear(beginYear, endYear) {
             this.loadingStatus = true
             animalApi.retrieveAnimalQuantityInYear(beginYear, endYear)
                 .then((res) => {
@@ -539,7 +518,7 @@ export default {
             console.log(quarter)
             return format(quarter, 'QQQ')
         },
-        setupAnimalFacilities() {
+        setupFacilities() {
             this.loadingStatus = true
             animalApi.retrieveAllAnimalFacilities()
                 .then((res) => {
@@ -563,33 +542,21 @@ export default {
                 })
         },
         //Hàm xử lí khi ấn vào nút "Chi tiết"
-        handleEdit(index, row) {
+        handleClickUpdate(index, row) {
             if (this.$refs.facilitiesForm != null) {
                 this.$refs.facilitiesForm.clearValidate()
             }
             this.formType = 'update'
             this.form = row
-            this.form.administrationName = row.administration.name
+            this.form.administrationCode = row.administration.code
             this.formBackUp = {
                 code: this.form.code,
                 name: this.form.name,
                 date: this.form.date,
                 capacity: this.form.capacity,
-                administrationName: this.form.administrationName
+                administrationCode: this.form.administrationCode
             }
             this.dialogFormVisible = true
-        },
-        handleEditAnimalQuantity(index, row) {
-            if (this.$refs.animalQuantityForm != null) {
-                this.$refs.animalQuantityForm.clearValidate()
-            }
-            this.animalForm = row
-            this.animalFormBackUp = {
-                animalName: this.animalForm.animalName,
-                quantity: this.animalForm.quantity,
-            }
-            this.animalFormType = 'update'
-            this.dialogAnimalFormVisible = true
         },
         handleUpdate(form) {
             if (!form) return
@@ -606,27 +573,29 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#animalFacilitiesDialog')
+                            })
                             let animalFacility = {
                                 code: this.form.code,
                                 name: this.form.name,
                                 date: this.form.date,
                                 capacity: this.form.capacity,
-                                adminstrationCode: this.form.administrationName,
+                                adminstrationCode: this.form.administrationCode,
                                 detail: ""
                             }
                             animalApi.updateAnimalFacility(animalFacility)
                                 .then((res) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     this.$notify({
                                         title: 'Thành công',
                                         message: 'Cập nhập thành công',
                                         type: 'success'
                                     })
                                     this.dialogFormVisible = false
-                                    this.setupAnimalFacilities()
+                                    this.setupFacilities()
                                 }).catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     try {
                                         this.$notify({
                                             title: 'Đã xảy ra lỗi',
@@ -647,67 +616,13 @@ export default {
                 }
             })
         },
-        handleUpdateInAnimalTable(form) {
-            if (!form) return
-            form.validate((valid) => {
-                if (valid) {
-                    this.$confirm(
-                        'Cập nhập thông tin này. Tiếp tục?',
-                        'Xác nhận',
-                        {
-                            confirmButtonText: 'OK',
-                            cancelButtonText: 'Hủy',
-                            type: 'warning',
-
-                        }
-                    )
-                        .then(() => {
-                            this.loadingStatus = true
-                            let animalQuantity = {
-                                facilitiesName: this.form.name,
-                                animalName: this.animalForm.animalName,
-                                quantity: this.animalForm.quantity
-                            }
-                            animalApi.updateAnimalQuantity(animalQuantity)
-                                .then((res) => {
-                                    this.loadingStatus = false
-                                    this.dialogAnimalFormVisible = false
-                                    this.$notify({
-                                        title: 'Thành công',
-                                        message: 'Cập nhập thành công',
-                                        type: 'success'
-                                    })
-                                    this.setupAnimalQuantity()
-                                }).catch((err) => {
-                                    this.loadingStatus = false
-                                    try {
-                                        this.$notify({
-                                            title: 'Đã xảy ra lỗi',
-                                            message: err.response.data.messages,
-                                            type: 'error',
-                                        })
-                                        console.log(err.message)
-                                    } catch (error) {
-                                        console.log(error)
-                                    }
-                                })
-                            this.dialogAnimalFormVisible = false
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                } else {
-                    return false
-                }
-            })
-        },
         handleCancel() {
             if (this.form != null && this.formBackUp != null) {
                 if (this.form.code == this.formBackUp.code
                     && this.form.name == this.formBackUp.name
                     && this.form.date == this.formBackUp.date
                     && this.form.capacity == this.formBackUp.capacity
-                    && this.form.administrationName == this.formBackUp.administrationName) {
+                    && this.form.administrationCode == this.formBackUp.administrationCode) {
                     this.dialogFormVisible = false
                 }
                 else {
@@ -726,7 +641,7 @@ export default {
                                 this.form.name = this.formBackUp.name
                                 this.form.date = this.formBackUp.date
                                 this.form.capacity = this.formBackUp.capacity
-                                this.form.administrationName = this.formBackUp.administrationName
+                                this.form.administrationCode = this.formBackUp.administrationCode
                             }
                             this.dialogFormVisible = false
                         })
@@ -734,7 +649,6 @@ export default {
                         })
                 }
             }
-            this.dialogFormVisible = false
         },
         handleCancelInAnimalTable() {
             if (this.animalFormBackUp != null && this.animalForm != null) {
@@ -766,9 +680,18 @@ export default {
             this.dialogAnimalFormVisible = false
         },
         handleClickCreateAnimalFacility() {
+            if (this.$refs.facilitiesForm != null) {
+                this.$refs.facilitiesForm.clearValidate()
+            }
             this.formType = 'create'
             this.resetFormData()
-            this.formBackUp = this.forthí
+            this.formBackUp = {
+                code: this.form.code,
+                name: this.form.name,
+                date: this.form.date,
+                capacity: this.form.capacity,
+                administrationCode: this.form.administrationCode
+            }
             this.dialogFormVisible = true
         },
         handleCreateAnimalFacility(form) {
@@ -786,28 +709,30 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#animalFacilitiesDialog')
+                            })
                             let animalFacility = {
                                 code: this.form.code,
                                 name: this.form.name,
                                 date: Date.now(),
                                 capacity: this.form.capacity,
-                                adminstrationCode: this.form.administrationName,
+                                adminstrationCode: this.form.administrationCode,
                                 detail: ""
                             }
                             animalApi.addAnimalFacility(animalFacility)
                                 .then((res) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     this.dialogFormVisible = false
                                     this.$notify({
                                         title: "Thành công",
                                         type: "success",
                                         message: "Tạo mới thành công"
                                     })
-                                    this.setupAnimalFacilities()
+                                    this.setupFacilities()
                                 })
                                 .catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     try {
                                         let message = ""
                                         message = err.response.data.messages
@@ -832,12 +757,14 @@ export default {
         }
         ,
         handleClickCreateAnimalQuantity() {
-            this.animalFormType = 'create'
             if (this.$refs.animalQuantityForm != null) {
                 this.$refs.animalQuantityForm.clearValidate()
             }
             this.resetAnimalFormData()
-            this.formBackUp = this.form
+            this.animalFormBackUp = {
+                animalName: this.animalForm.animalName,
+                quantity: this.animalForm.quantity
+            }
             this.dialogAnimalFormVisible = true;
         },
         handleCreateAnimalQuantity(form) {
@@ -855,16 +782,18 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#animalQuantityDialog')
+                            })
                             let animalQuantity = {
                                 codeASF: this.form.code,
                                 nameAS: this.animalForm.animalName,
                                 quantity: this.animalForm.quantity,
-                                date: Date.now()
+                                date: this.animalForm.date
                             }
+                            loading.close()
                             animalApi.addAnimalQuantity(animalQuantity)
                                 .then((res) => {
-                                    this.loadingStatus = false
                                     this.dialogAnimalFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
@@ -874,7 +803,7 @@ export default {
                                     this.setupAnimalQuantity()
                                 })
                                 .catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     let errorMessage = ''
                                     try {
                                         errorMessage = err.response.data.messages
@@ -897,25 +826,38 @@ export default {
             })
         },
         resetFormData() {
-            this.form.administrationName = ""
-            this.form.capacity = 1
-            this.form.code = ""
-            this.form.date = ""
-            this.form.name = ""
+            this.form = {
+                code: "",
+                name: "",
+                date: "",
+                capacity: 1,
+                administrationCode: "",
+
+            }
         },
         resetAnimalFormData() {
-            this.animalForm.animalName = ""
-            this.animalForm.quantity = 1
+            this.animalForm = {
+                animalName: "",
+                quantity: 1
+            }
         },
         checkEmptyField(rule, value, callback) {
-            if (/^\s*$/.test(value)) {
-                return callback(new Error('Vui lòng nhập trường này'))
+            if (value == null || /^\s*$/.test(value)) {
+                return callback(new Error('Vui lòng nhập thông tin này'))
+            }
+            return callback()
+        },
+        checkQuantity(rule, value, callback) {
+            let pattern = /^\s*$/
+            if (pattern.test(value) || isNaN(value)) {
+                return callback(new Error('Giá trị của thông tin này phải là số nguyên'))
             }
             return callback()
         },
         checkCapacity(rule, value, callback) {
-            if (isNaN(value) || value < 0) {
-                return callback(new Error('Giá trị của trường này phải lớn hơn hoặc bằng 0'))
+            let pattern = /^\s*$/
+            if (pattern.test(value) || isNaN(value) || value < 1) {
+                return callback(new Error('Giá trị của thông tin này phải là số nguyên dương'))
             }
             return callback()
         },
@@ -924,8 +866,8 @@ export default {
         }
     },
     created() {
-        this.setupAnimalQuantityDataByMonth(this.formatBeginMonth, this.formatEndMonth)
-        this.setupAnimalFacilities()
+        this.setupQuantityDataByMonth(this.formatBeginMonth, this.formatEndMonth)
+        this.setupFacilities()
         this.setupAnimalQuantity()
     }
 }

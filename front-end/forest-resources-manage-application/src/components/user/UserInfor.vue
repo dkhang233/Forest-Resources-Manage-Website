@@ -21,11 +21,12 @@
               <div class="flex flex-wrap justify-center">
                 <div class="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
                   <div class="relative">
-                    <img  alt="..." src="@/assets/image/default-avatar.png"  class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16"
+                    <img alt="..." src="@/assets/image/default-avatar.png"
+                      class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16"
                       style="max-width: 150px;" v-if="userStore.avatar == ''" />
                     <img alt="..." :src="avatar"
                       class=" shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16"
-                      style="max-width: 150px;" v-if="userStore.avatar != ''"/>
+                      style="max-width: 150px;" v-if="userStore.avatar != ''" />
                   </div>
                 </div>
                 <div class="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
@@ -38,7 +39,7 @@
                   </div>
                 </div>
                 <div class="w-full lg:w-4/12 px-4 lg:order-1">
-                  <div class="flex justify-center py-4 lg:pt-4 pt-8">
+                  <!-- <div class="flex justify-center py-4 lg:pt-4 pt-8">
                     <div class="mr-4 p-3 text-center">
                       <span class="text-xl font-bold block uppercase tracking-wide text-gray-700">22</span><span
                         class="text-sm text-gray-500">Friends</span>
@@ -51,7 +52,7 @@
                       <span class="text-xl font-bold block uppercase tracking-wide text-gray-700">89</span><span
                         class="text-sm text-gray-500">Comments</span>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="text-center mt-12">
@@ -63,17 +64,16 @@
                   {{ userStore.address }}
                 </div>
                 <div class="mb-2 text-gray-700 mt-10">
-                  <i class="fas fa-briefcase mr-2 text-lg text-gray-500"></i>{{ "Vai trò: " + userStore.role }}
+                  Vai trò:<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.role }}</span>
                 </div>
                 <div class="mb-2 text-gray-700">
-                  <i class="fas fa-university mr-2 text-lg text-gray-500"></i>{{ "Trực thuộc: " + userStore.administration
-                  }}
+                  Trực thuộc (mã):<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.administration }}</span>
                 </div>
                 <div class="mb-2 text-gray-700 mt-2">
-                  <i class="fas fa-briefcase mr-2 text-lg text-gray-500"></i>{{ "Email: " + userStore.email }}
+                  Email:<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.email }}</span>
                 </div>
                 <div class="mb-2 text-gray-700 mt-2">
-                  <i class="fas fa-briefcase mr-2 text-lg text-gray-500"></i>{{ "Ngày sinh: " + userStore.birthDate }}
+                  Ngày sinh:<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.birthDate }}</span>
                 </div>
               </div>
               <div class="mt-10 py-10 border-t border-gray-300 text-center">
@@ -310,9 +310,9 @@ export default {
     handleFileChange(event) {
       let file = event.target.files[0]
       if (!file.type.startsWith('image')) {
-        this.$message.error('Ảnh đại diện phải là ảnh!')
-      } else if (file.size / 1024 / 1024 > 10) {
-        this.$message.error('Ảnh đại diện phải có kích thước nhỏ hơn 10MB!')
+        this.$message.error('Vui lòng chọn file ảnh')
+      } else if (file.size / 1024 / 1024 > 1) {
+        this.$message.error('Vui lòng chọn file ảnh có kích thước nhỏ hơn 1MB')
       } else {
         this.avatarFile = file
         if (file != null) {

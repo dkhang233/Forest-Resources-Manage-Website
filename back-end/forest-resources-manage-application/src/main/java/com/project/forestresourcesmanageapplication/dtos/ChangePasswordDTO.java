@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ChangePasswordDTO {
     private String otp;
     private String password;
+    private String newPassword;
 }

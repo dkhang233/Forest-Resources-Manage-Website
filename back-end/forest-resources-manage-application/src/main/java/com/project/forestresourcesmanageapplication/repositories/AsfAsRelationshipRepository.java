@@ -13,8 +13,8 @@ import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
 import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
+import com.project.forestresourcesmanageapplication.responses.FacilityQuantity;
 
 @Repository
 public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelationship, Integer> {
@@ -43,11 +43,11 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
             + " ORDER BY c")
     List<FacilitiesQuantity> selectAllQuantityOfFacilities(@Param("date") Date date);
 
-    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity) ) "
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.FacilityQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity) ) "
             + " FROM AsfAsRelationship a WHERE a.date <= :date"
             + " GROUP BY a.animalStorageFacilities, a.animalSpecies"
             + " ORDER BY a.animalStorageFacilities.code , a.animalSpecies.name DESC")
-    List<AnimalsQuantity> selectAllQuantityOfAllAnimal(@Param("date") Date date);
+    List<FacilityQuantity> selectAllQuantityOfAllAnimal(@Param("date") Date date);
 
     @Query("SELECT SUM(a.quantity) FROM AsfAsRelationship a"
             + " WHERE a.animalStorageFacilities.name = :name AND a.date <= :date"
@@ -65,10 +65,10 @@ public interface AsfAsRelationshipRepository extends JpaRepository<AsfAsRelation
             + " ORDER BY a.animalStorageFacilities.name DESC")
     List<AnimalMonthQuantity> selectMonthQuantityOfFacilities(@Param("month") int month, @Param("date") Date date);
 
-    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.AnimalsQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity) ) "
+    @Query("SELECT NEW com.project.forestresourcesmanageapplication.responses.FacilityQuantity(a.animalStorageFacilities.code , a.animalSpecies.name , SUM(a.quantity) ) "
             + " FROM AsfAsRelationship a WHERE a.date <= :date"
             + " AND a.animalStorageFacilities =  :animalStorageFacilities AND a.animalSpecies = :animalsSpecies")
-    Optional<AnimalsQuantity> selecAnimalsQuantity(
+    Optional<FacilityQuantity> selecAnimalsQuantity(
             @Param("animalStorageFacilities") AnimalStorageFacilities animalStorageFacilities,
             @Param("animalsSpecies") AnimalSpecies animalsSpecies, Date date);
 

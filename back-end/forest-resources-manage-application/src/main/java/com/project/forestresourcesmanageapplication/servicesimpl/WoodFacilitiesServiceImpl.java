@@ -8,6 +8,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +27,6 @@ import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlread
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
 import com.project.forestresourcesmanageapplication.models.Administration;
-import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.OperationForm;
 import com.project.forestresourcesmanageapplication.models.ProductionType;
 import com.project.forestresourcesmanageapplication.models.WfPtRelationship;
@@ -39,6 +39,7 @@ import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
+import com.project.forestresourcesmanageapplication.responses.FacilityQuantity;
 import com.project.forestresourcesmanageapplication.services.AdminstrationService;
 import com.project.forestresourcesmanageapplication.services.WoodFacilitiesService;
 
@@ -53,8 +54,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
     private final WfPtRelationshipRepository wfPtRelationshipRepository;
     private final AdminstrationService adminstrationService;
 
-
-    //-------------------------CƠ SỞ SẢN XUẤT CHẾ BIẾN GỖ------------------
+    // -------------------------CƠ SỞ SẢN XUẤT CHẾ BIẾN GỖ------------------
     @Override
     public List<WoodFacilities> getAllWoodFacilities() {
         return woodFacilitiesRepository.findAll();
@@ -84,16 +84,16 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
                         .retrieveAdministrationByCode(woodFacilitiesDTO.getAdminstrationCode());
                 woodFacilitiesExisting.setAdministration(administration);
             } catch (Exception exception) {
-                throw new DataNotFoundException("Không tìm thấy cơ sở hành chính với code = "
+                throw new DataNotFoundException("Không tìm thấy cơ sở hành chính với mã = "
                         + woodFacilitiesDTO.getAdminstrationCode());
             }
         }
 
-        //kiểm tra hình thức hoạt động
+        // kiểm tra hình thức hoạt động
         if (!woodFacilitiesExisting.getOperationForm().getName()
                 .equals(woodFacilitiesDTO.getOperationFormName())) {
-                OperationForm operationForm = this.getOperationFormByName(woodFacilitiesDTO.getOperationFormName());
-                woodFacilitiesExisting.setOperationForm(operationForm);
+            OperationForm operationForm = this.getOperationFormByName(woodFacilitiesDTO.getOperationFormName());
+            woodFacilitiesExisting.setOperationForm(operationForm);
         }
 
         woodFacilitiesExisting.setCapacity(woodFacilitiesDTO.getCapacity());
@@ -133,9 +133,9 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
             woodFacilities.setAdministration(administration);
         } catch (Exception exception) {
             throw new DataNotFoundException(
-                    "Không tìm thấy cơ sở hành chính với code = " + woodFacilitiesDTO.getAdminstrationCode());
+                    "Không tìm thấy cơ sở hành chính với mã = " + woodFacilitiesDTO.getAdminstrationCode());
         }
-        //kiểm tra hình thức hoạt động
+        // kiểm tra hình thức hoạt động
         OperationForm operationForm = this.getOperationFormByName(woodFacilitiesDTO.getOperationFormName());
 
         woodFacilities.setCode(code);
@@ -154,8 +154,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         this.woodFacilitiesRepository.deleteById(woodFacilities.getCode());
     }
 
-
-    //-------------------------LOẠI HÌNH SẢN XUẤT------------------
+    // -------------------------LOẠI HÌNH SẢN XUẤT------------------
     // lƯu file ảnh avatar và trả về đường dẫn đến ảnh
     public String saveImage(MultipartFile avatarFile) {
         if (avatarFile == null) {
@@ -194,7 +193,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         }
         return uniqueFileName;
     }
-    
+
     @Override
     public List<ProductionType> getAllProductionType() {
         return productionTypeRepository.findAll();
@@ -219,7 +218,8 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
     @Override
     public ProductionType getProductionTypeByWoodName(String woodType) {
         return this.productionTypeRepository.findById(woodType)
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy loại hình sản xuất với loại gỗ = " + woodType));
+                .orElseThrow(
+                        () -> new DataNotFoundException("Không tìm thấy loại hình sản xuất với loại gỗ = " + woodType));
     }
 
     @Override
@@ -228,7 +228,8 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         // kiểm tra tên
         Optional<ProductionType> tmp = this.productionTypeRepository.findById(productionTypeDTO.getWoodType());
         if (tmp.isPresent()) {
-            throw new DataAlreadyExistsException("Đã tồn tại loại hình sản xuất với loại gỗ = " + productionTypeDTO.getWoodType());
+            throw new DataAlreadyExistsException(
+                    "Đã tồn tại loại hình sản xuất với loại gỗ = " + productionTypeDTO.getWoodType());
         }
         String image = this.saveImage(imageFile);
 
@@ -256,8 +257,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         return productionTypes;
     }
 
-
-    //-------------------------HÌNH THỨC HOẠT ĐỘNG------------------
+    // -------------------------HÌNH THỨC HOẠT ĐỘNG------------------
     @Override
     public List<OperationForm> getAllOperationForm() {
         return operationFormRepository.findAll();
@@ -285,7 +285,8 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         // kiểm tra tên
         Optional<OperationForm> tmp = this.operationFormRepository.findById(operationFormDTO.getName());
         if (tmp.isPresent()) {
-            throw new DataAlreadyExistsException("Đã tồn tại hình thức hoạt động với tên = " + operationFormDTO.getName());
+            throw new DataAlreadyExistsException(
+                    "Đã tồn tại hình thức hoạt động với tên = " + operationFormDTO.getName());
         }
 
         OperationForm operationForm = OperationForm.builder()
@@ -302,8 +303,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         this.operationFormRepository.deleteById(operationForm.getName());
     }
 
-
-    //-------------------------QUAN HỆ CSSX GỖ VÀ LOẠI HÌNH SX------------------
+    // -------------------------QUAN HỆ CSSX GỖ VÀ LOẠI HÌNH SX------------------
     @Override
     public List<WfPtRelationship> getAllWfPtRelationship() {
         return this.wfPtRelationshipRepository.findAll();
@@ -356,9 +356,9 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         this.wfPtRelationshipRepository.deleteById(wfPtRelationship.getId());
     }
 
-// --------------------------THỐNG KÊ--------------------------------
-    //Hàm hỗ trợ
-    //-------------START--------------
+    // --------------------------THỐNG KÊ--------------------------------
+    // Hàm hỗ trợ
+    // -------------START--------------
     private LocalDate caculateDate(LocalDate date) {
         int yearData = date.getYear();
         int monthData = date.getMonthValue();
@@ -465,7 +465,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         }
         return list;
     }
-    //----------------END-----------------
+    // ----------------END-----------------
 
     @Override
     public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date) {
@@ -478,7 +478,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         return facilitiesQuantities;
     }
 
-    //thống kê theo tháng
+    // thống kê theo tháng
     @Override
     public List<FacilitiesQuantityInMoth> getMonthQuantityFacilitiesWithTime(LocalDate beginDate, LocalDate endDate) {
         List<FacilitiesQuantityInMoth> allData = new ArrayList<>();
@@ -508,7 +508,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         return allData;
     }
 
-    //thống kê theo quý
+    // thống kê theo quý
     @Override
     public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate,
             LocalDate endDate) {
@@ -532,7 +532,7 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         return list;
     }
 
-    //thống kê theo năm
+    // thống kê theo năm
     @Override
     public List<FacilitiesQuantityInYear> getYearQuantityOfFacilitiesWithTime(int startYear, int endYear) {
         List<FacilitiesQuantityInYear> list = new ArrayList<>();
@@ -562,6 +562,25 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         }
         return list;
     }
-    //test
+
+    @Override
+    public HashMap<String, List<FacilityQuantity>> getAllQuantityOfAnimal(Date date) {
+        List<FacilityQuantity> woodQuantities = this.wfPtRelationshipRepository.selectAllQuantityOfAllWoodType(date);
+        HashMap<String, List<FacilityQuantity>> woodQuantitiesMap = new HashMap<>();
+        woodQuantities.stream().forEach((res) -> {
+            String facilitiesName = res.getFacilityName();
+            List<FacilityQuantity> data = new ArrayList<>();
+            if (woodQuantitiesMap.containsKey(facilitiesName)) {
+                data = woodQuantitiesMap.get(facilitiesName);
+                data.add(res);
+                woodQuantitiesMap.put(facilitiesName, data);
+            } else {
+                data.add(res);
+                woodQuantitiesMap.put(facilitiesName, data);
+            }
+        });
+        return woodQuantitiesMap;
+    }
+    // test
 
 }

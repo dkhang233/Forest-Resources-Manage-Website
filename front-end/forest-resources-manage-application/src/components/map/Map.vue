@@ -2,13 +2,15 @@
     <div ref="mapContainer" class=""></div>
 </template>
 <script>
-import mapboxGl from 'mapbox-gl';
 import * as mapApi from "@/api/map"
-mapboxGl.accessToken = "pk.eyJ1IjoiZGtoYW5nMjMzIiwiYSI6ImNscWQ3bzk2djA5ejIya3BuYXM4dm11NWMifQ.EgYHhPNYsqKwlrX_GKOzAw"
+//import mapbox
+import "mapbox-gl/dist/mapbox-gl.css"
+import mapboxgl from 'mapbox-gl'
+mapboxgl.accessToken = "pk.eyJ1IjoiZGtoYW5nMjMzIiwiYSI6ImNscWQ3bzk2djA5ejIya3BuYXM4dm11NWMifQ.EgYHhPNYsqKwlrX_GKOzAw"
 export default {
     data() {
         return {
-            map: null
+            map: null,
         };
     },
     methods: {
@@ -51,16 +53,12 @@ export default {
                             boundData.push(nodesData.get(way.nodes[j]))
                         }
                         this.drawLine(wayId, boundData, map)
-                        // var latlngs = boundData
-                        // var polyline = L.polyline(latlngs, { color: 'red' }).addTo(this.map);
-                        // zoom the map to the polyline
-                        // this.map.fitBounds(polyline.getBounds());
                     } catch (error) {
-                        // console.log(error)
+                        console.log(error)
                     }
                 })
                 .catch((err) => {
-                    // console.log(err)
+                    console.log(err)
                 })
         },
         drawLine(wayId, boundData, map) {
@@ -135,7 +133,7 @@ export default {
     },
     mounted() {
         try {
-            const map = new mapboxGl.Map({
+            const map = new mapboxgl.Map({
                 container: this.$refs.mapContainer,
                 style: "mapbox://styles/dkhang233/clqdiuan300cn01qr2fcn28mw", // Replace with your preferred map style
                 center: [
@@ -146,7 +144,7 @@ export default {
                 ],
                 zoom: 9,
             })
-            map.addControl(new mapboxGl.NavigationControl())
+            map.addControl(new mapboxgl.NavigationControl())
             this.retrieveDataOfRelation(1901010, map)
             // this.addImage(map)
             this.map = map

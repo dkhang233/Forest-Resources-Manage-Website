@@ -36,12 +36,11 @@ import com.project.forestresourcesmanageapplication.repositories.AsfAsRelationsh
 import com.project.forestresourcesmanageapplication.repositories.FluctuationRepository;
 import com.project.forestresourcesmanageapplication.responses.AnimalMonthQuantity;
 import com.project.forestresourcesmanageapplication.responses.AnimalQuarterQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalsQuantity;
-import com.project.forestresourcesmanageapplication.responses.AnimalsQuantityInFacility;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
 import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
+import com.project.forestresourcesmanageapplication.responses.FacilityQuantity;
 import com.project.forestresourcesmanageapplication.responses.QuarterQuantity;
 import com.project.forestresourcesmanageapplication.services.AdminstrationService;
 import com.project.forestresourcesmanageapplication.services.AnimalStorageFacilitiesService;
@@ -86,10 +85,10 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                 .equals(animalStorageFacilitiesDTO.getAdminstrationCode())) {
             try {
                 Administration administration = this.adminstrationService
-                        .retrieveAdministrationByName(animalStorageFacilitiesDTO.getAdminstrationCode());
+                        .retrieveAdministrationByCode(animalStorageFacilitiesDTO.getAdminstrationCode());
                 animalStorageFacilitiesExisting.setAdministration(administration);
             } catch (Exception exception) {
-                throw new DataNotFoundException("Không tìm thấy cơ sở hành chính với code = "
+                throw new DataNotFoundException("Không tìm thấy cơ sở hành chính với mã = "
                         + animalStorageFacilitiesDTO.getAdminstrationCode());
             }
         }
@@ -127,11 +126,11 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         // kiểm tra đơn vị hành chính
         try {
             Administration administration = this.adminstrationService
-                    .retrieveAdministrationByName(animalStorageFacilitiesDTO.getAdminstrationCode());
+                    .retrieveAdministrationByCode(animalStorageFacilitiesDTO.getAdminstrationCode());
             animalStorageFacilities.setAdministration(administration);
         } catch (Exception exception) {
             throw new DataNotFoundException(
-                    "Không tìm thấy cơ sở hành chính với code = " + animalStorageFacilitiesDTO.getAdminstrationCode());
+                    "Không tìm thấy cơ sở hành chính với mã = " + animalStorageFacilitiesDTO.getAdminstrationCode());
         }
         animalStorageFacilities.setCode(code);
         animalStorageFacilities.setName(animalStorageFacilitiesDTO.getName());
@@ -654,13 +653,13 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     }
 
     @Override
-    public HashMap<String, List<AnimalsQuantity>> getQuantityOfAllAnimalBeforeTime(LocalDate date) {
-        List<AnimalsQuantity> animalsQuantities = this.asfAsRelationshipRepository
+    public HashMap<String, List<FacilityQuantity>> getQuantityOfAllAnimalBeforeTime(LocalDate date) {
+        List<FacilityQuantity> animalsQuantities = this.asfAsRelationshipRepository
                 .selectAllQuantityOfAllAnimal(Date.valueOf(date));
-        HashMap<String, List<AnimalsQuantity>> animalsQuantitiesMap = new HashMap<>();
+        HashMap<String, List<FacilityQuantity>> animalsQuantitiesMap = new HashMap<>();
         animalsQuantities.stream().forEach((res) -> {
-            String facilitiesName = res.getFacilitiesName();
-            List<AnimalsQuantity> data = new ArrayList<>();
+            String facilitiesName = res.getFacilityName();
+            List<FacilityQuantity> data = new ArrayList<>();
             if (animalsQuantitiesMap.containsKey(facilitiesName)) {
                 data = animalsQuantitiesMap.get(facilitiesName);
                 data.add(res);
@@ -670,28 +669,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
                 animalsQuantitiesMap.put(facilitiesName, data);
             }
         });
-        List<AnimalsQuantityInFacility> animalsQuantityInFacilities;
         return animalsQuantitiesMap;
-    }
-
-    @Override
-    public void updateQuantityOfAnimal(AnimalsQuantity animalsQuantity) {
-        if (animalsQuantity.getQuantity() < 0) {
-            throw new InvalidDataException("Số lượng động vật không hợp lệ");
-        }
-        AnimalStorageFacilities animalStorageFacilities = this.animalStorageFacilitiesRepository
-                .findByName(animalsQuantity.getFacilitiesName())
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy cơ sở lưu trữ"));
-        AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(animalsQuantity.getAnimalName());
-        AnimalsQuantity animalsQuantity2 = this.asfAsRelationshipRepository
-                .selecAnimalsQuantity(animalStorageFacilities, animalSpecies, Date.valueOf(LocalDate.now()))
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy cơ sở lưu trữ hoặc động vật"));
-        long quantity = animalsQuantity.getQuantity() - animalsQuantity2.getQuantity();
-        if (quantity != 0) {
-            AsfAsRelationship asfAsRelationship = new AsfAsRelationship(1, animalStorageFacilities, animalSpecies,
-                    quantity, Date.valueOf(LocalDate.now()));
-            this.asfAsRelationshipRepository.save(asfAsRelationship);
-        }
     }
 
     private LocalDate caculateDate(LocalDate date) {
