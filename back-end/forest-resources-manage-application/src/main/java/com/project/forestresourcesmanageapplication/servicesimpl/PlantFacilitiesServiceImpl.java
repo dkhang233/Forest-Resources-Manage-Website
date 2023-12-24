@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.dtos.PfPsRelationshipDTO;
 import com.project.forestresourcesmanageapplication.dtos.PlantFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.PlantSeedDTO;
@@ -34,13 +35,13 @@ import lombok.val;
 
 @Service
 @RequiredArgsConstructor
-public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
+public class PlantFacilitiesServiceImpl implements PlantFacilitiesService {
     private final PlantFacilitiesRepository plantFacilitiesRepository;
     private final PlantSeedRepository plantSeedRepository;
     private final PfPsRelationshipRepository pfPsRelationshipRepository;
     private final AdminstrationService adminstrationService;
 
-    //-------------------------CƠ SỞ SẢN XUẤT GIỐNG CÂY TRỒNG------------------
+    // -------------------------CƠ SỞ SẢN XUẤT GIỐNG CÂY TRỒNG------------------
     @Override
     public List<PlantFacilities> getAllPlantFacilities() {
         return this.plantFacilitiesRepository.findAll();
@@ -85,7 +86,8 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
     public PlantFacilities getPlantFacilitiesByCode(String code) {
         return plantFacilitiesRepository.findById(code)
                 .orElseThrow(
-                        () -> new DataNotFoundException("Không tìm thấy cơ sở sản xuất giống cây trồng với code = " + code));
+                        () -> new DataNotFoundException(
+                                "Không tìm thấy cơ sở sản xuất giống cây trồng với code = " + code));
     }
 
     @Override
@@ -130,8 +132,45 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
         this.plantFacilitiesRepository.deleteById(plantFacilities.getCode());
     }
 
+    // --------------------Tọa độ trên bản đồ-----------------------------
+    public List<CoordinatesDTO> retrieveAllCoordinates() {
+        List<PlantFacilities> plantFacilities = this.getAllPlantFacilities();
+        List<CoordinatesDTO> coordinatesDTOs = plantFacilities.stream().map((facility) -> {
+            CoordinatesDTO coordinatesDTO = CoordinatesDTO.builder()
+                    .code(facility.getCode())
+                    .lat(facility.getLat())
+                    .lng(facility.getLng())
+                    .build();
+            return coordinatesDTO;
+        }).toList();
+        return coordinatesDTOs;
+    }
 
-    //-------------------------GIỐNG CÂY TRỒNG------------------
+    public CoordinatesDTO retrieveCoordinates(String code) {
+        PlantFacilities plantFacilities = this.getPlantFacilitiesByCode(code);
+        CoordinatesDTO coordinatesDTO = new CoordinatesDTO(plantFacilities.getCode(),
+                plantFacilities.getLat(), plantFacilities.getLng());
+        return coordinatesDTO;
+    }
+
+    public CoordinatesDTO updateCoordinates(CoordinatesDTO coordinatesDTO) {
+        PlantFacilities plantFacilities = this
+                .getPlantFacilitiesByCode(coordinatesDTO.getCode());
+        plantFacilities.setLat(coordinatesDTO.getLat());
+        plantFacilities.setLng(coordinatesDTO.getLng());
+        this.plantFacilitiesRepository.save(plantFacilities);
+        return coordinatesDTO;
+    }
+
+    public void deleteCoordinates(String code) {
+        PlantFacilities plantFacilities = this
+                .getPlantFacilitiesByCode(code);
+        plantFacilities.setLat("");
+        plantFacilities.setLng("");
+        this.plantFacilitiesRepository.save(plantFacilities);
+    }
+
+    // -------------------------GIỐNG CÂY TRỒNG------------------
     // lƯu file ảnh avatar và trả về đường dẫn đến ảnh
     public String saveImage(MultipartFile avatarFile) {
         if (avatarFile == null) {
@@ -170,7 +209,7 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
         }
         return uniqueFileName;
     }
-    
+
     @Override
     public List<PlantSeed> getAllPlantSeed() {
         return this.plantSeedRepository.findAll();
@@ -241,8 +280,7 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
         return plantSeeds;
     }
 
-
-    //-------------------------QUAN HỆ CSSX VÀ GIỐNG CÂY TRỒNG------------------
+    // -------------------------QUAN HỆ CSSX VÀ GIỐNG CÂY TRỒNG------------------
     @Override
     public List<PfPsRelationship> getAllPfPsRelationship() {
         return this.pfPsRelationshipRepository.findAll();
@@ -251,8 +289,8 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
     @Override
     @Transactional
     public PfPsRelationship updatePfPsRelationship(int id, PfPsRelationshipDTO pfPsRelationshipDTO) {
-       PfPsRelationship pfPsRelationship = this.getPfPsRelationshipById(id);
-        // kiểm tra tên CSSX  và tên giống cây trồng
+        PfPsRelationship pfPsRelationship = this.getPfPsRelationshipById(id);
+        // kiểm tra tên CSSX và tên giống cây trồng
         PlantFacilities plantFacilities = this
                 .getPlantFacilitiesByCode(pfPsRelationshipDTO.getCodePF());
         PlantSeed plantSeed = this.getPlantSeedByName(pfPsRelationshipDTO.getNamePS());
@@ -275,7 +313,7 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
     @Transactional
     public PfPsRelationship addPfPsRelationship(PfPsRelationshipDTO pfPsRelationshipDTO) {
         PfPsRelationship pfPsRelationship = new PfPsRelationship();
-        // kiểm tra tên CSSX  và tên giống cây trồng
+        // kiểm tra tên CSSX và tên giống cây trồng
         PlantFacilities plantFacilities = this
                 .getPlantFacilitiesByCode(pfPsRelationshipDTO.getCodePF());
         PlantSeed plantSeed = this.getPlantSeedByName(pfPsRelationshipDTO.getNamePS());
@@ -294,5 +332,5 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService{
         PfPsRelationship pfPsRelationship = this.getPfPsRelationshipById(id);
         this.pfPsRelationshipRepository.deleteById(pfPsRelationship.getId());
     }
-    
+
 }

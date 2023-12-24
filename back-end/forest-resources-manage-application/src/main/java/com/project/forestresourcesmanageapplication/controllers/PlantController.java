@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.dtos.PlantFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.PlantSeedDTO;
 import com.project.forestresourcesmanageapplication.models.PlantFacilities;
@@ -71,6 +72,25 @@ public class PlantController {
     @DeleteMapping("{code}")
     public ResponseEntity<Void> deletePlantFacilities(@PathVariable String code) {
         this.plantFacilitiesService.deletePlantFacilitiesByCode(code);
+        return ResponseEntity.ok().build();
+    }
+
+    // --------------------------Tọa độ trên bản đồ---------------------
+    @GetMapping("/coordinates")
+    public ResponseEntity<?> getAllCoordinates() {
+        List<CoordinatesDTO> coordinatesDTOs = this.plantFacilitiesService.retrieveAllCoordinates();
+        return ResponseEntity.ok(coordinatesDTOs);
+    }
+
+    @PutMapping("/coordinates")
+    public ResponseEntity<?> updateCoordinates(@RequestBody CoordinatesDTO coordinatesDTO) {
+        coordinatesDTO = this.plantFacilitiesService.updateCoordinates(coordinatesDTO);
+        return ResponseEntity.ok(coordinatesDTO);
+    }
+
+    @DeleteMapping("/coordinates/{code}")
+    public ResponseEntity<?> deleteCoordinates(@PathVariable(name = "code") String code) {
+        this.plantFacilitiesService.deleteCoordinates(code);
         return ResponseEntity.ok().build();
     }
 

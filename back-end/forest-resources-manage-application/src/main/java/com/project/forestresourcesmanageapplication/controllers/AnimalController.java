@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
@@ -81,6 +82,25 @@ public class AnimalController {
     @DeleteMapping("{code}")
     public ResponseEntity<Void> deleteAnimalStorageFacilities(@PathVariable String code) {
         this.animalStorageFacilitiesService.deleteAnimalStorageFacilitiesByCode(code);
+        return ResponseEntity.ok().build();
+    }
+
+    // --------------------------Tọa độ trên bản đồ---------------------
+    @GetMapping("/coordinates")
+    public ResponseEntity<?> getAllCoordinates() {
+        List<CoordinatesDTO> coordinatesDTOs = this.animalStorageFacilitiesService.retrieveAllCoordinates();
+        return ResponseEntity.ok(coordinatesDTOs);
+    }
+
+    @PutMapping("/coordinates")
+    public ResponseEntity<?> updateCoordinates(@RequestBody CoordinatesDTO coordinatesDTO) {
+        coordinatesDTO = this.animalStorageFacilitiesService.updateCoordinates(coordinatesDTO);
+        return ResponseEntity.ok(coordinatesDTO);
+    }
+
+    @DeleteMapping("/coordinates/{code}")
+    public ResponseEntity<?> deleteCoordinates(@PathVariable(name = "code") String code) {
+        this.animalStorageFacilitiesService.deleteCoordinates(code);
         return ResponseEntity.ok().build();
     }
 

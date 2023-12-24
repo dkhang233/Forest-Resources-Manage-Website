@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.dtos.OperationFormDTO;
 import com.project.forestresourcesmanageapplication.dtos.ProductionTypeDTO;
 import com.project.forestresourcesmanageapplication.dtos.WfPtRelationshipDTO;
@@ -34,6 +35,15 @@ public interface WoodFacilitiesService {
                         String code);
 
         public void deleteWoodFacilitiesByCode(String code);
+
+        // Tọa độ trên bản đồ
+        public List<CoordinatesDTO> retrieveAllCoordinates();
+
+        public CoordinatesDTO retrieveCoordinates(String code);
+
+        public CoordinatesDTO updateCoordinates(CoordinatesDTO coordinatesDTO);
+
+        public void deleteCoordinates(String code);
 
         // ProductionType - Loại hình sản xuất
         public List<ProductionType> getAllProductionType();

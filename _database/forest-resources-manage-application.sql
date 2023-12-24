@@ -215,6 +215,8 @@ CREATE TABLE `animal_storage_facilities`(
     `capacity` LONG NOT NULL COMMENT 'sức chứa',
     `adminstration_code` VARCHAR(20) NULL COMMENT 'id hành chính',
     `detail` varchar(256) NULL COMMENT 'thông tin chi tiết',
+    `lat` VARCHAR(100) NULL DEFAULT '' COMMENT 'vĩ độ',
+    `lng` VARCHAR(100) NULL DEFAULT '' COMMENT 'kinh độ',
     PRIMARY KEY (`code`),
     FOREIGN KEY (`adminstration_code`)
         REFERENCES `administrations`(`code`)
@@ -319,6 +321,8 @@ CREATE TABLE `wood_facilities`(
 	`capacity` LONG NOT NULL COMMENT 'sức chứa',
     `adminstration_code` VARCHAR(20) NULL COMMENT 'id hành chính',
     `operation_form_name` VARCHAR(100) NOT NULL COMMENT 'tên hình thức hoạt động',
+    `lat` VARCHAR(100) NULL DEFAULT '' COMMENT 'vĩ độ',
+    `lng` VARCHAR(100) NULL DEFAULT '' COMMENT 'kinh độ',
     PRIMARY KEY (`code`),
     FOREIGN KEY (`adminstration_code`)
         REFERENCES `administrations`(`code`),
@@ -371,6 +375,8 @@ CREATE TABLE `plant_facilities`(
     `date` DATE NULL,
 	`capacity` long NOT NULL COMMENT 'sức chứa',
     `adminstration_code` VARCHAR(20) NULL COMMENT 'id hành chính',
+    `lat` VARCHAR(100) NULL DEFAULT '' COMMENT 'vĩ độ',
+    `lng` VARCHAR(100) NULL DEFAULT '' COMMENT 'kinh độ',
     PRIMARY KEY (`code`),
     FOREIGN KEY (`adminstration_code`)
         REFERENCES `administrations`(`code`)

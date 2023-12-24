@@ -50,4 +50,10 @@ public class AnimalStorageFacilities {
     @Column(name="detail")
     private String detail;
 
+    @Column(name = "lat")
+    private String lat;
+
+    @Column(name = "lng")
+    private String lng;
+
 }

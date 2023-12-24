@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.dtos.OperationFormDTO;
 import com.project.forestresourcesmanageapplication.dtos.ProductionTypeDTO;
 import com.project.forestresourcesmanageapplication.dtos.WfPtRelationshipDTO;
@@ -27,6 +28,7 @@ import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlread
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
 import com.project.forestresourcesmanageapplication.models.Administration;
+import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.OperationForm;
 import com.project.forestresourcesmanageapplication.models.ProductionType;
 import com.project.forestresourcesmanageapplication.models.WfPtRelationship;
@@ -152,6 +154,44 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
     public void deleteWoodFacilitiesByCode(String code) {
         WoodFacilities woodFacilities = this.getWoodFacilitiesByCode(code);
         this.woodFacilitiesRepository.deleteById(woodFacilities.getCode());
+    }
+
+    // --------------------Tọa độ trên bản đồ-----------------------------
+    public List<CoordinatesDTO> retrieveAllCoordinates() {
+        List<WoodFacilities> woodFacilities = this.getAllWoodFacilities();
+        List<CoordinatesDTO> coordinatesDTOs = woodFacilities.stream().map((facility) -> {
+            CoordinatesDTO coordinatesDTO = CoordinatesDTO.builder()
+                    .code(facility.getCode())
+                    .lat(facility.getLat())
+                    .lng(facility.getLng())
+                    .build();
+            return coordinatesDTO;
+        }).toList();
+        return coordinatesDTOs;
+    }
+
+    public CoordinatesDTO retrieveCoordinates(String code) {
+        WoodFacilities woodFacilities = this.getWoodFacilitiesByCode(code);
+        CoordinatesDTO coordinatesDTO = new CoordinatesDTO(woodFacilities.getCode(),
+                woodFacilities.getLat(), woodFacilities.getLng());
+        return coordinatesDTO;
+    }
+
+    public CoordinatesDTO updateCoordinates(CoordinatesDTO coordinatesDTO) {
+        WoodFacilities woodFacilities = this
+                .getWoodFacilitiesByCode(coordinatesDTO.getCode());
+        woodFacilities.setLat(coordinatesDTO.getLat());
+        woodFacilities.setLng(coordinatesDTO.getLng());
+        this.woodFacilitiesRepository.save(woodFacilities);
+        return coordinatesDTO;
+    }
+
+    public void deleteCoordinates(String code) {
+        WoodFacilities woodFacilities = this
+                .getWoodFacilitiesByCode(code);
+        woodFacilities.setLat("");
+        woodFacilities.setLng("");
+        this.woodFacilitiesRepository.save(woodFacilities);
     }
 
     // -------------------------LOẠI HÌNH SẢN XUẤT------------------

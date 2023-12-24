@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.dtos.OperationFormDTO;
 import com.project.forestresourcesmanageapplication.dtos.PfPsRelationshipDTO;
 import com.project.forestresourcesmanageapplication.dtos.PlantFacilitiesDTO;
@@ -20,42 +21,51 @@ import com.project.forestresourcesmanageapplication.models.WfPtRelationship;
 import com.project.forestresourcesmanageapplication.models.WoodFacilities;
 
 public interface PlantFacilitiesService {
-    //PlantFacilities
-    public List<PlantFacilities> getAllPlantFacilities();
+        // PlantFacilities
+        public List<PlantFacilities> getAllPlantFacilities();
 
-    public PlantFacilities updatePlantFacilities(String code,
-            PlantFacilitiesDTO plantFacilitiesDTO);
+        public PlantFacilities updatePlantFacilities(String code,
+                        PlantFacilitiesDTO plantFacilitiesDTO);
 
-    public PlantFacilities getPlantFacilitiesByCode(String code);
+        public PlantFacilities getPlantFacilitiesByCode(String code);
 
-    public PlantFacilities addPlantFacilities(PlantFacilitiesDTO plantFacilitiesDTO,
-            String code);
+        public PlantFacilities addPlantFacilities(PlantFacilitiesDTO plantFacilitiesDTO,
+                        String code);
 
-    public void deletePlantFacilitiesByCode(String code);
+        public void deletePlantFacilitiesByCode(String code);
 
-    //PlantSeed
-    public List<PlantSeed> getAllPlantSeed();
+        // Tọa độ trên bản đồ
+        public List<CoordinatesDTO> retrieveAllCoordinates();
 
-    public PlantSeed updatePlantSeed(PlantSeedDTO plantSeedDTO, MultipartFile imageFile);
+        public CoordinatesDTO retrieveCoordinates(String code);
 
-    public PlantSeed getPlantSeedByName(String name);
+        public CoordinatesDTO updateCoordinates(CoordinatesDTO coordinatesDTO);
 
-    public PlantSeed addPlantSeed(PlantSeedDTO plantSeedDTO, MultipartFile imageFile);
+        public void deleteCoordinates(String code);
 
-    public void deletePlantSeedByName(String name);
+        // PlantSeed
+        public List<PlantSeed> getAllPlantSeed();
 
-    public List<PlantSeed> getAllPlantSeedByFacilitiesCode(String code);
+        public PlantSeed updatePlantSeed(PlantSeedDTO plantSeedDTO, MultipartFile imageFile);
 
-    //PfPsRelationship
-    public List<PfPsRelationship> getAllPfPsRelationship();
+        public PlantSeed getPlantSeedByName(String name);
 
-    public PfPsRelationship updatePfPsRelationship(int id, PfPsRelationshipDTO pfPsRelationshipDTO);
+        public PlantSeed addPlantSeed(PlantSeedDTO plantSeedDTO, MultipartFile imageFile);
 
-    public PfPsRelationship getPfPsRelationshipById(int id);
+        public void deletePlantSeedByName(String name);
 
-    public PfPsRelationship addPfPsRelationship(PfPsRelationshipDTO pfPsRelationshipDTO);
+        public List<PlantSeed> getAllPlantSeedByFacilitiesCode(String code);
 
-    public void deletePfPsRelationshipById(int id);
+        // PfPsRelationship
+        public List<PfPsRelationship> getAllPfPsRelationship();
 
-    //thống kê
+        public PfPsRelationship updatePfPsRelationship(int id, PfPsRelationshipDTO pfPsRelationshipDTO);
+
+        public PfPsRelationship getPfPsRelationshipById(int id);
+
+        public PfPsRelationship addPfPsRelationship(PfPsRelationshipDTO pfPsRelationshipDTO);
+
+        public void deletePfPsRelationshipById(int id);
+
+        // thống kê
 }

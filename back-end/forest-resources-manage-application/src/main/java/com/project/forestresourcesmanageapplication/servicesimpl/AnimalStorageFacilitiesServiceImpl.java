@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
@@ -145,6 +146,44 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
     public void deleteAnimalStorageFacilitiesByCode(String code) {
         AnimalStorageFacilities animalStorageFacilities = this.getAnimalStorageFacilitiesByCode(code);
         this.animalStorageFacilitiesRepository.deleteById(animalStorageFacilities.getCode());
+    }
+
+    // --------------------Tọa độ trên bản đồ-----------------------------
+    public List<CoordinatesDTO> retrieveAllCoordinates() {
+        List<AnimalStorageFacilities> animalStorageFacilities = this.getAllAnimalStorageFacilities();
+        List<CoordinatesDTO> coordinatesDTOs = animalStorageFacilities.stream().map((facility) -> {
+            CoordinatesDTO coordinatesDTO = CoordinatesDTO.builder()
+                    .code(facility.getCode())
+                    .lat(facility.getLat())
+                    .lng(facility.getLng())
+                    .build();
+            return coordinatesDTO;
+        }).toList();
+        return coordinatesDTOs;
+    }
+
+    public CoordinatesDTO retrieveCoordinates(String code) {
+        AnimalStorageFacilities animalStorageFacilities = this.getAnimalStorageFacilitiesByCode(code);
+        CoordinatesDTO coordinatesDTO = new CoordinatesDTO(animalStorageFacilities.getCode(),
+                animalStorageFacilities.getLat(), animalStorageFacilities.getLng());
+        return coordinatesDTO;
+    }
+
+    public CoordinatesDTO updateCoordinates(CoordinatesDTO coordinatesDTO) {
+        AnimalStorageFacilities animalStorageFacilities = this
+                .getAnimalStorageFacilitiesByCode(coordinatesDTO.getCode());
+        animalStorageFacilities.setLat(coordinatesDTO.getLat());
+        animalStorageFacilities.setLng(coordinatesDTO.getLng());
+        this.animalStorageFacilitiesRepository.save(animalStorageFacilities);
+        return coordinatesDTO;
+    }
+
+    public void deleteCoordinates(String code) {
+        AnimalStorageFacilities animalStorageFacilities = this
+                .getAnimalStorageFacilitiesByCode(code);
+        animalStorageFacilities.setLat("");
+        animalStorageFacilities.setLng("");
+        this.animalStorageFacilitiesRepository.save(animalStorageFacilities);
     }
 
     // -----------------------LOÀI ĐỘNG VẬT----------------------------
@@ -481,7 +520,7 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
             }
             if (i == 0) {
                 throw new DataNotFoundException("Dữ liệu trong " + this.changeToQuarter(startDate) + " của "
-                        + asf+ " không tồn tại");
+                        + asf + " không tồn tại");
             }
             long quantity = sum / i;
             FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(asf, quantity);

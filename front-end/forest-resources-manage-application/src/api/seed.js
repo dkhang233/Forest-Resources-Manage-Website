@@ -8,4 +8,10 @@ export const retrieveAllFacilities = () => apiClient.get('plant-facilities')
 export const createFacility = (facility) => apiClient.post(`plant-facilities/${facility.code}`,facility)
 export const updateFacility = (facility) => apiClient.put(`plant-facilities/${facility.code}`,facility)
 
+export const retrieveAllCoordinates = () => apiClient.get('plant-facilities/coordinates')
+export const updateCoordinates = (coordinates) => apiClient.put('plant-facilities/coordinates',coordinates)
+export const deleteCoordinates = (code) => apiClient.delete(`plant-facilities/coordinates/${code}`)
+
+
+
 export const IMAGE_URL = baseURL + 'plant-facilities/plant_seed/images/'

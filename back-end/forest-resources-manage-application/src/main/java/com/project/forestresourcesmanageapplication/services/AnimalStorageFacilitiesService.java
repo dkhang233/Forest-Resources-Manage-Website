@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.project.forestresourcesmanageapplication.dtos.AnimalSpeciesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AnimalStorageFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.AsfAsRelationshipDTO;
-
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.models.AnimalSpecies;
 import com.project.forestresourcesmanageapplication.models.AnimalStorageFacilities;
 import com.project.forestresourcesmanageapplication.models.AsfAsRelationship;
@@ -38,6 +38,12 @@ public interface AnimalStorageFacilitiesService {
             String code);
 
     public void deleteAnimalStorageFacilitiesByCode(String code);
+
+    // Tọa độ trên bản đồ
+    public List<CoordinatesDTO> retrieveAllCoordinates();
+    public CoordinatesDTO retrieveCoordinates(String code);
+    public CoordinatesDTO updateCoordinates(CoordinatesDTO coordinatesDTO);
+    public void deleteCoordinates(String code);
 
     // Animal-Species
     public List<AnimalSpecies> getAllAnimalSpecies();

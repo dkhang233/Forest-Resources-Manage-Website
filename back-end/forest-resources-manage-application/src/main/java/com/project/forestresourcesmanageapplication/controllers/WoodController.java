@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.project.forestresourcesmanageapplication.dtos.CoordinatesDTO;
 import com.project.forestresourcesmanageapplication.dtos.OperationFormDTO;
 import com.project.forestresourcesmanageapplication.dtos.ProductionTypeDTO;
 import com.project.forestresourcesmanageapplication.dtos.WfPtRelationshipDTO;
@@ -83,6 +84,25 @@ public class WoodController {
     @DeleteMapping("{code}")
     public ResponseEntity<Void> deleteWoodFacilities(@PathVariable String code) {
         this.woodFacilitiesService.deleteWoodFacilitiesByCode(code);
+        return ResponseEntity.ok().build();
+    }
+
+    // --------------------------Tọa độ trên bản đồ---------------------
+    @GetMapping("/coordinates")
+    public ResponseEntity<?> getAllCoordinates() {
+        List<CoordinatesDTO> coordinatesDTOs = this.woodFacilitiesService.retrieveAllCoordinates();
+        return ResponseEntity.ok(coordinatesDTOs);
+    }
+
+    @PutMapping("/coordinates")
+    public ResponseEntity<?> updateCoordinates(@RequestBody CoordinatesDTO coordinatesDTO) {
+        coordinatesDTO = this.woodFacilitiesService.updateCoordinates(coordinatesDTO);
+        return ResponseEntity.ok(coordinatesDTO);
+    }
+
+    @DeleteMapping("/coordinates/{code}")
+    public ResponseEntity<?> deleteCoordinates(@PathVariable(name = "code") String code) {
+        this.woodFacilitiesService.deleteCoordinates(code);
         return ResponseEntity.ok().build();
     }
 

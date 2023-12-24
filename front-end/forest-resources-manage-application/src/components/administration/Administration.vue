@@ -1,38 +1,25 @@
 <template>
-    <div class="tree" v-loading="loadingStatus">
-        <el-row :gutter="50">
-            <el-col :span="10">
-                <el-card class="administrations">
-                    <template #header>
-                        <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
-                        <el-input :offset="2" v-model="filterText" placeholder="Tìm kiếm đơn vị hành chính theo tên hoặc mã"
-                            class="form" />
+    <div class="m-5">
+        <div>
+            <el-card class="administrations w-[50%]" v-loading="loadingStatus">
+                <template #header>
+                    <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
+                    <el-input :offset="2" v-model="filterText" placeholder="Tìm kiếm đơn vị hành chính theo tên hoặc mã"
+                        class="form" />
+                </template>
+                <el-tree-v2 default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps"
+                    :item-size="50" :expand-on-click-node="false" :filter-method="filterNode" :height="500">
+                    <template #default="{ node, data }">
+                        <span class="custom-tree-node">
+                            <span>{{ `${node.label} (${data.code})` }}</span>
+                            <a class="text-blue-500 ml-[80%] hover:text-blue-300" @click="showNode(data)">Chi
+                                tiết</a>
+                        </span>
                     </template>
-                    <el-tree-v2 default-expand-all ref="treeRef" class="el-tree" :data="treeData" :props="defaultProps"
-                        :item-size="50" :expand-on-click-node="false" :filter-method="filterNode" :height="500">
-                        <template #default="{ node, data }">
-                            <span class="custom-tree-node">
-                                <span>{{ `${node.label} (${data.code})` }}</span>
-                                <a class="text-blue-500 ml-[100px] hover:text-blue-300" @click="showNode(data)">Chi tiết</a>
-                            </span>
-                        </template>
-                    </el-tree-v2>
-                </el-card>
-            </el-col>
-            <el-col :span="13">
-                <el-card class="box-card">
-                    <template #header>
-                        <div class="card-header">
-                            <span>Map</span>
-                        </div>
-                    </template>
-                    <!-- <map-view class="h-[31rem]"></map-view> -->
-                    <Map class="h-[31rem]"></Map>
-                </el-card>
-            </el-col>
-        </el-row>
-        <map></map>
-
+                </el-tree-v2>
+            </el-card>
+        </div>
+        <img class="absolute top-0 bottom-0 right-0 left-[50rem] h-[41rem] w-[45%]" src="@/assets/image/vietnam_map.png" />
         <el-dialog v-model="dialogFormVisible" title="Thông tin đơn vị hành chính">
             <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
                 <el-form-item label="Mã" prop="code">
@@ -251,12 +238,6 @@ export default {
 </script>
 
 <style scoped>
-.tree {
-    margin: 30px 30px 10px 30px;
-    width: 100%;
-    height: 670px;
-}
-
 .form {
     margin: 0px 0px 0px 20px;
     width: 400px;
@@ -265,9 +246,5 @@ export default {
 .el-tree {
     --el-tree-node-hover-bg-color: #D0D3D4;
     font-size: 20px !important;
-}
-
-.administrations {
-    height: 600px;
 }
 </style>
