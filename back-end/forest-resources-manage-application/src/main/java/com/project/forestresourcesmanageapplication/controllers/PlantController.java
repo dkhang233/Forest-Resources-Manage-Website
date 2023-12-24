@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -28,6 +29,9 @@ import com.project.forestresourcesmanageapplication.dtos.PlantFacilitiesDTO;
 import com.project.forestresourcesmanageapplication.dtos.PlantSeedDTO;
 import com.project.forestresourcesmanageapplication.models.PlantFacilities;
 import com.project.forestresourcesmanageapplication.models.PlantSeed;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
 import com.project.forestresourcesmanageapplication.services.PlantFacilitiesService;
 
 import lombok.RequiredArgsConstructor;
@@ -139,4 +143,34 @@ public class PlantController {
     }
 
     // --------------------------THỐNG KÊ DỮ LIỆU VỀ SỐ LƯỢNG----------------------
+    // ------Thống kê số lượng theo tháng trong tất cả cơ sở-------
+    @GetMapping("/plant_seed/facilities/month/{beginMonth}/{endMonth}")
+    public ResponseEntity<List<FacilitiesQuantityInMoth>> getMonthQuantityOfFacilitiesWithTime(
+            @PathVariable(value = "beginMonth") LocalDate beginMonth,
+            @PathVariable(value = "endMonth") LocalDate endMonth) {
+        List<FacilitiesQuantityInMoth> facilitiesQuantities = this.plantFacilitiesService
+                .getMonthQuantityFacilitiesWithTime(beginMonth, endMonth);
+        return ResponseEntity.ok(facilitiesQuantities);
+    }
+
+    // ------Thống kê số lượng theo quý trong tất cả cơ sở-------
+    @GetMapping("/plant_seed/facilities/quarter/{startDate}/{endDate}")
+    public ResponseEntity<List<FacilitiesQuantityInQuarter>> getQuarterQuantityOfFacilitiesWithTime(
+            @PathVariable(value = "startDate") LocalDate startDate,
+            @PathVariable(value = "endDate") LocalDate endDate) {
+        List<FacilitiesQuantityInQuarter> facilitiesQuantities = this.plantFacilitiesService
+                .getQuarterQuantityOfFacilitiesWithTime(startDate, endDate);
+        return ResponseEntity.ok(facilitiesQuantities);
+    }
+
+    // -------Thống kê số lượng theo năm trong tất cả cơ sở----------
+    @GetMapping("/plant_seed/facilities/year/{startYear}/{endYear}")
+    public ResponseEntity<List<FacilitiesQuantityInYear>> getYearQuantityOfFacilitiesWithTime(
+            @PathVariable(value = "startYear") int startYear,
+            @PathVariable(value = "endYear") int endYear) {
+        List<FacilitiesQuantityInYear> facilitiesQuantityInYears = this.plantFacilitiesService
+                .getYearQuantityOfFacilitiesWithTime(startYear, endYear);
+        return ResponseEntity.ok(facilitiesQuantityInYears);
+    }
+
 }

@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -27,6 +32,10 @@ import com.project.forestresourcesmanageapplication.models.PlantSeed;
 import com.project.forestresourcesmanageapplication.repositories.PfPsRelationshipRepository;
 import com.project.forestresourcesmanageapplication.repositories.PlantFacilitiesRepository;
 import com.project.forestresourcesmanageapplication.repositories.PlantSeedRepository;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantity;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInMoth;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInQuarter;
+import com.project.forestresourcesmanageapplication.responses.FacilitiesQuantityInYear;
 import com.project.forestresourcesmanageapplication.services.AdminstrationService;
 import com.project.forestresourcesmanageapplication.services.PlantFacilitiesService;
 
@@ -331,6 +340,214 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService {
     public void deletePfPsRelationshipById(int id) {
         PfPsRelationship pfPsRelationship = this.getPfPsRelationshipById(id);
         this.pfPsRelationshipRepository.deleteById(pfPsRelationship.getId());
+    }
+
+    // --------------------------THỐNG KÊ--------------------------------
+    // Hàm hỗ trợ
+    // -------------START--------------
+    private LocalDate caculateDate(LocalDate date) {
+        int yearData = date.getYear();
+        int monthData = date.getMonthValue();
+        int day = date.lengthOfMonth();
+        return LocalDate.of(yearData, monthData, day);
+    }
+
+    private String changeToQuarter(LocalDate date) {
+        int month = date.getMonthValue();
+        int year = date.getYear();
+
+        return (month >= 1 && month <= 3) ? "Q1-" + year
+                : (month >= 4 && month <= 6) ? "Q2-" + year : (month >= 7 && month <= 9) ? "Q3-" + year : "Q4-" + year;
+    }
+
+    private LocalDate getLastDayOfQuarter(LocalDate date) {
+        LocalDate firstDayOfQuarter = date.with(date.getMonth().firstMonthOfQuarter())
+                .with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfQuarter = firstDayOfQuarter.plusMonths(2)
+                .with(TemporalAdjusters.lastDayOfMonth());
+        return lastDayOfQuarter;
+    }
+
+    private LocalDate getFirstDayOfQuarter(LocalDate date) {
+        LocalDate firstDayOfQuarter = date.with(date.getMonth().firstMonthOfQuarter())
+                .with(TemporalAdjusters.firstDayOfMonth());
+        return firstDayOfQuarter;
+    }
+
+    private long getMonthQuantityOfFacilities(String name, LocalDate date) {
+        LocalDate date2 = this.caculateDate(date);
+        Date dateExisting = Date.valueOf(date2);
+        try {
+            long quantity = this.pfPsRelationshipRepository.getMonthQuantityOfFacilitiesNew(name, dateExisting);
+            return quantity;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private int getTotalBeforeFuntion(String name, LocalDate date, int i) {
+        LocalDate date2 = this.caculateDate(date);
+        Date dateExisting = Date.valueOf(date2);
+        try {
+            long quantity = this.pfPsRelationshipRepository.getMonthQuantityOfFacilitiesNew(name, dateExisting);
+            return i + 1;
+        } catch (Exception e) {
+            return i;
+        }
+
+    }
+
+    private List<FacilitiesQuantity> getQuarterFacilitiesWithStartDate(LocalDate startDate) {
+        LocalDate dateTmp = startDate;
+        List<FacilitiesQuantity> list = new ArrayList<>();
+        LocalDate lastDayOfQuarter = this.getLastDayOfQuarter(startDate);
+        List<String> listPF = this.plantFacilitiesRepository
+                .findAllFacilitiesNameBeforeTime(Date.valueOf(lastDayOfQuarter));
+        for (String pf : listPF) {
+            long sum = 0;
+            int i = 0;
+            for (int j = 1; j <= 3; j++) {
+                sum += this.getMonthQuantityOfFacilities(pf, startDate);
+                i = this.getTotalBeforeFuntion(pf, startDate, i);
+
+                startDate = startDate.plusMonths(1);
+            }
+            if (i == 0) {
+                throw new DataNotFoundException("Dữ liệu trong " + this.changeToQuarter(startDate) + " của "
+                        + pf + " không tồn tại");
+            }
+            long quantity = sum / i;
+            FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(pf, quantity);
+
+            list.add(facilitiesQuantity);
+            startDate = dateTmp;
+        }
+        return list;
+    }
+
+    private List<FacilitiesQuantity> getYearQuantityFacilitiesWithYear(int year) {
+        List<FacilitiesQuantity> list = new ArrayList<>();
+        String endDate = year + "-12-30";
+        LocalDate startDate = LocalDate.of(year, 1, 1);
+        LocalDate dateTmp = startDate;
+        List<String> listPF = this.plantFacilitiesRepository
+                .findAllFacilitiesNameBeforeTime(Date.valueOf(endDate));
+        for (String pf : listPF) {
+            long sum = 0;
+            int i = 0;
+            for (int j = 1; j <= 12; j++) {
+                sum += this.getMonthQuantityOfFacilities(pf, startDate);
+                i = this.getTotalBeforeFuntion(pf, startDate, i);
+                startDate = startDate.plusMonths(1);
+            }
+            if (i == 0) {
+                throw new DataNotFoundException(
+                        "Dữ liệu trong năm " + year + " của " + pf + " không tồn tại");
+            }
+            long quantity = sum / i;
+            FacilitiesQuantity facilitiesQuantity = new FacilitiesQuantity(pf, quantity);
+            list.add(facilitiesQuantity);
+            startDate = dateTmp;
+        }
+        return list;
+    }
+
+    // ----------------END-----------------
+
+    @Override
+    public List<FacilitiesQuantity> getQuantityOfFacilitiesBeforeTime(LocalDate date) {
+        List<FacilitiesQuantity> facilitiesQuantities = this.pfPsRelationshipRepository
+                .selectAllQuantityOfFacilities(Date.valueOf(date));
+        if (facilitiesQuantities.isEmpty()) {
+            throw new DataNotFoundException(
+                    "Dữ liệu trong tháng " + date.getMonthValue() + " năm " + date.getYear() + " chưa tồn tại");
+        }
+        return facilitiesQuantities;
+    }
+
+    // thống kê theo tháng
+    @Override
+    public List<FacilitiesQuantityInMoth> getMonthQuantityFacilitiesWithTime(LocalDate beginDate, LocalDate endDate) {
+        List<FacilitiesQuantityInMoth> allData = new ArrayList<>();
+        beginDate = this.caculateDate(beginDate);
+        endDate = this.caculateDate(endDate);
+        if (endDate.isAfter(LocalDate.now())) {
+            endDate = LocalDate.now();
+            while (beginDate.isBefore(endDate.plusDays(1))) {
+                List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(beginDate);
+                FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(beginDate).data(data).build();
+                allData.add(tmp);
+                beginDate = beginDate.plusMonths(1);
+                beginDate = this.caculateDate(beginDate);
+            }
+            List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(endDate);
+            FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(endDate).data(data).build();
+            allData.add(tmp);
+        } else {
+            while (beginDate.isBefore(endDate.plusDays(1))) {
+                List<FacilitiesQuantity> data = this.getQuantityOfFacilitiesBeforeTime(beginDate);
+                FacilitiesQuantityInMoth tmp = FacilitiesQuantityInMoth.builder().date(beginDate).data(data).build();
+                allData.add(tmp);
+                beginDate = beginDate.plusMonths(1);
+                beginDate = this.caculateDate(beginDate);
+            }
+        }
+        return allData;
+    }
+
+    // thống kê theo quý
+    @Override
+    public List<FacilitiesQuantityInQuarter> getQuarterQuantityOfFacilitiesWithTime(LocalDate startDate,
+            LocalDate endDate) {
+        if (this.changeToQuarter(startDate).equals(this.changeToQuarter(endDate))
+                || startDate.isAfter(endDate)) {
+            throw new DataAccessResourceFailureException(
+                    "Ngày bắt đầu và ngày kết thúc không hợp lệ .Vui lòng nhập lại");
+        }
+        List<FacilitiesQuantityInQuarter> list = new ArrayList<>();
+        while (true) {
+            FacilitiesQuantityInQuarter tmp = new FacilitiesQuantityInQuarter();
+            List<FacilitiesQuantity> data = this.getQuarterFacilitiesWithStartDate(startDate);
+            tmp.setQuarter(this.changeToQuarter(startDate));
+            tmp.setData(data);
+            list.add(tmp);
+            LocalDate firstDayNextQuarter = this.getLastDayOfQuarter(startDate).plusDays(1);
+            startDate = firstDayNextQuarter;
+            if (startDate.isAfter(endDate))
+                break;
+        }
+        return list;
+    }
+
+    // thống kê theo năm
+    @Override
+    public List<FacilitiesQuantityInYear> getYearQuantityOfFacilitiesWithTime(int startYear, int endYear) {
+        List<FacilitiesQuantityInYear> list = new ArrayList<>();
+        if (startYear > endYear) {
+            throw new DataAccessResourceFailureException("Năm bắt đầu và năm kết thúc không hợp lệ .Vui lòng nhập lại");
+        }
+        if (startYear == endYear) {
+            List<FacilitiesQuantity> data = this.getYearQuantityFacilitiesWithYear(endYear);
+            FacilitiesQuantityInYear tmp = new FacilitiesQuantityInYear(endYear, data);
+            list.add(tmp);
+            return list;
+        }
+        while (true) {
+            FacilitiesQuantityInYear tmp = new FacilitiesQuantityInYear();
+            List<FacilitiesQuantity> data = this.getYearQuantityFacilitiesWithYear(startYear);
+            tmp.setYear(startYear);
+            tmp.setData(data);
+            list.add(tmp);
+            int nextYear = startYear + 1;
+            if (nextYear == endYear) {
+                List<FacilitiesQuantity> data2 = this.getYearQuantityFacilitiesWithYear(endYear);
+                FacilitiesQuantityInYear tmp2 = new FacilitiesQuantityInYear(endYear, data2);
+                list.add(tmp2);
+                break;
+            }
+            startYear = nextYear;
+        }
+        return list;
     }
 
 }

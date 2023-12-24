@@ -401,4 +401,16 @@ CREATE TABLE `pf_ps_relationship`(
         ON DELETE CASCADE ON UPDATE CASCADE
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='bảng quan hệ cơ sở giống cây trồng - giống cây trồng';
 
-
+-- -----------------------------------------------------
+-- Table Access History
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `access_history`;
+CREATE TABLE `access_history`(
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `username` VARCHAR(100) NULL ,
+    `method` VARCHAR(100) NOT NULL COMMENT 'hành động',
+    `arguments` VARCHAR(256) NULL COMMENT 'đối số truyền vào',
+    `time` VARCHAR(100) NOT NULL COMMENT 'thời gian bắt đầu thực hiện',
+    `performance` LONG NULL COMMENT 'hiệu suất',
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='lịch sử truy cập';
