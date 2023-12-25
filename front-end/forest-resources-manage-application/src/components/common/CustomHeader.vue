@@ -22,7 +22,7 @@
             <div class="!visible flex-grow basis-[100%] items-center lg:!flex lg:basis-auto" v-show="headerView">
                 <!-- Logo -->
                 <a class="mb-4 ml-2 mr-5 mt-3 flex items-center text-neutral-900 hover:text-neutral-900 focus:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400 lg:mb-0 lg:mt-0"
-                    href="#">
+                    >
                     <img src="@/assets/logo/logo.png" class="w-[60px] h-[55px]" alt="TE Logo" loading="lazy" />
                 </a>
                 <!-- Left navigation links -->
@@ -30,12 +30,12 @@
                     <!-- Team link -->
                     <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                         <a class="text-[#2C3E50] transition duration-200 hover:text-neutral-400 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                            href="#" data-te-nav-link-ref>Team</a>
+                            data-te-nav-link-ref>Team</a>
                     </li>
                     <!-- Projects link -->
                     <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                         <a class="text-[#2C3E50] transition duration-200 hover:text-neutral-400 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                            href="#" data-te-nav-link-ref>Projects</a>
+                            data-te-nav-link-ref>Projects</a>
                     </li>
                 </ul>
             </div>
@@ -47,7 +47,7 @@
                 <div class="relative" data-te-dropdown-ref data-te-dropdown-alignment="end">
                     <!-- First dropdown trigger -->
                     <a class="hidden-arrow mr-4 flex items-center text-neutral-600 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                        href="#" id="dropdownMenuButton1" role="button" data-te-dropdown-toggle-ref aria-expanded="false">
+                         id="dropdownMenuButton1" role="button" data-te-dropdown-toggle-ref aria-expanded="false">
                         <!-- Dropdown trigger icon -->
                         <span class="[&>svg]:w-5">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
@@ -85,7 +85,7 @@
                         </li>
                         <li>
                             <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                href="#">Đổi mật khẩu</a>
+                                href="#/main/change-pass">Đổi mật khẩu</a>
                         </li>
                         <li>
                             <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 hover:cursor-pointer active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"

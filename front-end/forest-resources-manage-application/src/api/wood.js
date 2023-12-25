@@ -13,6 +13,7 @@ export const deleteOperationForm = (operationFormName) => apiClient.delete(`wood
 export const retrieveAllWoodFacilities = () => apiClient.get('wood-facilities')
 export const updateWoodFacility = (facility) => apiClient.put(`wood-facilities/${facility.code}`, facility)
 export const createWoodFacility = (facility) => apiClient.post(`wood-facilities/${facility.code}`, facility)
+export const deleteWoodFacility = (facilityCode) => apiClient.delete(`wood-facilities/${facilityCode}`)
 
 export const createWoodQuantity = (woodQuantity) => apiClient.put('wood-facilities/production-type/facilities/add', woodQuantity)
 export const retrieveWoodQuantityByMonth = (start, end) => apiClient.get(`wood-facilities/production-type/facilities/month/${start}/${end}`)

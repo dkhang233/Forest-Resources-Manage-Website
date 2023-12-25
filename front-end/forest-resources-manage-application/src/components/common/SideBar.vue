@@ -3,7 +3,7 @@
         <el-scrollbar class="h-[89%] bg-[#FBFBFB]" always>
             <el-menu active-text-color="#dd5862" text-color="#fff" class="side-bar" @open="handleOpen" @close="handleClose"
                 :collapse="this.appStore.flag" background-color="#FBFBFB" menu-trigger="click" router>
-                <el-menu-item :index="`/main/home`">
+                <el-menu-item :index="`/main`">
                     <font-awesome-icon icon="fa-house" />
                     <template #title>
                         <span class="text-lg font-[600] ml-[1rem]">Trang chủ</span>

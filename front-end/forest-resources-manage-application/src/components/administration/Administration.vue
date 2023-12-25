@@ -43,13 +43,13 @@
             </el-form>
             <template #footer>
                 <span class="grid grid-cols-6 gap-4">
-                    <button class="p-2 mr-5 space-x-[100px] font-sans font-bold 
+                    <!-- <button class="p-2 mr-5 space-x-[100px] font-sans font-bold 
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="deleteBtn">
                         Xóa
-                    </button>
+                    </button> -->
                     <button class="p-2 mr-3 col-start-5 font-sans font-bold
                         text-white rounded-lg shadow-lg 
                         px-5 bg-[#839192] shadow-blue-100 

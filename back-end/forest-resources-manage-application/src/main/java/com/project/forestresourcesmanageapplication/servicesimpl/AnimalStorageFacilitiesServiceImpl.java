@@ -344,7 +344,17 @@ public class AnimalStorageFacilitiesServiceImpl implements AnimalStorageFaciliti
         AnimalStorageFacilities animalStorageFacilities = this
                 .getAnimalStorageFacilitiesByCode(asfAsRelationshipDTO.getCodeASF());
         AnimalSpecies animalSpecies = this.getAnimalSpeciesByName(asfAsRelationshipDTO.getNameAS());
-
+        HashMap<String, List<FacilityQuantity>> data = this.getQuantityOfAllAnimalBeforeTime(LocalDate.now());
+        List<FacilityQuantity> facilityQuantitys = data.get(animalStorageFacilities.getCode()) == null
+                ? new ArrayList<>()
+                : data.get(animalStorageFacilities.getCode());
+        for (int i = 0; i < facilityQuantitys.size(); i++) {
+            if (facilityQuantitys.get(i).getObjName().equals(animalSpecies.getName())) {
+                if ((facilityQuantitys.get(i).getQuantity() + asfAsRelationshipDTO.getQuantity()) < 0) {
+                    throw new InvalidDataException("Số lượng thống kê không hợp lệ");
+                }
+            }
+        }
         asfAsRelationship.setAnimalStorageFacilities(animalStorageFacilities);
         asfAsRelationship.setAnimalSpecies(animalSpecies);
         asfAsRelationship.setQuantity(asfAsRelationshipDTO.getQuantity());

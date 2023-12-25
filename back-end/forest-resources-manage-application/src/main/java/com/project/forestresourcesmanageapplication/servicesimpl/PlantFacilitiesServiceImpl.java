@@ -74,14 +74,14 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService {
 
         // kiểm tra đơn vị hành chính
         if (!plantFacilitiesExisting.getAdministration().getCode()
-                .equals(plantFacilitiesDTO.getAdminstrationCode())) {
+                .equals(plantFacilitiesDTO.getAdministrationCode())) {
             try {
                 Administration administration = this.adminstrationService
-                        .retrieveAdministrationByCode(plantFacilitiesDTO.getAdminstrationCode());
+                        .retrieveAdministrationByCode(plantFacilitiesDTO.getAdministrationCode());
                 plantFacilitiesExisting.setAdministration(administration);
             } catch (Exception exception) {
                 throw new DataNotFoundException("Không tìm thấy cơ sở hành chính với code = "
-                        + plantFacilitiesDTO.getAdminstrationCode());
+                        + plantFacilitiesDTO.getAdministrationCode());
             }
         }
 
@@ -119,11 +119,11 @@ public class PlantFacilitiesServiceImpl implements PlantFacilitiesService {
         // kiểm tra đơn vị hành chính
         try {
             Administration administration = this.adminstrationService
-                    .retrieveAdministrationByCode(plantFacilitiesDTO.getAdminstrationCode());
+                    .retrieveAdministrationByCode(plantFacilitiesDTO.getAdministrationCode());
             plantFacilities.setAdministration(administration);
         } catch (Exception exception) {
             throw new DataNotFoundException(
-                    "Không tìm thấy cơ sở hành chính với code = " + plantFacilitiesDTO.getAdminstrationCode());
+                    "Không tìm thấy cơ sở hành chính với code = " + plantFacilitiesDTO.getAdministrationCode());
         }
 
         plantFacilities.setCode(code);

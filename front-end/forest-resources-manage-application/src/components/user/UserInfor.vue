@@ -67,7 +67,8 @@
                   Vai trò:<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.role }}</span>
                 </div>
                 <div class="mb-2 text-gray-700">
-                  Trực thuộc (mã):<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.administration }}</span>
+                  Trực thuộc (mã):<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.administration
+                  }}</span>
                 </div>
                 <div class="mb-2 text-gray-700 mt-2">
                   Email:<span class="font-[600] ml-2 text-lg text-gray-500">{{ userStore.email }}</span>
@@ -133,13 +134,13 @@
         </el-form>
         <template #footer>
           <span class="grid grid-cols-16 gap-4">
-            <button class="p-2 mr-3  font-sans font-bold text-sm
+            <!-- <button class="p-2 mr-3  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false">
               Xóa
-            </button>
+            </button> -->
             <button class=" p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 

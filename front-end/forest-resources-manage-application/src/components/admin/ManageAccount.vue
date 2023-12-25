@@ -90,14 +90,14 @@
                 </el-form>
                 <template #footer>
                     <span class="grid grid-cols-16 gap-4">
-                        <button class="p-2 mr-3  font-sans font-bold text-sm
+                        <!-- <button class="p-2 mr-3  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false"
                             v-if="formType == 'update'">
                             Xóa
-                        </button>
+                        </button> -->
                         <button class=" p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
@@ -465,7 +465,7 @@ export default {
                 type: 'application/json'
             });
             user.append('body', formData)
-            updateUser(row.username, user)
+            userApi.updateUserByAdmin(row.username, user)
                 .then((res) => {
                     row.loading = false
                     this.$notify({

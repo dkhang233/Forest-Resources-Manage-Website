@@ -10,6 +10,8 @@ import com.project.forestresourcesmanageapplication.dtos.NewUserDTO;
 import com.project.forestresourcesmanageapplication.dtos.ResetPasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
 import com.project.forestresourcesmanageapplication.dtos.verifyOtpDTO;
+import com.project.forestresourcesmanageapplication.models.AccessLog;
+import com.project.forestresourcesmanageapplication.responses.AccessLogResponse;
 
 public interface UserService {
 	List<UserDTO> retrieveAllUsers();
@@ -32,4 +34,7 @@ public interface UserService {
 
 	void changePasswordWithCurrentPassword(String username, ChangePasswordDTO changePasswordDTO);
 
+	List<AccessLogResponse> getAllAccessLog(String username);
+
+	void createAccessLog(AccessLog accessLog);
 }

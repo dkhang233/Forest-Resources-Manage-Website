@@ -6,13 +6,22 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.forestresourcesmanageapplication.dtos.ChangePasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.LoginDTO;
 import com.project.forestresourcesmanageapplication.dtos.NewUserDTO;
@@ -22,21 +31,26 @@ import com.project.forestresourcesmanageapplication.dtos.verifyOtpDTO;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataAlreadyExistsException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.DataNotFoundException;
 import com.project.forestresourcesmanageapplication.exceptionhandling.InvalidDataException;
+import com.project.forestresourcesmanageapplication.models.AccessLog;
 import com.project.forestresourcesmanageapplication.models.Administration;
 import com.project.forestresourcesmanageapplication.models.User;
+import com.project.forestresourcesmanageapplication.repositories.AccessLogRepository;
 import com.project.forestresourcesmanageapplication.repositories.AdministrationRepository;
 import com.project.forestresourcesmanageapplication.repositories.UserRepository;
+import com.project.forestresourcesmanageapplication.responses.AccessLogResponse;
 import com.project.forestresourcesmanageapplication.services.UserService;
 import com.project.forestresourcesmanageapplication.utils.EmailUtil;
 import com.project.forestresourcesmanageapplication.utils.OtpUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final AdministrationRepository administrationRepository;
+	private final AccessLogRepository accessLogRepository;
 	private final EmailUtil emailUtil;
 	private final OtpUtil otpUtil;
 
@@ -216,6 +230,29 @@ public class UserServiceImpl implements UserService {
 		throw new InvalidDataException("Mật khẩu hiện tại chưa chính xác");
 	}
 
+	@Override
+	public List<AccessLogResponse> getAllAccessLog(String username) {
+		List<AccessLogResponse> accessLogs = this.accessLogRepository.findAll().stream().map((log) -> {
+			AccessLogResponse accessLogResponse;
+			accessLogResponse = AccessLogResponse.builder()
+					.id(log.getId())
+					.username(log.getUsername())
+					.httpMethod(log.getHttpMethod())
+					.requestUrl(log.getRequestUrl())
+					.statusCode(log.getStatusCode())
+					.requestBody(this.toMap(new JSONObject(log.getRequestBody())))
+					.responseBody(this.toMap(new JSONObject(log.getRequestBody())))
+					.build();
+			return accessLogResponse;
+		}).toList();
+		return accessLogs;
+	}
+
+	@Override
+	public void createAccessLog(AccessLog accessLog) {
+		this.accessLogRepository.save(accessLog);
+	}
+
 	// Chuyển từ user sang userDTO
 	public UserDTO mapUserToUserDTO(User user) {
 		UserDTO userDTO = UserDTO.builder()
@@ -271,4 +308,33 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	public static HashMap<String, Object> toMap(JSONObject jsonobj) throws JSONException {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		Iterator<String> keys = jsonobj.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			Object value = jsonobj.get(key);
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			} else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			map.put(key, value);
+		}
+		return map;
+	}
+
+	public static List<Object> toList(JSONArray array) throws JSONException {
+		List<Object> list = new ArrayList<Object>();
+		for (int i = 0; i < array.length(); i++) {
+			Object value = array.get(i);
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			} else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			list.add(value);
+		}
+		return list;
+	}
 }

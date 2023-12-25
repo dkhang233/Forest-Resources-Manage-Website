@@ -1,5 +1,5 @@
 <template>
-    <p class="container bg-[url('@/assets/image/wood-type-bg.jpg')] " >
+    <p class="container bg-[url('@/assets/image/wood-type-bg.jpg')] ">
     <div class="grid grid-cols-20 px-[9rem] pt-[3rem]">
         <div class="col-start-3">
             <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always" v-loading="loadingStatus">
@@ -20,7 +20,7 @@
             <el-dialog id="dialog" class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
-                    dark:bg-neutral-700" top="4vh" v-model="dialogFormVisible" :title="formTitle"
+                    dark:bg-neutral-700" top="15vh" v-model="dialogFormVisible" :title="formTitle"
                 :before-close="handleCancel">
                 <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
                     label-position="top">
@@ -297,10 +297,12 @@ export default {
                 }
             )
                 .then(() => {
-                    this.loadingStatus = true
+                    const loading = this.$loading({
+                        target: this.$el.querySelector('#dialog')
+                    })
                     woodApi.deleteProductionType(this.form.woodType)
                         .then((res) => {
-                            this.loadingStatus = false
+                            loading.close()
                             this.dialogFormVisible = false
                             this.$notify({
                                 title: 'Thành công',
@@ -310,9 +312,20 @@ export default {
                             this.retrieveData()
                         })
                         .catch((err) => {
+                            loading.close()
+                            let message = ''
+                            try {
+                                message = err.response.data.messages
+                                this.$notify({
+                                    title: 'Đã xảy ra lỗi',
+                                    message: message,
+                                    type: 'error',
+                                })
+                            } catch (error) {
 
+                            }
+                            console.log(err)
                         })
-                    this.dialogFormVisible = false
                 })
                 .catch(() => {
                 })

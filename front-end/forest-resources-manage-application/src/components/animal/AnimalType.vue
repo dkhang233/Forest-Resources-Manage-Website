@@ -18,7 +18,7 @@
             <!-- <img class="h-[550px] rounded-s-3xl" src="@/assets/image/default-animal.jpg" alt="" v-if="animalImage == ''" /> -->
             <!-- <img class="h-[550px] rounded-s-3xl" :src="animalImage" alt="" v-if="animalImage != ''" /> -->
             <div class="col-start-11">
-                <el-card class=" h-[550px] w-[50rem] rounded-[20px]" shadow="always"  v-loading="loadingStatus">
+                <el-card class=" h-[550px] w-[50rem] rounded-[20px]" shadow="always" v-loading="loadingStatus">
                     <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
                         style="--el-table-row-hover-bg-color: #D0D3D4;" fit @row-click="changeAnimalImage">
                         <el-table-column v-for="( item, index ) in  tableColumns " :key="index" :label="item.title"
@@ -29,12 +29,12 @@
                                 <el-input v-model="search" size="large" placeholder="Tìm kiếm theo tên" />
                             </template>
                             <template #default="scope">
-                                <el-button @click="handleEdit(scope.$index, scope.row)">Chi tiết</el-button>
+                                <el-button @click="handleClickUpdate(scope.$index, scope.row)">Chi tiết</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-card>
-                <el-dialog class=" block rounded-lg
+                <el-dialog id="dialog" class=" block rounded-lg
                     bg-white p-6 
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="4vh" v-model="dialogFormVisible" :title="formTitle"
@@ -89,7 +89,7 @@
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false"
+                        border transition hover:-translate-y-0.5 duration-150" @click="handleDelete"
                                 v-if="formType == 'update'">
                                 Xóa
                             </button>
@@ -183,7 +183,7 @@ export default {
                 animalType: [{ validator: this.checkEmptyField, trigger: 'blur' }],
                 mainFood: [{ validator: this.checkEmptyField, trigger: 'blur' }],
                 mainDisease: [{ validator: this.checkEmptyField, trigger: 'blur' }],
-                longevity: [{ validator: this.checkEmptyField, trigger: 'blur' }],
+                longevity: [{ validator: this.checkLongevity, trigger: 'blur' }],
                 fluctuationName: [{ validator: this.checkEmptyField, trigger: 'blur' }],
             },
         }
@@ -263,9 +263,12 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#dialog')
+                            })
                             let animal = new FormData()
                             animal.append('file-image', this.imageFile)
+                            this.form.fluctuationId = this.form.fluctuationName === 'Không theo chu kỳ' ? 2 : 1
                             let formJson = JSON.stringify(this.form)
                             const formData = new Blob([formJson], {
                                 type: 'application/json'
@@ -274,7 +277,7 @@ export default {
                             console.log(`animal: ${formData}`)
                             animalApi.createAmimal(this.form.name, animal)
                                 .then((res) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     this.dialogFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
@@ -283,7 +286,7 @@ export default {
                                     })
                                     this.retrieveData()
                                 }).catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     let message = ''
                                     try {
                                         message = err.response.data.messages
@@ -309,7 +312,7 @@ export default {
         // Cập nhập thông tin tài khoản người dùng
 
         //Hàm xử lí khi ấn vào nút "Chi tiết"
-        handleEdit(index, row) {
+        handleClickUpdate(index, row) {
             if (this.$refs.ruleFormRef != null) {
                 this.$refs.ruleFormRef.clearValidate()
             }
@@ -361,8 +364,7 @@ export default {
             this.imageFile = null
         },
 
-        // Hàm xử lí khi ấn vào nút "Xóa"
-        handleDelete(index, row) {
+        handleDelete() {
             this.$confirm(
                 'Xóa thông tin này. Tiếp tục?',
                 'Xác nhận',
@@ -373,8 +375,35 @@ export default {
                 }
             )
                 .then(() => {
-                    // this.updateAdministration()
-                    this.dialogFormVisible = false
+                    const loading = this.$loading({
+                        target: this.$el.querySelector('#dialog')
+                    })
+                    animalApi.deleteAnimalSpecie(this.form.name)
+                        .then(() => {
+                            loading.close()
+                            this.dialogFormVisible = false
+                            this.$notify({
+                                title: 'Thành công',
+                                message: 'Xóa thành công',
+                                type: 'success'
+                            })
+                            this.retrieveData()
+                        })
+                        .catch((err) => {
+                            loading.close()
+                            let message = ''
+                            try {
+                                message = err.response.data.messages
+                                this.$notify({
+                                    title: 'Đã xảy ra lỗi',
+                                    message: message,
+                                    type: 'error',
+                                })
+                            } catch (error) {
+
+                            }
+                            console.log(err)
+                        })
                 })
                 .catch(() => {
                 })
@@ -437,7 +466,9 @@ export default {
                         }
                     )
                         .then(() => {
-                            this.loadingStatus = true
+                            const loading = this.$loading({
+                                target: this.$el.querySelector('#dialog')
+                            })
                             let animal = new FormData()
                             animal.append('file-image', this.imageFile)
                             this.form.fluctuationId = this.form.fluctuationName === 'Không theo chu kỳ' ? 2 : 1
@@ -448,7 +479,8 @@ export default {
                             animal.append('body', formData)
                             animalApi.updateAnimalSpecie(this.form.name, animal)
                                 .then((res) => {
-                                    this.loadingStatus = false
+                                    loading.close()
+                                    this.dialogFormVisible = false
                                     this.$notify({
                                         title: 'Thành công',
                                         message: 'Cập nhập thành công',
@@ -456,7 +488,7 @@ export default {
                                     })
                                     this.retrieveData()
                                 }).catch((err) => {
-                                    this.loadingStatus = false
+                                    loading.close()
                                     try {
                                         this.$notify({
                                             title: 'Đã xảy ra lỗi',
@@ -468,7 +500,6 @@ export default {
                                         console.log(error)
                                     }
                                 })
-                            this.dialogFormVisible = false
                         })
                         .catch((err) => {
                             console.log(err)
@@ -499,6 +530,15 @@ export default {
             }
             return callback()
         },
+        checkLongevity(rule, value, callback) {
+            if (value == null || /^\s*$/.test(value)) {
+                return callback(new Error('Vui lòng nhập thông tin này'))
+            }
+            if(isNaN(value) || value <= 0){
+                return callback(new Error('Thông tin không hợp lệ'))
+            }
+            return callback()
+        }
     },
     created() {
         this.retrieveData()

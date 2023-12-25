@@ -7,7 +7,7 @@ export const constantRoutes = [
     component: () => import('../components/common/Main'),
     children: [
       {
-        path: 'home',
+        path: '',
         component: () => import('@/components/home/Home')
       },
       {
@@ -56,6 +56,10 @@ export const constantRoutes = [
       {
         path : 'map',
         component : () => import('@/components/map/MapView')
+      },
+      {
+        path : 'change-pass',
+        component : () => import('@/components/login/ChangePassWithCurrentPass')
       }
     ]
   },

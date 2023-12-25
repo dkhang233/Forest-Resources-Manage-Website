@@ -24,10 +24,13 @@ import com.project.forestresourcesmanageapplication.dtos.NewUserDTO;
 import com.project.forestresourcesmanageapplication.dtos.ResetPasswordDTO;
 import com.project.forestresourcesmanageapplication.dtos.UserDTO;
 import com.project.forestresourcesmanageapplication.dtos.verifyOtpDTO;
+import com.project.forestresourcesmanageapplication.models.AccessLog;
+import com.project.forestresourcesmanageapplication.responses.AccessLogResponse;
 import com.project.forestresourcesmanageapplication.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -91,15 +94,16 @@ public class UserController {
 		return ResponseEntity.ok("");
 	}
 
-	@PostMapping("/change-password")
+	@PutMapping("/change-password")
 	public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
 		this.userService.changePassword(changePasswordDTO);
 		return ResponseEntity.ok("Mật khẩu đã được thay đổi");
 	}
 
-	@PostMapping("/change-password/{username}")
-	public ResponseEntity<?> changePasswordWithCurrentPassword(@PathVariable String username,@RequestBody ChangePasswordDTO changePasswordDTO) {
-		this.userService.changePasswordWithCurrentPassword(username,changePasswordDTO);
+	@PutMapping("/change-password/{username}")
+	public ResponseEntity<?> changePasswordWithCurrentPassword(@PathVariable String username,
+			@RequestBody ChangePasswordDTO changePasswordDTO) {
+		this.userService.changePasswordWithCurrentPassword(username, changePasswordDTO);
 		return ResponseEntity.ok("Mật khẩu đã được thay đổi");
 	}
 
@@ -108,17 +112,10 @@ public class UserController {
 		String otp = this.userService.verifyOtp(verifyOtpDTO);
 		return ResponseEntity.ok(otp);
 	}
-	// @PostMapping("{username}/avatar")
-	// public ResponseEntity<String> uploadAvatar(@RequestParam(name = "model")
-	// String model,@RequestParam(name = "avatar") MultipartFile file){
-	// return ResponseEntity.ok(model);
-	// }
 
-	// @PostMapping("/{username}")
-	// public ResponseEntity<String> updateUser(@PathVariable String
-	// username,@RequestBody UserDTO userDTO) {
-	// userDTO = this.userService.updateUser(username,userDTO);
-	// return ResponseEntity.badRequest().build();
-	// }
+	@GetMapping("/access-log/{username}")
+	public ResponseEntity<?> getMethodName(@PathVariable String username) {
+		return ResponseEntity.ok(this.userService.getAllAccessLog(username));
+	}
 
 }

@@ -339,8 +339,12 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
 
     @Override
     public void deleteOperationFormByName(String name) {
-        OperationForm operationForm = this.getOperationFormByName(name);
-        this.operationFormRepository.deleteById(operationForm.getName());
+        try {
+            OperationForm operationForm = this.getOperationFormByName(name);
+            this.operationFormRepository.deleteById(operationForm.getName());
+        } catch (Exception e) {
+            throw new InvalidDataException("Hình thức hoạt động này vẫn đang được sử dụng trong các cơ sở");
+        }
     }
 
     // -------------------------QUAN HỆ CSSX GỖ VÀ LOẠI HÌNH SX------------------
@@ -380,7 +384,16 @@ public class WoodFacilitiesServiceImpl implements WoodFacilitiesService {
         WoodFacilities woodFacilities = this
                 .getWoodFacilitiesByCode(wfPtRelationshipDTO.getCodeWF());
         ProductionType productionType = this.getProductionTypeByWoodName(wfPtRelationshipDTO.getNamePT());
-
+        HashMap<String, List<FacilityQuantity>> data = this.getAllQuantityOfAnimal(Date.valueOf(LocalDate.now()));
+        List<FacilityQuantity> facilityQuantitys = data.get(woodFacilities.getCode()) == null ? new ArrayList<>()
+                : data.get(woodFacilities.getCode());
+        for (int i = 0; i < facilityQuantitys.size(); i++) {
+            if (facilityQuantitys.get(i).getObjName().equals(productionType.getWoodType())) {
+                if ((facilityQuantitys.get(i).getQuantity() + wfPtRelationshipDTO.getQuantity()) < 0) {
+                    throw new InvalidDataException("Số lượng thống kê không hợp lệ");
+                }
+            }
+        }
         wfPtRelationship.setWoodFacilities(woodFacilities);
         wfPtRelationship.setProductionType(productionType);
         wfPtRelationship.setQuantity(wfPtRelationshipDTO.getQuantity());

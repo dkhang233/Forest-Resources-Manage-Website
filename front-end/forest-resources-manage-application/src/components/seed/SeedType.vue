@@ -80,7 +80,7 @@
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="dialogFormVisible = false"
+                        border transition hover:-translate-y-0.5 duration-150" @click="handleDelete"
                                 v-if="formType == 'update'">
                                 Xóa
                             </button>
@@ -345,7 +345,7 @@ export default {
         },
 
         // Hàm xử lí khi ấn vào nút "Xóa"
-        handleDelete(index, row) {
+        handleDelete() {
             this.$confirm(
                 'Xóa thông tin này. Tiếp tục?',
                 'Xác nhận',
@@ -356,8 +356,35 @@ export default {
                 }
             )
                 .then(() => {
-                    // this.updateAdministration()
-                    this.dialogFormVisible = false
+                    const loading = this.$loading({
+                        target: this.$el.querySelector('#dialog')
+                    })
+                    seedApi.deleteSeedType(this.form.name)
+                        .then(() => {
+                            loading.close()
+                            this.dialogFormVisible = false
+                            this.$notify({
+                                title: 'Thành công',
+                                message: 'Xóa thành công',
+                                type: 'success'
+                            })
+                            this.retrieveData()
+                        })
+                        .catch((err) => {
+                            loading.close()
+                            let message = ''
+                            try {
+                                message = err.response.data.messages
+                                this.$notify({
+                                    title: 'Đã xảy ra lỗi',
+                                    message: message,
+                                    type: 'error',
+                                })
+                            } catch (error) {
+
+                            }
+                            console.log(err)
+                        })
                 })
                 .catch(() => {
                 })

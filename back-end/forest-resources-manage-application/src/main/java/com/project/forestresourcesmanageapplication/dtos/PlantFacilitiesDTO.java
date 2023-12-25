@@ -12,5 +12,5 @@ public class PlantFacilitiesDTO {
 
     private long capacity;
 
-    private String adminstrationCode;
+    private String administrationCode;
 }

@@ -40,7 +40,8 @@
                             <el-input v-model="form.name" />
                         </el-form-item>
                         <el-form-item label="Ngày thành lập" prop="date">
-                            <el-input v-model="form.date" />
+                            <el-date-picker v-model="form.date" type="date" locale="vi" placeholder="Chọn ngày thành lập"
+                                size="default" :disabled-date="disabledDate" />
                         </el-form-item>
                         <el-form-item label="Sức chứa" prop="capacity">
                             <el-input v-model="form.capacity" />
@@ -56,7 +57,7 @@
                         text-white rounded-lg shadow-lg 
                         px-5 bg-red-500 shadow-blue-100 
                         hover:bg-opacity-90  hover:shadow-lg 
-                        border transition hover:-translate-y-0.5 duration-150" @click="handleDeleteOperationForm"
+                        border transition hover:-translate-y-0.5 duration-150" @click="handleDelete"
                             v-if="formType == 'update'">
                             Xóa
                         </button>
@@ -111,7 +112,7 @@ export default {
                 name: '',
                 date: '',
                 capacity: 1,
-                administrationCode: '' 
+                administrationCode: ''
             },
             formBackUp: null,
             formType: 'update',
@@ -287,7 +288,7 @@ export default {
 
         // --------------Xử lí trong dialog "Thông tin chi tiết" -------------------------
         // Hàm xử lí khi ấn vào nút "Xóa"
-        handleDeleteOperationForm(index, row) {
+        handleDelete() {
             this.$confirm(
                 'Xóa thông tin này. Tiếp tục?',
                 'Xác nhận',
@@ -298,10 +299,12 @@ export default {
                 }
             )
                 .then(() => {
-                    this.loadingStatus = true
-                    woodApi.deleteOperationForm(this.form.name)
+                    const loading = this.$loading({
+                        target: this.$el.querySelector('#dialog')
+                    })
+                    seedApi.deleteFacility(this.form.code)
                         .then((res) => {
-                            this.loadingStatus = false
+                            loading.close()
                             this.dialogFormVisible = false
                             this.$notify({
                                 title: 'Thành công',
@@ -311,6 +314,7 @@ export default {
                             this.retrieveData()
                         })
                         .catch((err) => {
+                            loading.close()
                             try {
                                 this.$notify({
                                     title: 'Đã xảy ra lỗi',
@@ -385,6 +389,9 @@ export default {
             }
             return callback()
         },
+        disabledDate(date) {
+            return date > Date.now() ? true : false
+        }
     },
     created() {
         this.retrieveData()

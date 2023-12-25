@@ -294,7 +294,7 @@ export default {
                     activeItem[0].classList.remove('bg-primary-200');
                 }
                 const listing = document.getElementById(
-                    `listing-${feature.properties.code}`
+                    `listing-${feature.properties.code}-${feature.properties.type}`
                 );
                 listing.classList.add('bg-primary-200');
             });
@@ -480,168 +480,194 @@ export default {
             }
         },
         addCoordinates() {
-            if (this.form.code == '' || this.form.type == '' || this.form.lat == ''  || this.form.lng == '' ) {
+            if (this.form.code == '' || this.form.type == '') {
                 this.$message({
                     message: 'Vui lòng nhập đủ thông tin',
                     type: 'error'
                 })
             }
             else {
-                this.$confirm(
-                    'Xóa vị trí này. Tiếp tục?',
-                    'Xác nhận',
-                    {
-                        confirmButtonText: 'OK',
-                        cancelButtonText: 'Hủy',
-                        type: 'warning',
-
-                    }
-                )
-                    .then(() => {
-                        this.loadingStatus = true
-                        let type = this.form.type
-                        if (type == 'animal') {
-                            animalApi.updateCoordinates(this.form)
-                                .then((res) => {
-                                    let code = res.data.code
-                                    let lng = res.data.lng
-                                    let lat = res.data.lat
-                                    if (lng != '' && lat != '') {
-                                        let feature = {
-                                            "type": "Feature",
-                                            "geometry": {
-                                                "type": "Point",
-                                                "coordinates": [
-                                                    lng, lat
-                                                ]
-                                            },
-                                            "properties": {
-                                                'type': 'animal',
-                                                'code': code,
-                                            }
-                                        }
-                                        this.buildLocationList(feature)
-                                        this.addMarkers(feature)
-                                    }
-                                    this.$notify({
-                                        title: 'Thành công',
-                                        message: 'Cập nhập thành công',
-                                        type: 'success'
-                                    })
-                                    this.loadingStatus = false
-                                })
-                                .catch((err) => {
-                                    this.loadingStatus = false
-                                    let message = ''
-                                    try {
-                                        message = err.response.data.messages
-                                        this.$notify({
-                                            title: 'Đã xảy ra lỗi',
-                                            message: message,
-                                            type: 'error',
-                                        })
-                                    } catch (error) {
-
-                                    }
-                                    console.log(err)
-                                })
-                        }
-                        if (type == 'wood') {
-                            woodApi.updateCoordinates(this.form)
-                                .then((res) => {
-                                    let code = res.data.code
-                                    let lng = res.data.lng
-                                    let lat = res.data.lat
-                                    if (lng != '' && lat != '') {
-                                        let feature = {
-                                            "type": "Feature",
-                                            "geometry": {
-                                                "type": "Point",
-                                                "coordinates": [
-                                                    lng, lat
-                                                ]
-                                            },
-                                            "properties": {
-                                                'type': 'wood',
-                                                'code': code,
-                                            }
-                                        }
-                                        this.buildLocationList(feature)
-                                        this.addMarkers(feature)
-                                    }
-                                    this.$notify({
-                                        title: 'Thành công',
-                                        message: 'Cập nhập thành công',
-                                        type: 'success'
-                                    })
-                                    this.loadingStatus = false
-                                })
-                                .catch((err) => {
-                                    this.loadingStatus = false
-                                    let message = ''
-                                    try {
-                                        message = err.response.data.messages
-                                        this.$notify({
-                                            title: 'Đã xảy ra lỗi',
-                                            message: message,
-                                            type: 'error',
-                                        })
-                                    } catch (error) {
-
-                                    }
-                                    console.log(err)
-                                })
-                        }
-                        if (type == 'seed') {
-                            seedApi.updateCoordinates(this.form)
-                                .then((res) => {
-                                    let code = res.data.code
-                                    let lng = res.data.lng
-                                    let lat = res.data.lat
-                                    if (lng != '' && lat != '') {
-                                        let feature = {
-                                            "type": "Feature",
-                                            "geometry": {
-                                                "type": "Point",
-                                                "coordinates": [
-                                                    lng, lat
-                                                ]
-                                            },
-                                            "properties": {
-                                                'type': 'seed',
-                                                'code': code,
-                                            }
-                                        }
-                                        this.buildLocationList(feature)
-                                        this.addMarkers(feature)
-                                    }
-                                    this.$notify({
-                                        title: 'Thành công',
-                                        message: 'Cập nhập thành công',
-                                        type: 'success'
-                                    })
-                                    this.loadingStatus = false
-                                })
-                                .catch((err) => {
-                                    this.loadingStatus = false
-                                    let message = ''
-                                    try {
-                                        message = err.response.data.messages
-                                        this.$notify({
-                                            title: 'Đã xảy ra lỗi',
-                                            message: message,
-                                            type: 'error',
-                                        })
-                                    } catch (error) {
-
-                                    }
-                                    console.log(err)
-                                })
-                        }
+                if (this.form.lat == '' || this.form.lng == '') {
+                    this.$message({
+                        message: 'Vui lòng chọn tọa độ trên bản đồ',
+                        type: 'error'
                     })
-                    .catch((err) => {
+                }
+                else {
+                    this.$confirm(
+                        'Xóa vị trí này. Tiếp tục?',
+                        'Xác nhận',
+                        {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Hủy',
+                            type: 'warning',
 
-                    })
+                        }
+                    )
+                        .then(() => {
+                            this.loadingStatus = true
+                            let type = this.form.type
+                            if (type == 'animal') {
+                                animalApi.updateCoordinates(this.form)
+                                    .then((res) => {
+                                        let code = res.data.code
+                                        let lng = res.data.lng
+                                        let lat = res.data.lat
+                                        if (lng != '' && lat != '') {
+                                            let feature = {
+                                                "type": "Feature",
+                                                "geometry": {
+                                                    "type": "Point",
+                                                    "coordinates": [
+                                                        lng, lat
+                                                    ]
+                                                },
+                                                "properties": {
+                                                    'type': 'animal',
+                                                    'code': code,
+                                                }
+                                            }
+                                            const listing = document.getElementById(`listing-${this.form.code}-${this.form.type}`)
+                                            listing.remove()
+                                            const marker = document.getElementById(`marker-${this.form.code}-${this.form.type}`)
+                                            marker.remove()
+                                            const popUps = document.getElementsByClassName('mapboxgl-popup');
+                                            if (popUps[0]) popUps[0].remove();
+                                            this.buildLocationList(feature)
+                                            this.addMarkers(feature)
+                                        }
+                                        this.$notify({
+                                            title: 'Thành công',
+                                            message: 'Cập nhập thành công',
+                                            type: 'success'
+                                        })
+                                        this.loadingStatus = false
+                                    })
+                                    .catch((err) => {
+                                        this.loadingStatus = false
+                                        let message = ''
+                                        try {
+                                            message = err.response.data.messages
+                                            this.$notify({
+                                                title: 'Đã xảy ra lỗi',
+                                                message: message,
+                                                type: 'error',
+                                            })
+                                        } catch (error) {
+
+                                        }
+                                        console.log(err)
+                                    })
+                            }
+                            if (type == 'wood') {
+                                woodApi.updateCoordinates(this.form)
+                                    .then((res) => {
+                                        let code = res.data.code
+                                        let lng = res.data.lng
+                                        let lat = res.data.lat
+                                        if (lng != '' && lat != '') {
+                                            let feature = {
+                                                "type": "Feature",
+                                                "geometry": {
+                                                    "type": "Point",
+                                                    "coordinates": [
+                                                        lng, lat
+                                                    ]
+                                                },
+                                                "properties": {
+                                                    'type': 'wood',
+                                                    'code': code,
+                                                }
+                                            }
+                                            const listing = document.getElementById(`listing-${this.form.code}-${this.form.type}`)
+                                            listing.remove()
+                                            const marker = document.getElementById(`marker-${this.form.code}-${this.form.type}`)
+                                            marker.remove()
+                                            const popUps = document.getElementsByClassName('mapboxgl-popup');
+                                            if (popUps[0]) popUps[0].remove();
+                                            this.buildLocationList(feature)
+                                            this.addMarkers(feature)
+                                        }
+                                        this.$notify({
+                                            title: 'Thành công',
+                                            message: 'Cập nhập thành công',
+                                            type: 'success'
+                                        })
+                                        this.loadingStatus = false
+                                    })
+                                    .catch((err) => {
+                                        this.loadingStatus = false
+                                        let message = ''
+                                        try {
+                                            message = err.response.data.messages
+                                            this.$notify({
+                                                title: 'Đã xảy ra lỗi',
+                                                message: message,
+                                                type: 'error',
+                                            })
+                                        } catch (error) {
+
+                                        }
+                                        console.log(err)
+                                    })
+                            }
+                            if (type == 'seed') {
+                                seedApi.updateCoordinates(this.form)
+                                    .then((res) => {
+                                        let code = res.data.code
+                                        let lng = res.data.lng
+                                        let lat = res.data.lat
+                                        if (lng != '' && lat != '') {
+                                            let feature = {
+                                                "type": "Feature",
+                                                "geometry": {
+                                                    "type": "Point",
+                                                    "coordinates": [
+                                                        lng, lat
+                                                    ]
+                                                },
+                                                "properties": {
+                                                    'type': 'seed',
+                                                    'code': code,
+                                                }
+                                            }
+                                            const listing = document.getElementById(`listing-${this.form.code}-${this.form.type}`)
+                                            listing.remove()
+                                            const marker = document.getElementById(`marker-${this.form.code}-${this.form.type}`)
+                                            marker.remove()
+                                            const popUps = document.getElementsByClassName('mapboxgl-popup');
+                                            if (popUps[0]) popUps[0].remove();
+                                            this.buildLocationList(feature)
+                                            this.addMarkers(feature)
+                                        }
+                                        this.$notify({
+                                            title: 'Thành công',
+                                            message: 'Cập nhập thành công',
+                                            type: 'success'
+                                        })
+                                        this.loadingStatus = false
+                                    })
+                                    .catch((err) => {
+                                        this.loadingStatus = false
+                                        let message = ''
+                                        try {
+                                            message = err.response.data.messages
+                                            this.$notify({
+                                                title: 'Đã xảy ra lỗi',
+                                                message: message,
+                                                type: 'error',
+                                            })
+                                        } catch (error) {
+
+                                        }
+                                        console.log(err)
+                                    })
+                            }
+                        })
+                        .catch((err) => {
+
+                        })
+                }
             }
         },
         convertFacilityName(type) {
