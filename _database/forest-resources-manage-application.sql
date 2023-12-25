@@ -414,3 +414,20 @@ CREATE TABLE `access_history`(
     `performance` LONG NULL COMMENT 'hiệu suất',
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='lịch sử truy cập';
+
+
+-- -----------------------------------------------------
+-- Table Access Log
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `access_log`;
+CREATE TABLE `access_log` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `username` VARCHAR(100) NOT NULL,
+    `http_method` VARCHAR(10) NOT NULL,
+    `request_url` VARCHAR(150) NOT NULL,
+    `status_code` INT NOT NULL,
+    `request_body` LONGTEXT,
+    `response_body` LONGTEXT.
+    FOREIGN KEY (`username`)
+        REFERENCES `users` (`username`)
+)  ENGINE=INNODB CHARACTER SET=UTF8MB4 COLLATE = UTF8MB4_BIN COMMENT='lịch sử tác động'
