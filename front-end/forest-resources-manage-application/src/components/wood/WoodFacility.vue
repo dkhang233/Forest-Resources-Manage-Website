@@ -204,11 +204,11 @@ export default {
             // -------------------Phần biểu đồ--------------
             quarter: startOfQuarter(new Date()),
             beginMonth: {
-                month: new Date().getMonth() - 6,
-                year: new Date().getFullYear()
+                month: new Date().getMonth >= 6 ? new Date().getMonth() - 6 : new Date().getMonth() + 6,
+                year: new Date().getMonth > 6 ? new Date().getFullYear() : new Date().getFullYear() - 1
             },
             endMonth: {
-                month: new Date().getMonth() - 1,
+                month: new Date().getMonth(),
                 year: new Date().getFullYear()
             },
             beginQuarter: new Date('2023-01-01'),

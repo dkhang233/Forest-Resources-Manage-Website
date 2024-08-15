@@ -495,7 +495,7 @@ export default {
                 }
                 else {
                     this.$confirm(
-                        'Xóa vị trí này. Tiếp tục?',
+                        'Thêm vị trí này. Tiếp tục?',
                         'Xác nhận',
                         {
                             confirmButtonText: 'OK',
@@ -528,9 +528,9 @@ export default {
                                                 }
                                             }
                                             const listing = document.getElementById(`listing-${this.form.code}-${this.form.type}`)
-                                            listing.remove()
+                                            if (listing) listing.remove();
                                             const marker = document.getElementById(`marker-${this.form.code}-${this.form.type}`)
-                                            marker.remove()
+                                            if (marker) marker.remove()
                                             const popUps = document.getElementsByClassName('mapboxgl-popup');
                                             if (popUps[0]) popUps[0].remove();
                                             this.buildLocationList(feature)
@@ -580,9 +580,9 @@ export default {
                                                 }
                                             }
                                             const listing = document.getElementById(`listing-${this.form.code}-${this.form.type}`)
-                                            listing.remove()
+                                            if (listing) listing.remove();
                                             const marker = document.getElementById(`marker-${this.form.code}-${this.form.type}`)
-                                            marker.remove()
+                                            if (marker) marker.remove()
                                             const popUps = document.getElementsByClassName('mapboxgl-popup');
                                             if (popUps[0]) popUps[0].remove();
                                             this.buildLocationList(feature)
@@ -632,9 +632,9 @@ export default {
                                                 }
                                             }
                                             const listing = document.getElementById(`listing-${this.form.code}-${this.form.type}`)
-                                            listing.remove()
+                                            if (listing) listing.remove();
                                             const marker = document.getElementById(`marker-${this.form.code}-${this.form.type}`)
-                                            marker.remove()
+                                            if (marker) marker.remove()
                                             const popUps = document.getElementsByClassName('mapboxgl-popup');
                                             if (popUps[0]) popUps[0].remove();
                                             this.buildLocationList(feature)

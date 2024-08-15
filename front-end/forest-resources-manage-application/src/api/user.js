@@ -1,21 +1,21 @@
 import { apiClient } from "./index"
 
-export const login = (user) => apiClient.post("users/login",user)
-export const resetPassword  = (email) => apiClient.post(`users/reset-password`,email)
-export const verifyOtp = (otp) => apiClient.post("users/verify-otp",otp)
-export const changePassword = (newPassword) => apiClient.put("users/change-password",newPassword)
-export const changePasswordWithCurrentPass = (username,newPassword) => apiClient.put(`users/change-password/${username}`,newPassword)
+export const login = (user) => apiClient.post("users/login", user)
+export const resetPassword = (email) => apiClient.post(`users/reset-password`, email)
+export const verifyOtp = (otp) => apiClient.post("users/verify-otp", otp)
+export const changePassword = (newPassword) => apiClient.put("users/change-password", newPassword)
+export const changePasswordWithCurrentPass = (username, newPassword) => apiClient.put(`users/change-password/${username}`, newPassword)
 export const retrieveAllUsers = () => apiClient.get("users");
 
 export const retrieveUserByUserName = (username) => apiClient.get(`users/${username}`);
 
-export const updateUserByAdmin = (username,user) => apiClient.post(`users/admin/${username}`, user, {
+export const updateUserByAdmin = (username, user) => apiClient.post(`users/admin/${username}`, user, {
     headers: {
         'Content-Type': 'multipart/form-data'
     }
 });
 
-export const updateUser = (username,user) => apiClient.post(`users/${username}`, user, {
+export const updateUser = (username, user) => apiClient.post(`users/${username}`, user, {
     headers: {
         'Content-Type': 'multipart/form-data'
     }
@@ -27,5 +27,5 @@ export const createUser = (user) => apiClient.post(`users`, user, {
     }
 });
 
-// export const IMAGE_URL = "http://localhost:8088/api/v1/users/avatar/"
-export const IMAGE_URL = "https://suitably-welcomed-tick.ngrok-free.app/api/v1/users/avatar/"
+export const IMAGE_URL = "http://localhost:8088/api/v1/users/avatar/"
+// export const IMAGE_URL = "https://suitably-welcomed-tick.ngrok-free.app/api/v1/users/avatar/"
