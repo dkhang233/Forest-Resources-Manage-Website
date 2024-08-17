@@ -1,6 +1,5 @@
 # Forest Resources Manage Application
 
----
 ### Project Description
 <p>
 This project is intended to help manage the natural resources of the administration such as: woods, animals,... It includes basic functionalities such as:
@@ -39,9 +38,36 @@ Change user info
 <ul>
 <li>Spring</li>
 <li>Vue js</li>
-<Li></Li>
+<Li>Mysql</Li>
 </ul>
 
 ---
-### Screenshots
-![image](https://user-images.githubusercontent.com/57967190/134772073-3b3b3b3b-1b3b-4b3b-8b3b-3b3b3b3b3b3b.png)
+### How to run
+<ol>
+<li>Clone this project</li>
+<li>Run the sql script [forest-resources-manage-application.sql](_database/forest-resources-manage-application.sql) to create the database</li>
+<li>Change the database configuration in the file [application.properties](back-end/forest-resources-manage-application/src/main/resources/application.properties)
+</li>
+<li>Move to [backend folder](back-end/forest-resources-manage-application) and run: 
+```shell
+mvnw spring-boot:run
+```
+</li>
+<li>Move to [frontend folder](front-end/forest-resources-manage-application) and run:
+```shell
+npm install
+npm run serve
+```
+</ol>
+
+---
+### Website Preview
+![image](screenshoot/login.png)
+![image](screenshoot/forget-password.png)
+![image](screenshoot/home.png)
+![image](screenshoot/user-info.png)
+![image](screenshoot/administration.png)
+![image](screenshoot/distribution-map.png)
+![image](screenshoot/animal-facilities.png)
+![image](screenshoot/animal-fluctuation-chart.png)
+![image](screenshoot/user-info.png)
