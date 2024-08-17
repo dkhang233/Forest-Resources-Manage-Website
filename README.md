@@ -57,7 +57,7 @@ mvnw spring-boot:run
 ```
 
 </li>
-<li>Move to <a href="front-end/forest-resources-manage-application">frontend folder and run:</a> 
+<li>Move to <a href="front-end/forest-resources-manage-application">frontend folder</a>  and run:
 
 ```shell
 npm install
