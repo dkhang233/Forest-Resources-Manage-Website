@@ -1,5 +1,5 @@
 /.metadata/
-.idea/
-.vscode/
-.metadata/
+.idea
+.vscode
+.metadata
 .project
