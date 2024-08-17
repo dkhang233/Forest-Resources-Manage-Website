@@ -43,17 +43,22 @@ Change user info
 
 ---
 ### How to run
+
 <ol>
 <li>Clone this project</li>
-<li>Run the sql script [forest-resources-manage-application.sql](_database/forest-resources-manage-application.sql) to create the database</li>
-<li>Change the database configuration in the file [application.properties](back-end/forest-resources-manage-application/src/main/resources/application.properties)
+<li>Run the sql script: <a href="_database/forest-resources-manage-application.sql">forest-resources-manage-application.sql</a>
+to create the database</li>
+<li>Change the database configuration in <a href="back-end/forest-resources-manage-application/src/main/resources/application.properties">application.properties</a>
 </li>
-<li>Move to [backend folder](back-end/forest-resources-manage-application) and run: 
+<li>Move to <a href="back-end/forest-resources-manage-application">back-end folder</a> and run:
+
 ```shell
 mvnw spring-boot:run
 ```
+
 </li>
-<li>Move to [frontend folder](front-end/forest-resources-manage-application) and run:
+<li>Move to <a href="front-end/forest-resources-manage-application">frontend folder and run:</a> 
+
 ```shell
 npm install
 npm run serve
