@@ -19,6 +19,7 @@
     "core-js": "^3.8.3",
     "date-fns": "^2.30.0",
     "element-plus": "^2.4.2",
+    "forest-resources-manage-application": "file:",
     "fs-extra": "^11.2.0",
     "mapbox-gl": "^3.0.1",
     "pinia": "^2.1.7",

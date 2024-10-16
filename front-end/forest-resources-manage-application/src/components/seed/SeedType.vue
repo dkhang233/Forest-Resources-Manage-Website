@@ -1,25 +1,17 @@
 <template>
     <div>
-        <el-row class="">
-            <el-col :offset="2">
-                <h1 class=" text-[#2C3E50] text-[25px] font-bold m-3">
-                    <font-awesome-icon class="mr-3" :icon="['fas', 'paw']" size="2xl" />
-                    Quản lí động vật
-                </h1>
-            </el-col>
-        </el-row>
         <div class="absolute top-0 w-[45%] h-full bg-center bg-cover bg-[url('@/assets/image/seed-type-bg.jpg')]"
             v-if="seedImage == ''">
         </div>
         <div class="absolute top-0 w-1/2 h-full bg-center bg-cover" :style="`background-image: url('${seedImage}');`"
             v-if="seedImage != ''">
         </div>
-        <div class="relative grid grid-cols-20 pl-[100px] pr-[90px]">
+        <div class="relative grid grid-cols-20 pl-[100px] pr-[90px] mt-4">
             <div class="col-start-11">
-                <el-card class=" h-[550px] w-[50rem] rounded-[20px]" shadow="always" v-loading="loadingStatus">
-                    <el-table :data="filterTableData" class="h-[520px] hover:cursor-pointer"
+                <el-card class="h-[33rem] w-[50rem] rounded-[20px]" shadow="always" v-loading="loadingStatus">
+                    <el-table :data="filterTableData" class="h-[32rem] hover:cursor-pointer"
                         style="--el-table-row-hover-bg-color: #D0D3D4;" fit @row-click="changeSeedImage">
-                        <el-table-column v-for="( item, index ) in  tableColumns " :key="index" :label="item.title"
+                        <el-table-column v-for="( item, index ) in tableColumns " :key="index" :label="item.title"
                             :prop="item.value" align="center">
                         </el-table-column>
                         <el-table-column :min-width="120" align="center">
@@ -48,7 +40,8 @@
                                     v-if="form.image != ''" />
                                 <font-awesome-icon
                                     class="shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] p-2 hover:cursor-pointer hover:opacity-60 hover:text-red-600"
-                                    v-if="form.image != ''" @click="resertImage" :icon="['fas', 'trash-can']" size="lg" />
+                                    v-if="form.image != ''" @click="resertImage" :icon="['fas', 'trash-can']"
+                                    size="lg" />
                                 <input class="mt-[50px]" ref="uploadInput" @change="handleFileChange" type="file"
                                     v-show="false" />
                             </el-form-item>
@@ -521,4 +514,3 @@ export default {
     word-break: normal;
 }
 </style>
-

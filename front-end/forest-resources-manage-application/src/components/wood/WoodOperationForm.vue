@@ -1,9 +1,9 @@
 <template>
     <p class="container bg-[url('@/assets/image/operation-form-bg.jpg')] bg-cover ">
-    <div class="grid grid-cols-20 px-[9rem] pt-[3rem]">
+    <div class="grid grid-cols-20 px-[9rem] pt-4">
         <div class="col-start-3">
-            <el-card class="h-[550px] w-[60rem] rounded-3xl" shadow="always" v-loading="loadingStatus">
-                <el-table :data="filterTableData" class="h-[520px] break-normal"
+            <el-card class="h-[33rem] w-[60rem] rounded-3xl" shadow="always" v-loading="loadingStatus">
+                <el-table :data="filterTableData" class="h-[32rem] break-normal"
                     style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
                     <el-table-column v-for="(item, index) in tableColumns" :key="index" :label="item.title"
                         :prop="item.value" align="center">
@@ -23,8 +23,8 @@
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="15vh" v-model="dialogFormVisible" :title="formTitle"
                 :before-close="handleCancel">
-                <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
-                    label-position="top">
+                <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules"
+                    size="default" label-position="top">
                     <div class="col-start-1 col-span-10">
                         <el-form-item label="Tên" prop="name">
                             <el-input v-model="form.name" :disabled="formType == 'update'" />
@@ -365,6 +365,3 @@ export default {
     word-break: normal;
 }
 </style>
-
-
-

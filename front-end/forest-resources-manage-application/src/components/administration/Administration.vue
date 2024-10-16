@@ -1,7 +1,7 @@
 <template>
     <div class="m-5">
         <div>
-            <el-card class="administrations w-[50%]" v-loading="loadingStatus">
+            <el-card class="administrations w-[50%] h-[35rem]" v-loading="loadingStatus">
                 <template #header>
                     <font-awesome-icon :icon="['fas', 'magnifying-glass']" flip="horizontal" size="lg" />
                     <el-input :offset="2" v-model="filterText" placeholder="Tìm kiếm đơn vị hành chính theo tên hoặc mã"
@@ -19,7 +19,8 @@
                 </el-tree-v2>
             </el-card>
         </div>
-        <img class="absolute top-0 bottom-0 right-0 left-[50rem] h-[41rem] w-[45%]" src="@/assets/image/vietnam_map.png" />
+        <img class="absolute top-0 bottom-0 right-0 left-[50rem] h-[38rem] w-[38%]"
+            src="@/assets/image/vietnam_map.png" />
         <el-dialog v-model="dialogFormVisible" title="Thông tin đơn vị hành chính">
             <el-form ref="ruleFormRef" :model="form" status-icon :rules="rules">
                 <el-form-item label="Mã" prop="code">

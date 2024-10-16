@@ -27,5 +27,6 @@ export const createUser = (user) => apiClient.post(`users`, user, {
     }
 });
 
-export const IMAGE_URL = "http://localhost:8088/api/v1/users/avatar/"
-// export const IMAGE_URL = "https://suitably-welcomed-tick.ngrok-free.app/api/v1/users/avatar/"
+// export const IMAGE_URL = "http://localhost:8088/api/v1/users/avatar/"
+// export const IMAGE_URL = "https://warm-fortress-76305-a18888609ffb.herokuapp.com/api/v1/users/avatar/"
+export const IMAGE_URL = "https://forest-agys.onrender.com/api/v1/users/avatar/"

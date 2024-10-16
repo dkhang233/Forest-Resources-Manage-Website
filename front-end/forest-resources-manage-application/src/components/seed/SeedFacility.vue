@@ -1,9 +1,9 @@
 <template>
     <p class="container bg-[url('@/assets/image/seed-facilities-bg.jpg')] bg-cover ">
-    <div class="grid grid-cols-20 px-[9rem] pt-[3rem]">
+    <div class="grid grid-cols-20 px-[9rem] pt-3">
         <div class="col-start-3">
-            <el-card class="h-[550px] w-[64rem] rounded-3xl" shadow="always" v-loading="loadingStatus">
-                <el-table :data="filterTableData" class="h-[520px] break-normal"
+            <el-card class="h-[33rem] w-[64rem] rounded-3xl" shadow="always" v-loading="loadingStatus">
+                <el-table :data="filterTableData" class="h-[32rem] break-normal"
                     style="--el-table-row-hover-bg-color: #D0D3D4;" fit>
                     <el-table-column label="Mã" prop="code" align="center">
                     </el-table-column>
@@ -30,8 +30,8 @@
                     shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]
                     dark:bg-neutral-700" top="4vh" v-model="dialogFormVisible" :title="formTitle"
                 :before-close="handleCancel">
-                <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules" size="default"
-                    label-position="top">
+                <el-form class="grid grid-cols-10" ref="ruleFormRef" :model="form" status-icon :rules="rules"
+                    size="default" label-position="top">
                     <div class="col-start-1 col-span-10">
                         <el-form-item label="Mã" prop="code">
                             <el-input v-model="form.code" :disabled="formType == 'update'" />
@@ -40,8 +40,8 @@
                             <el-input v-model="form.name" />
                         </el-form-item>
                         <el-form-item label="Ngày thành lập" prop="date">
-                            <el-date-picker v-model="form.date" type="date" locale="vi" placeholder="Chọn ngày thành lập"
-                                size="default" :disabled-date="disabledDate" />
+                            <el-date-picker v-model="form.date" type="date" locale="vi"
+                                placeholder="Chọn ngày thành lập" size="default" :disabled-date="disabledDate" />
                         </el-form-item>
                         <el-form-item label="Sức chứa" prop="capacity">
                             <el-input v-model="form.capacity" />
@@ -403,6 +403,3 @@ export default {
     word-break: normal;
 }
 </style>
-
-
-

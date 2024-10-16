@@ -49,7 +49,7 @@ import "mapbox-gl/dist/mapbox-gl.css"
 import mapboxgl from 'mapbox-gl'
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-mapboxgl.accessToken = "pk.eyJ1IjoiZGtoYW5nMjMzIiwiYSI6ImNscWQ3bzk2djA5ejIya3BuYXM4dm11NWMifQ.EgYHhPNYsqKwlrX_GKOzAw"
+mapboxgl.accessToken = "pk.eyJ1IjoiZGtoYW5nMjMzIiwiYSI6ImNtMWEzeGZzOTFmdnYyanNqdjcyeTZmc3oifQ.yZ46LQ3CDpQtK_iRdzqdlg"
 export default {
     data() {
         return {

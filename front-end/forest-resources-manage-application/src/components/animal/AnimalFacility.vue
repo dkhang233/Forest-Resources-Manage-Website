@@ -1,14 +1,16 @@
 <template>
-    <div class="grid grid-cols-10 container bg-[url('@/assets/image/animal-facilities-bg.jpg')] bg-cover "
+    <div class="w-[100%] grid grid-cols-10 container bg-[url('@/assets/image/animal-facilities-bg.jpg')] bg-cover "
         v-loading="loadingStatus">
         <div
-            class="col-start-2 col-span-8 grid grid-cols-10 rounded-[25px] bg-white mt-4 p-5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]">
-            <span class="col-start-3 col-span-7 font-bold text-lg">Biểu đồ thống kê tổng số lượng động vật lưu trữ tại các
+            class="col-start-2 col-span-8 grid grid-cols-10 rounded-[25px] bg-white mt-4 mb-7 p-5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]">
+            <span class="col-start-3 col-span-7 font-bold text-lg">Biểu đồ thống kê tổng số lượng động vật lưu trữ tại
+                các
                 cơ
                 sở</span>
-            <stacked-area-chart class="col-start-3 col-span-7  h-[500px] mt-5" :chart-label="chartLabel"
+            <stacked-area-chart class="col-start-3 col-span-7  h-[400px] mt-5" :chart-label="chartLabel"
                 :chart-data="chartData" v-if="chartData.size != 0"></stacked-area-chart>
-            <el-select v-model="dataType" class="mt-[3rem] mr-3 col-start-3  col-span-1" placeholder="Select" size="large">
+            <el-select v-model="dataType" class="mt-[3rem] mr-3 col-start-3  col-span-1" placeholder="Select"
+                size="large">
                 <el-option v-for="item in dataTypes" :key="item.label" :label="item.label" :value="item.value" />
             </el-select>
             <div class="mt-6 col-start-4  col-span-4 grid grid-cols-2 gap-3" v-if="dataType == 'month'">
@@ -43,11 +45,11 @@
             </div>
         </div>
 
-        <div class="col-start-2 col-span-8 pt-[8rem] pb-[4rem] ">
+        <div class="w-[100%] col-start-2 col-span-8 pt-[4rem] pb-[2rem]">
             <el-row v-loading="loadingStatus">
                 <el-col :span="24" :offset="0">
-                    <el-card class="h-[530px] rounded-[50px] mb-2" shadow="always">
-                        <el-table :data="filterFacilitiesTable" class="h-[530px] w-[93rem]" fit>
+                    <el-card class="h-[500px] rounded-[50px]" shadow="always">
+                        <el-table :data="filterFacilitiesTable" class="h-[500px] w-[93rem]" fit>
                             <el-table-column label="Mã" prop="code" align="center" />
                             <el-table-column label="Tên cơ sở" prop="name" align="center" />
                             <el-table-column label="Ngày thành lập" prop="date" align="center" />
@@ -122,13 +124,14 @@
                                     </el-form-item>
                                     <el-form-item label="Ngày thống kê" prop="date">
                                         <el-date-picker v-model="animalForm.date" type="date" locale="vi"
-                                            placeholder="Chọn ngày thống kê" size="default" :disabled-date="disabledDate" />
+                                            placeholder="Chọn ngày thống kê" size="default"
+                                            :disabled-date="disabledDate" />
                                     </el-form-item>
                                 </div>
                             </el-form>
                             <template #footer>
                                 <span class="grid grid-cols-16 gap-4">
-                                    <button class=" p-2 col-start-12  font-sans font-bold text-sm
+                                    <button class="p-2 col-start-12  font-sans font-bold text-sm
                         text-white rounded-lg shadow-lg px-5 bg-blue-500 
                         shadow-blue-100 hover:bg-opacity-90  hover:shadow-lg 
                         border transition hover:-translate-y-0.5 duration-150"
@@ -202,8 +205,8 @@ export default {
             // -------------------Phần biểu đồ--------------
             quarter: startOfQuarter(new Date()),
             beginMonth: {
-                month: new Date().getMonth >= 6 ? new Date().getMonth() - 6 : new Date().getMonth() + 6,
-                year: new Date().getMonth > 6  ? new Date().getFullYear() : new Date().getFullYear() - 1
+                month: new Date().getMonth() >= 6 ? new Date().getMonth() - 6 : new Date().getMonth() + 6,
+                year: new Date().getMonth() > 6 ? new Date().getFullYear() : new Date().getFullYear() - 1
             },
             endMonth: {
                 month: new Date().getMonth(),
@@ -270,9 +273,11 @@ export default {
     computed: {
         formatBeginMonth() {
             if (this.beginMonth != null) {
+                console.log(new Date().getMonth >= 6)
+                console.log(this.beginMonth)
                 let month = this.beginMonth.month < 9 ? "0" + (this.beginMonth.month + 1) : (this.beginMonth.month + 1)
-                let beginMonth = this.beginMonth.year + '-' + month + '-01'
-                return beginMonth
+                let begin = this.beginMonth.year + '-' + month + '-01'
+                return begin
             }
         },
         formatEndMonth() {
