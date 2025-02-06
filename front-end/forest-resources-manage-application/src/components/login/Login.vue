@@ -40,7 +40,7 @@ export default {
     mounted() {
         this.$notify({
             title: 'Note',
-            message: "User: a, Password: 1 (Vui lòng đợi 60s để server khởi động)",
+            message: "User: a, Password: 1",
             type: 'info',
             duration: 0,
         })
